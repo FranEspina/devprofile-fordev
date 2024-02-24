@@ -1,0 +1,35 @@
+---
+import {SignUpModal} from '@/components/SignUpModal'
+---
+
+<section class="flex flex-row justify-between items-center h-14- min-h-14 gap-1">
+  <div class="">
+    <ul class="flex flex-row text-xs">
+      <li class="text-3xl"></li>
+    </ul>
+  </div>
+
+  <div class="">
+    <ul class="flex flex-row text-xs  gap-3">
+      <li class="li-nav-bar"></li>
+      <li class="li-nav-bar"></li>
+      <li class="li-nav-bar"></li>
+    </ul>
+  </div>
+
+  <div class="">
+    <ul class="flex flex-row text-xs gap-3">
+      <li>
+        <SignUpModal client:load />
+      </li>
+      
+    </ul>
+  </div>
+
+</section>
+
+<style>
+  .li-nav-bar {
+  @apply hover:text-blue-400 hover:cursor-pointer hover:shadow-lg transition-colors duration-300;
+  }
+</style>

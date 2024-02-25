@@ -6,7 +6,7 @@ export const Modal = ({ title, show, handleConfirm, textConfirm, handleCancel, c
 
   return (show &&
     <div className="fixed z-10 left-0 top-0 w-full h-full overflow-auto bg-black/90">
-      <section className='bg-[#101015] my-[15%] mx-auto w-[80%] shadow-md shadow-blue-500 flex flex-col border border-blue-500'>
+      <section className='bg-[#101015] my-[5%] mx-auto w-[80%] shadow-md shadow-blue-500 flex flex-col border border-blue-500'>
         <header className="relative bg-blue-800 p-2">
           <h1 className='text-gray-50 text-2xl' >{title}</h1>
           <CloseButton onClick={handleCancel}/>

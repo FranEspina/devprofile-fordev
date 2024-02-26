@@ -37,13 +37,19 @@ export const createTables = () => {
     });
 };
 
-export const getUserByEmail = async (email: string): Promise<boolean> => {
-
+export const getUserByEmail = async (email: string): Promise<User | null> => {
 
   try {
-    const result = await pool.query('SELECT email FROM users WHERE email = $1', [email])
-    if (!result || !result.rowCount) return false
-    return (result.rowCount >= 1)
+    const result = await pool.query('SELECT first_name, last_name, password FROM users WHERE email = $1', [email])
+    if (!result || !result.rowCount) return null
+
+    const id: number = result.rows[0]['id']
+    const password: string = result.rows[0]['password']
+    const firstName: string = result.rows[0]['first_name']
+    const lastName: string = result.rows[0]['last_name']
+
+    return new User({ id, email, firstName, lastName, password })
+
   }
   catch (error) {
     console.log('Error inesperado recuperando usuario por email', error)
@@ -52,11 +58,11 @@ export const getUserByEmail = async (email: string): Promise<boolean> => {
 
 }
 
-export async function createUser({ email, firstName, lastName, password }: { email: string, firstName: string, lastName: string, password: string }) {
+export async function createUser({ email, firstName, lastName, hashPassword }: { email: string, firstName: string, lastName: string, hashPassword: string }) {
   try {
-    const result = await pool.query('INSERT INTO users(EMAIL, FIRST_NAME, LAST_NAME, PASSWORD) VALUES ($1, $2, $3, $4) RETURNING id', [email, firstName, lastName, password])
+    const result = await pool.query('INSERT INTO users(EMAIL, FIRST_NAME, LAST_NAME, PASSWORD) VALUES ($1, $2, $3, $4) RETURNING id', [email, firstName, lastName, hashPassword])
 
-    return new User({ id: result.rows[0].id, email, firstName, lastName, password })
+    return new User({ id: result.rows[0].id, email, firstName, lastName, password: hashPassword })
   }
   catch (error) {
     console.log('Error inesperado creando usuario', error)

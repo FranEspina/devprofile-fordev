@@ -1,10 +1,15 @@
-import express from 'express'
+import express, { Request, Response, NextFunction } from 'express'
 import morgan from 'morgan'
 import cors from 'cors'
+import authRoute from './routes/authRoute'
 
 const app = express()
 
-app.use(cors())
+const corsOptions = {
+  origin: 'http://localhost:8081'
+}
+
+app.use(cors(corsOptions))
 app.use(express.json());
 app.use(
   express.urlencoded({
@@ -12,5 +17,8 @@ app.use(
   })
 )
 app.use(morgan('combined'))
+
+app.use('/auth', authRoute)
+
 
 export default app

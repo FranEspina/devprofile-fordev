@@ -1,10 +1,14 @@
 import { Modal } from './Modal.jsx'
 import { useState } from 'react'
 import axios from 'axios'
-
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useNotify } from '@/hooks/useNotify'
 
 export const SignUpModal = () => {
   const [show, setShow] = useState(false);
+
+  const {notifyError, notifySuccess} = useNotify()
 
   const showModal = () => {
     setShow(true)
@@ -32,13 +36,22 @@ export const SignUpModal = () => {
     axios.post(baseUrl, body)
       .then((response) => {
         console.log(response.data);
+        notifySuccess('Usuario registado correctamente')
         setShow(false)
       })
       .catch((err) => {
-        console.log('error')
+        notifyError('Error inebsperado registrando usuario')
         console.log(err)
       })
   }
+
+  const inputs = [
+    { name: 'first_name', desc: 'Nombre:', type: 'text', placeholder: 'xxxxx' },
+    { name: 'last_name', desc: 'Apellidos:', type: 'text', placeholder: 'xxxxx' },
+    { name: 'email', desc: 'Correo electrónico:', type: 'email', placeholder: 'xxxxx' },
+    { name: 'password', desc: 'Contraseña:', type: 'password', placeholder: 'xxxxx' },
+    { name: 'password_repeat', desc: 'Repetir contraseña:', type: 'password', placeholder: 'xxxxx' }]
+
 
   return (
     <div>
@@ -46,35 +59,14 @@ export const SignUpModal = () => {
 
         <form id='signUpForm' action="submit" className="px-10 py-2 text-xs" >
           <fieldset >
-            <div className="flex flex-col gap-1">
-              <label for="first_name" className="mb-2">Nombre:</label>
-              <input className="mb-4 w-full py-2 px-4 block text-xs disabled:opacity-50 disabled:pointer-events-none bg-blue-950 border-blue-300 text-gray-50 focus:border-blue-500  focus:ring-blue-600 placeholder-gray-600"
-                type="text" id="first_name" name="first_name"
-                placeholder='xxxxx'
-              ></input>
-            </div>
-            <div className="flex flex-col gap-1">
-              <label for="last_name">Apellidos</label>
-              <input className="mb-4 w-full py-2 px-4 block text-xs disabled:opacity-50 disabled:pointer-events-none bg-blue-950 border-blue-300 text-gray-50 focus:border-blue-500  focus:ring-blue-600 placeholder-gray-600"
-                type="text" id="last_name" name="last_name"
-                placeholder='xxxxx xxxxx'></input>
-            </div>
-            <div className="flex flex-col gap-1">
-              <label for="email">Correo electrónico</label>
-              <input className="mb-4 w-full py-2 px-4 block text-xs disabled:opacity-50 disabled:pointer-events-none bg-blue-950 border-blue-300 text-gray-50 focus:border-blue-500  focus:ring-blue-600 placeholder-gray-600"
-                type="email" id="email" name="email"
-                placeholder='xxxxx@xxxxx.xxx'></input>
-            </div>
-            <div className="flex flex-col gap-1">
-              <label for="password">Contraseña</label>
-              <input className="mb-4 w-full py-2 px-4 block text-xs disabled:opacity-50 disabled:pointer-events-none bg-blue-950 border-blue-300 text-gray-50 focus:border-blue-500  focus:ring-blue-600 placeholder-gray-600"
-                type="password" id="password" name="password" placeholder='xxxxx'></input>
-            </div>
-            <div className="flex flex-col gap-1">
-              <label for="password_repeat">Contraseña</label>
-              <input className="mb-4 w-full py-2 px-4 block text-xs disabled:opacity-50 disabled:pointer-events-none bg-blue-950 border-blue-300 text-gray-50 focus:border-blue-500  focus:ring-blue-600 placeholder-gray-600"
-                type="password" id="password_repeat" name="password_repeat" placeholder='xxxxx'></input>
-            </div>
+            { inputs.map((field) =>
+              <div key={field.name} className="flex flex-col gap-1">
+                <label for={field.name} className="mb-2">{field.desc}</label>
+                <input className="mb-4 w-full py-2 px-4 block text-xs disabled:opacity-50 disabled:pointer-events-none bg-blue-950 border-blue-300 text-gray-50 focus:border-blue-500  focus:ring-blue-600 placeholder-gray-600"
+                  type={field.type} id={field.name} name={field.name}
+                  placeholder={field.placeholder} />
+              </div>
+              )}
           </fieldset>
         </form>
       </Modal>
@@ -84,6 +76,19 @@ export const SignUpModal = () => {
         onClick={showModal}>
         Registro
       </button>
+      <ToastContainer
+        position="bottom-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+        transition: Bounce
+        />
     </div>
   )
 }

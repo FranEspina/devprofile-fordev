@@ -2,7 +2,8 @@ import app from './app'
 import dotenv from 'dotenv'
 import { createTables } from './services/db'
 
-dotenv.config()
+if ()
+  dotenv.config()
 
 console.log(process.env.NODE_ENV)
 

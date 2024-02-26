@@ -1,12 +1,16 @@
 import express from 'express'
 import morgan from 'morgan'
+import cors from 'cors'
 
 const app = express()
-app.use(morgan('combined'))
 
-app.get('/', (req, res) => {
-  console.log('estoy dentro')
-  return res.status(200).json({ message: 'hello world' });
-})
+app.use(cors())
+app.use(express.json());
+app.use(
+  express.urlencoded({
+    extended: true,
+  })
+)
+app.use(morgan('combined'))
 
 export default app

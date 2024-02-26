@@ -6,5 +6,5 @@ dotenv.config()
 console.log(process.env.NODE_ENV)
 
 const port = process.env.PORT || 3001
-app.listen(port, () => console.log(`Servidor iniciado en puerto ${port}`))
 
+app.listen(port, () => console.log(`Servidor iniciado en puerto ${port}`))

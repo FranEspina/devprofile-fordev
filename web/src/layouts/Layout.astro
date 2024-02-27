@@ -1,5 +1,8 @@
 ---
 import NavTop from "@/components/NavTop.astro";
+import { ToastContainer, Bounce } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 interface Props {
   title: string;
 }
@@ -22,22 +25,42 @@ const { title } = Astro.props;
   </nav>
   <body>
     <slot />
+    <ToastContainer
+      client:load
+      position="bottom-right"
+      autoClose={2000}
+      hideProgressBar={false}
+      newestOnTop={false}
+      closeOnClick
+      rtl={false}
+      pauseOnFocusLoss
+      draggable
+      pauseOnHover
+      theme="dark"
+    />
   </body>
 
   <style is:global>
+    :root {
+      color-scheme: light dark;
+    }
+
     html {
       font-family: "Motomangucode", system-ui, sans-serif;
       background: #13151a;
       color: #f1f0e1;
       margin-left: 10px;
       margin-right: 10px;
+    }
 
-      --toastify-color-light: #fff;
-      --toastify-color-dark: #121212;
-      --toastify-color-info: #3498db;
-      --toastify-color-success: #07bc0c;
-      --toastify-color-warning: #f1c40f;
-      --toastify-color-error: #e74c3c;
+    ToastContainer {
+      color-scheme: light dark;
+      --toastify-color-light: @apply bg-gray-50;
+      --toastify-color-dark: #13151a;
+      --toastify-color-info: @apply bg-blue-500;
+      --toastify-color-success: rgb(59 130 246);
+      --toastify-color-warning: @apply bg-blue-500;
+      --toastify-color-error: @apply bg-blue-500;
       --toastify-color-transparent: rgba(255, 255, 255, 0.7);
 
       --toastify-icon-color-info: var(--toastify-color-info);
@@ -46,22 +69,22 @@ const { title } = Astro.props;
       --toastify-icon-color-error: var(--toastify-color-error);
 
       --toastify-toast-width: 320px;
-      --toastify-toast-background: #fff;
+      --toastify-toast-background: @apply bg-gray-50;
       --toastify-toast-min-height: 64px;
       --toastify-toast-max-height: 800px;
-      --toastify-font-family: sans-serif;
+      --toastify-font-family: "Motomangucode";
       --toastify-z-index: 9999;
 
-      --toastify-text-color-light: #757575;
-      --toastify-text-color-dark: #fff;
+      --toastify-text-color-light: @apply bg-blue-950;
+      --toastify-text-color-dark: @apply bg-gray-50;
 
-      --toastify-text-color-info: #fff;
-      --toastify-text-color-success: #fff;
-      --toastify-text-color-warning: #fff;
-      --toastify-text-color-error: #fff;
+      --toastify-text-color-info: @apply bg-gray-50;
+      --toastify-text-color-success: @apply bg-gray-50;
+      --toastify-text-color-warning: @apply bg-gray-50;
+      --toastify-text-color-error: @apply bg-gray-50;
 
-      --toastify-spinner-color: #616161;
-      --toastify-spinner-color-empty-area: #e0e0e0;
+      --toastify-spinner-color: @apply bg-blue-500;
+      --toastify-spinner-color-empty-area: @apply bg-gray-50;
 
       --toastify-color-progress-light: linear-gradient(
         to right,
@@ -81,7 +104,6 @@ const { title } = Astro.props;
 
       --toastify-color-progress-bgo: 0.2;
     }
-
     @font-face {
       font-family: "Motomangucode";
       src: url("/fonts/Motomangucode.woff2") format("woff2");

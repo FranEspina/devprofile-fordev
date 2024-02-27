@@ -1,5 +1,11 @@
 ---
 import { SignUpModal } from "./SignUpModal";
+import { ItemListNav } from "@/components/ItemListNav.tsx";
+import { Logout } from "@/components/Logout";
+
+function onLogout() {
+  console.log("hola");
+}
 ---
 
 <section
@@ -13,23 +19,18 @@ import { SignUpModal } from "./SignUpModal";
 
   <div class="">
     <ul class="flex flex-row text-xs gap-3">
-      <li class="li-nav-bar"></li>
-      <li class="li-nav-bar"></li>
-      <li class="li-nav-bar"></li>
+      <ItemListNav client:load>Inicio</ItemListNav>
+      <ItemListNav client:load authRequired={true}>Proyectos</ItemListNav>
+      <ItemListNav client:load authRequired={true}>Cuestionarios</ItemListNav>
     </ul>
   </div>
 
   <div class="">
     <ul class="flex flex-row text-xs gap-3">
-      <li>
+      <ItemListNav client:load hideLogged={true}>
         <SignUpModal client:load />
-      </li>
+      </ItemListNav>
+      <Logout client:load authRequired={true}>Cerrar Sesión</Logout>
     </ul>
   </div>
 </section>
-
-<style>
-  .li-nav-bar {
-    @apply hover:text-blue-400 hover:cursor-pointer hover:shadow-lg transition-colors duration-300;
-  }
-</style>

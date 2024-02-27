@@ -1,11 +1,15 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import Layout from "../layouts/Layout.astro";
+import { Wellcome } from "@/components/Wellcome.tsx";
 ---
 
 <Layout title="dev profile for dev ">
-	<main class="">
+  <main class="">
     <h1 class="text-5xl text-blue-500">Proyectos de desarrolladores</h1>
-    <p class="">Un ejemplo de diferentes buenas prácticas que todo desarrollador fullstack debería poder realizar</p>
-
-	</main>
+    <p class="">
+      Un ejemplo de diferentes buenas prácticas que todo desarrollador fullstack
+      debería poder realizar
+    </p>
+    <Wellcome client:load />
+  </main>
 </Layout>

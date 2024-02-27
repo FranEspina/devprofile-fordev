@@ -2,6 +2,7 @@
 import { SignUpModal } from "./SignUpModal";
 import { ItemListNav } from "@/components/ItemListNav.tsx";
 import { Logout } from "@/components/Logout";
+import { SignInModal } from "@/components/SignInModal";
 
 function onLogout() {
   console.log("hola");
@@ -29,6 +30,9 @@ function onLogout() {
     <ul class="flex flex-row text-xs gap-3">
       <ItemListNav client:load hideLogged={true}>
         <SignUpModal client:load />
+      </ItemListNav>
+      <ItemListNav client:load hideLogged={true}>
+        <SignInModal client:load />
       </ItemListNav>
       <Logout client:load authRequired={true}>Cerrar Sesión</Logout>
     </ul>

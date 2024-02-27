@@ -65,7 +65,7 @@ export const SignUpModal = () => {
                 <label htmlFor={field.name} className="mb-2">{field.desc}</label>
                 <input className="mb-4 w-full py-2 px-4 block text-xs disabled:opacity-50 disabled:pointer-events-none bg-blue-950 border-blue-300 text-gray-50 focus:border-blue-500  focus:ring-blue-600 placeholder-gray-600"
                   type={field.type} id={field.name} name={field.name}
-                  placeholder={field.placeholder} />
+                  placeholder={field.placeholder} autocomplete="off" />
               </div>
             )}
           </fieldset>

@@ -1,11 +1,11 @@
 import axios from 'axios'
 import type { registerType, registerResultType, loginType, apiResponse } from '@/types/apiTypes.ts'
 
-
+const API_BASE_URL = 'https://devprofile-fordev-dev-knsf.1.ie-1.fl0.io'
 
 export async function register(user: registerType): Promise<registerResultType> {
 
-  const baseUrl = 'https://devprofile-fordev-dev-knsf.1.ie-1.fl0.io/auth/register'
+  const baseUrl = `${API_BASE_URL}/auth/register`
 
   try {
 
@@ -30,7 +30,7 @@ export async function register(user: registerType): Promise<registerResultType> 
 
 export async function login(userLogin: loginType): Promise<registerResultType> {
 
-  const baseUrl = 'https://devprofile-fordev-dev-knsf.1.ie-1.fl0.io/auth/login'
+  const baseUrl = `${API_BASE_URL}/auth/login`
 
   try {
     const response = await axios.post(baseUrl, userLogin)
@@ -43,7 +43,12 @@ export async function login(userLogin: loginType): Promise<registerResultType> {
     return { success: false, message: results.message }
   }
   catch (error) {
-    console.log(error)
-    return { success: false, message: 'Error inesperado iniciando sesión' }
+    const results: apiResponse = error.response.data
+    if (results) {
+      return { success: false, message: results.message }
+    }
+    else {
+      return { success: false, message: 'Error inesperado iniciando sesión' }
+    }
   }
 }

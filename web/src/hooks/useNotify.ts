@@ -5,7 +5,7 @@ export function useNotify() {
   const notifyError = (message: string) =>
     toast.error(message, {
       position: "bottom-center",
-      autoClose: 2000,
+      autoClose: 1000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
@@ -18,7 +18,7 @@ export function useNotify() {
   const notifySuccess = (message: string) =>
     toast.error(message, {
       position: "bottom-center",
-      autoClose: 2000,
+      autoClose: 1000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,

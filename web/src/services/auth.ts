@@ -43,12 +43,15 @@ export async function login(userLogin: loginType): Promise<registerResultType> {
     return { success: false, message: results.message }
   }
   catch (error) {
-    const results: apiResponse = error.response.data
-    if (results) {
-      return { success: false, message: results.message }
+    if (error?.response?.data) {
+      const results: apiResponse = error.response.data
+      if (results) {
+        return { success: false, message: results.message }
+      }
     }
-    else {
-      return { success: false, message: 'Error inesperado iniciando sesión' }
-    }
+
+    console.log(error)
+    return { success: false, message: 'Error inesperado iniciando sesión' }
+
   }
 }

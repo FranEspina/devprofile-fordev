@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useNotify } from '@/hooks/useNotify'
 import { login } from '@/services/auth.ts';
 import { useProfileStore } from '@/store/profileStore'
+import { UserLoginFormSchema } from '@/Schemas/userSchema';
 
 
 export const SignInModal = () => {
@@ -31,6 +32,12 @@ export const SignInModal = () => {
     const userForm = {
       email: form.elements['email'].value,
       password: form.elements['password'].value,
+    }
+
+    const parsed = await UserLoginFormSchema.safeParseAsync(userForm)
+    if (!parsed.success) {
+      console.log(parsed)
+      return
     }
 
     var { success, message, token, user } = await login(userForm)

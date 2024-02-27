@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useNotify } from '@/hooks/useNotify'
 import { register } from '@/services/auth.ts';
 import { useProfileStore } from '@/store/profileStore'
+import { UserRegisterFormSchema } from '@/Schemas/userSchema'
 
 
 export const SignUpModal = () => {
@@ -33,6 +34,14 @@ export const SignUpModal = () => {
       lastName: form.elements['last_name'].value,
       email: form.elements['email'].value,
       password: form.elements['password'].value,
+      passwordConfirmation: form.elements['password_confirmation'].value,
+    }
+
+
+    const parsed = await UserRegisterFormSchema.safeParseAsync(userForm)
+    if (!parsed.success) {
+      console.log(parsed)
+      return
     }
 
     var { success, message, token, user } = await register(userForm)
@@ -52,7 +61,7 @@ export const SignUpModal = () => {
     { name: 'last_name', desc: 'Apellidos:', type: 'text', placeholder: 'xxxxx' },
     { name: 'email', desc: 'Correo electrónico:', type: 'email', placeholder: 'xxxxx' },
     { name: 'password', desc: 'Contraseña:', type: 'password', placeholder: 'xxxxx' },
-    { name: 'password_repeat', desc: 'Repetir contraseña:', type: 'password', placeholder: 'xxxxx' }]
+    { name: 'password_confirmation', desc: 'Repetir contraseña:', type: 'password', placeholder: 'xxxxx' }]
 
 
   return (

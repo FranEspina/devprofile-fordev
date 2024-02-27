@@ -4,11 +4,12 @@ import { useProfileStore } from "@/store/profileStore";
 interface ItemListNavProps {
   authRequired?: boolean,
   hideLogged?: boolean,
+  hoverStyled?: boolean,
   children?: React.JSX.Element | string,
   onClick?: () => void
 }
 
-export function ItemListNav({ authRequired, hideLogged, children, onClick }: ItemListNavProps) {
+export function ItemListNav({ authRequired, hideLogged, children, hoverStyled = false, onClick }: ItemListNavProps) {
 
   const { token } = useProfileStore((state) => state);
 
@@ -27,7 +28,7 @@ export function ItemListNav({ authRequired, hideLogged, children, onClick }: Ite
   }
 
   return (
-    <li className="hover:text-blue-400 hover:cursor-pointer hover:shadow-lg transition-colors duration-300"
+    <li className={hoverStyled ? 'hover:text-blue-400 hover:cursor-pointer hover:shadow-lg transition-colors duration-300' : ''}
       onClick={onClick}>
       {children}
     </li>

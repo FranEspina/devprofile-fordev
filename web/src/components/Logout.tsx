@@ -19,5 +19,5 @@ export function Logout({ authRequired, children }: LogoutProps) {
     notifySuccess('Sesión cerrada')
   }
 
-  return <ItemListNav authRequired={authRequired} onClick={handleClick}>{children}</ItemListNav>
+  return <ItemListNav hoverStyled={true} authRequired={authRequired} onClick={handleClick}>{children}</ItemListNav>
 }

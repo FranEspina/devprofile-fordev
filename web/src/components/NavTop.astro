@@ -20,9 +20,13 @@ function onLogout() {
 
   <div class="">
     <ul class="flex flex-row text-xs gap-3">
-      <ItemListNav client:load>Inicio</ItemListNav>
-      <ItemListNav client:load authRequired={true}>Proyectos</ItemListNav>
-      <ItemListNav client:load authRequired={true}>Cuestionarios</ItemListNav>
+      <ItemListNav hoverStyled={true} client:load>Inicio</ItemListNav>
+      <ItemListNav hoverStyled={true} client:load authRequired={true}>
+        Proyectos
+      </ItemListNav>
+      <ItemListNav hoverStyled={true} client:load authRequired={true}>
+        Cuestionarios
+      </ItemListNav>
     </ul>
   </div>
 

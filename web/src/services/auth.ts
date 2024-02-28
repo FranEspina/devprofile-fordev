@@ -14,16 +14,29 @@ export async function register(user: registerType): Promise<registerResultType> 
 
     const results: apiResponse = response.data
     if (results.success === true) {
-
       return { success: true, message: 'Usuario registrado correctamente', user: results.data, token: results.token }
-
     }
 
     console.log(results)
     return { success: false, message: results.message }
   }
   catch (error) {
-    console.log(error)
+    if (axios.isAxiosError(error)) {
+      console.error('Error axios:', error.message);
+      if (error.response) {
+        const results: apiResponse = error.response.data
+        if (results) {
+          return { success: false, message: results.message }
+        }
+      }
+    } else if (error instanceof Error) {
+      console.error('Exception:', error.message);
+    } else if (typeof error === "string") {
+      console.error('Error:', error);
+    } else {
+      console.error('Unknow error:', error);
+    }
+
     return { success: false, message: 'Error inesperado registrando usuario' }
   }
 }
@@ -41,16 +54,23 @@ export async function login(userLogin: loginType): Promise<registerResultType> {
     }
     console.log(results)
     return { success: false, message: results.message }
-  }
-  catch (error) {
-    if (error?.response?.data) {
-      const results: apiResponse = error.response.data
-      if (results) {
-        return { success: false, message: results.message }
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error('Error axios:', error.message);
+      if (error.response) {
+        const results: apiResponse = error.response.data
+        if (results) {
+          return { success: false, message: results.message }
+        }
       }
+    } else if (error instanceof Error) {
+      console.error('Exception:', error.message);
+    } else if (typeof error === "string") {
+      console.error('Error:', error);
+    } else {
+      console.error('Unknow error:', error);
     }
 
-    console.log(error)
     return { success: false, message: 'Error inesperado iniciando sesión' }
 
   }

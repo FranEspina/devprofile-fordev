@@ -34,17 +34,15 @@ export const SignInModal = ({ text = 'Iniciar sesión' }) => {
 
     const parsed = await UserLoginFormSchema.safeParseAsync(userForm)
     if (!parsed.success) {
-
+      const errors = {};
       if (parsed.error instanceof z.ZodError) {
-        const errors = {};
         parsed.error.errors.forEach((err) => {
           errors[err.path[0]] = err.message;
         });
-        setErrors(errors)
       } else {
-        notifyError(parsed.error)
-        console.error('Error Zod formulario inicio sesión:', parsed.error);
+        errors['generic'] = parsed.error
       }
+      setErrors(errors)
       setLoading(false)
       return
     }
@@ -59,7 +57,9 @@ export const SignInModal = ({ text = 'Iniciar sesión' }) => {
         setShow(false)
       }
       else {
-        notifyError(message)
+        const errors = {}
+        errors['generic'] = message
+        setErrors(errors)
       }
     }
     finally {
@@ -89,6 +89,7 @@ export const SignInModal = ({ text = 'Iniciar sesión' }) => {
               </div>
             )}
           </fieldset>
+          {errors['generic'] && <p className='text-xxs md:text-xs text-center text-blue-500 ml-1'>{errors['generic']}</p>}
         </form>
       </Modal>
 

@@ -37,16 +37,16 @@ export const SignUpModal = ({ text = 'Registrar' }) => {
 
     const parsed = await UserRegisterFormSchema.safeParseAsync(userForm)
     if (!parsed.success) {
+      const errors = {};
       if (parsed.error instanceof z.ZodError) {
-        const errors = {};
         parsed.error.errors.forEach((err) => {
           errors[err.path[0]] = err.message;
         });
-        setErrors(errors)
       } else {
-        notifyError(parsed.error)
-        console.error('Se produjo un error inesperado:', parsed.error);
+        errors['generic'] = parsed.error
       }
+      setErrors(errors)
+      setLoading(false)
       return
     }
 
@@ -60,7 +60,9 @@ export const SignUpModal = ({ text = 'Registrar' }) => {
         setShow(false)
       }
       else {
-        notifyError(message)
+        const errors = {}
+        errors['generic'] = message
+        setErrors(errors)
       }
     }
     finally {
@@ -93,6 +95,7 @@ export const SignUpModal = ({ text = 'Registrar' }) => {
               </div>
             )}
           </fieldset>
+          {errors['generic'] && <p className='text-xxs md:text-xs text-center text-blue-500 ml-1'>{errors['generic']}</p>}
         </form>
       </Modal>
 

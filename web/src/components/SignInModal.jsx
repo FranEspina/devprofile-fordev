@@ -10,11 +10,8 @@ export const SignInModal = ({ text = 'Iniciar sesión' }) => {
   const [show, setShow] = useState(false);
   const [errors, setErrors] = useState([])
   const [loading, setLoading] = useState(false);
-
-
   const { notifyError, notifySuccess } = useNotify()
   const { setUser, setToken } = useProfileStore(state => state)
-
 
   const showModal = () => {
     setShow(true)
@@ -27,7 +24,6 @@ export const SignInModal = ({ text = 'Iniciar sesión' }) => {
   }
 
   const confirmModal = async (e) => {
-
     setLoading(true)
 
     var form = document.getElementById("user-sign-in-form");
@@ -69,7 +65,6 @@ export const SignInModal = ({ text = 'Iniciar sesión' }) => {
     finally {
       setLoading(false)
     }
-
   }
 
   const fields = [

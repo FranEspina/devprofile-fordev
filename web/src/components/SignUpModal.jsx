@@ -6,14 +6,12 @@ import { useProfileStore } from '@/store/profileStore'
 import { UserRegisterFormSchema } from '@/Schemas/userSchema'
 import { z } from 'astro/zod'
 
-
 export const SignUpModal = ({ text = 'Registrar' }) => {
   const [show, setShow] = useState(false);
   const [errors, setErrors] = useState([])
-
+  const [loading, setLoading] = useState(false);
   const { notifyError, notifySuccess } = useNotify()
   const { setUser, setToken } = useProfileStore(state => state)
-
 
   const showModal = () => {
     setShow(true)
@@ -26,6 +24,7 @@ export const SignUpModal = ({ text = 'Registrar' }) => {
   }
 
   const confirmModal = async (e) => {
+    setLoading(true)
 
     var form = document.getElementById("user-sign-up-form");
     const userForm = {
@@ -51,16 +50,21 @@ export const SignUpModal = ({ text = 'Registrar' }) => {
       return
     }
 
-    var { success, message, token, user } = await register(userForm)
-    if (success) {
-      setUser(user)
-      setToken(token || '')
-      notifySuccess(message)
-      setErrors([])
-      setShow(false)
+    try {
+      var { success, message, token, user } = await register(userForm)
+      if (success) {
+        setUser(user)
+        setToken(token || '')
+        notifySuccess(message)
+        setErrors([])
+        setShow(false)
+      }
+      else {
+        notifyError(message)
+      }
     }
-    else {
-      notifyError(message)
+    finally {
+      setLoading(false)
     }
   }
 
@@ -74,7 +78,7 @@ export const SignUpModal = ({ text = 'Registrar' }) => {
 
   return (
     <div>
-      <Modal className="w-80 md:w-96" title='Registro' textConfirm="Registrar" show={show} handleCancel={hideModal} handleConfirm={confirmModal}>
+      <Modal className="w-80 md:w-96" title='Registro' textConfirm="Registrar" show={show} handleCancel={hideModal} handleConfirm={confirmModal} loading={loading}>
         <form id='user-sign-up-form' action="submit" className="px-3 md:px-5 py-2 text-xxs md:text-xs" >
           <fieldset >
             {fields.map((field) =>

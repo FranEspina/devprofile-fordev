@@ -14,29 +14,29 @@ function onLogout() {
 >
   <div class="">
     <ul class="flex flex-row text-xs">
-      <li class="text-3xl"></li>
+      <li class="text-sm md:text-xl mt-2">
+        <span class="text-blue-500">d</span>f<span
+          class="text-blue-500 rotate-90 block">D</span
+        >
+      </li>
     </ul>
   </div>
 
   <div class="">
     <ul class="flex flex-row text-xs gap-3">
-      <ItemListNav hoverStyled={true} client:load>Inicio</ItemListNav>
-      <ItemListNav hoverStyled={true} client:load authRequired={true}>
-        Proyectos
-      </ItemListNav>
-      <ItemListNav hoverStyled={true} client:load authRequired={true}>
-        Cuestionarios
-      </ItemListNav>
+      <ItemListNav hoverStyled={true} client:load />
+      <ItemListNav hoverStyled={true} client:load authRequired={true} />
+      <ItemListNav hoverStyled={true} client:load authRequired={true} />
     </ul>
   </div>
 
   <div class="">
-    <ul class="flex flex-row text-xs gap-3">
+    <ul class="flex flex-row gap-3">
       <ItemListNav client:load hideLogged={true}>
         <SignUpModal client:load />
       </ItemListNav>
       <ItemListNav client:load hideLogged={true}>
-        <SignInModal client:load />
+        <SignInModal text="Iniciar" client:load />
       </ItemListNav>
       <Logout client:load authRequired={true}>Cerrar Sesión</Logout>
     </ul>

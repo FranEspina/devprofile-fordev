@@ -4,29 +4,25 @@ import classNames from 'classnames';
 
 // Modal Component
 export const Modal = ({ title, show, handleConfirm, textConfirm, handleCancel, className = '', children }) => {
-
-
-
   return (show &&
     <div className="fixed z-10 left-0 top-0 w-full h-full overflow-auto bg-black/90">
       <section className={classNames('bg-[#101015] my-[5%] w-[80%] mx-auto  shadow-md shadow-blue-500 flex flex-col border border-blue-500', className)}>
         <header className="relative bg-blue-800 p-2">
-          <h1 className='text-gray-50 text-2xl' >{title}</h1>
-          <CloseButton onClick={handleCancel} />
+          <h1 className='text-gray-50 text-base md:text-lg' >{title}</h1>
+          <CloseButton size='mobile' onClick={handleCancel} />
         </header>
-        <main className="flex-1 my-3">
+        <main className="flex-1 mt-3 md:my-3">
           {children}
         </main>
-        <footer className="flex flex-row justify-end gap-2 mb-7 mr-10" >
-
+        <footer className="flex flex-row justify-center gap-2 mb-4 md:mb-7 text-[10px]" >
           <button
-            className='border border-gray-50 px-5 py-2 hover:border-blue-500 hover:text-blue-500 hover:cursor-pointer hover:shadow-lg transition-colors duration-300'
+            className='uppercase border border-gray-50 px-2 md:px-5 py-1 hover:border-blue-500 hover:text-blue-500 hover:cursor-pointer hover:shadow-lg transition-colors duration-300'
             onClick={handleConfirm}>
             {textConfirm}
           </button>
 
           <button
-            className='border border-gray-50 px-5 py-2 hover:border-blue-500 hover:text-blue-500 hover:cursor-pointer hover:shadow-lg transition-colors duration-300'
+            className='uppercase border border-gray-50 px-5 py-1 hover:border-blue-500 hover:text-blue-500 hover:cursor-pointer hover:shadow-lg transition-colors duration-300'
             onClick={handleCancel}>
             Cancelar
           </button>

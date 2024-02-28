@@ -9,6 +9,8 @@ import { z } from 'astro/zod'
 export const SignInModal = ({ text = 'Iniciar sesión' }) => {
   const [show, setShow] = useState(false);
   const [errors, setErrors] = useState([])
+  const [loading, setLoading] = useState(false);
+
 
   const { notifyError, notifySuccess } = useNotify()
   const { setUser, setToken } = useProfileStore(state => state)
@@ -25,7 +27,8 @@ export const SignInModal = ({ text = 'Iniciar sesión' }) => {
   }
 
   const confirmModal = async (e) => {
-    e.preventDefault()
+
+    setLoading(true)
 
     var form = document.getElementById("user-sign-in-form");
     const userForm = {
@@ -46,20 +49,27 @@ export const SignInModal = ({ text = 'Iniciar sesión' }) => {
         notifyError(parsed.error)
         console.error('Error Zod formulario inicio sesión:', parsed.error);
       }
+      setLoading(false)
       return
     }
 
-    var { success, message, token, user } = await login(userForm)
-    if (success) {
-      setUser(user)
-      setToken(token || '')
-      notifySuccess(message)
-      setErrors([])
-      setShow(false)
+    try {
+      var { success, message, token, user } = await login(userForm)
+      if (success) {
+        setUser(user)
+        setToken(token || '')
+        notifySuccess(message)
+        setErrors([])
+        setShow(false)
+      }
+      else {
+        notifyError(message)
+      }
     }
-    else {
-      notifyError(message)
+    finally {
+      setLoading(false)
     }
+
   }
 
   const fields = [
@@ -69,7 +79,7 @@ export const SignInModal = ({ text = 'Iniciar sesión' }) => {
 
   return (
     <div>
-      <Modal className="w-80 md:w-96" title='Inicio de sesión' textConfirm="Iniciar sesión" show={show} handleCancel={hideModal} handleConfirm={confirmModal}>
+      <Modal className="w-80 md:w-96" title='Inicio de sesión' textConfirm="Iniciar sesión" show={show} handleCancel={hideModal} handleConfirm={confirmModal} loading={loading}>
         <form id='user-sign-in-form' action="submit" className="px-3 md:px-5 py-2 text-xxs md:text-xs" >
           <fieldset >
             {fields.map((field) =>
@@ -79,7 +89,7 @@ export const SignInModal = ({ text = 'Iniciar sesión' }) => {
                   {errors[field.schema] && <p className='text-xxs md:text-xs text-blue-500 ml-1'>{errors[field.schema]}</p>}
                 </div>
                 <input className="mb-4 w-full py-2 px-4 block text-xxs md:text-xs disabled:opacity-50 disabled:pointer-events-none bg-blue-950 border-blue-300 text-gray-50 focus:border-blue-500  focus:ring-blue-600 placeholder-gray-600"
-                  type={field.type} id={field.name} name={field.name} autocomplete="off"
+                  type={field.type} id={field.name} name={field.name}
                   placeholder={field.placeholder} />
               </div>
             )}

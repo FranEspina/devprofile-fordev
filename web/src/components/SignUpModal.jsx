@@ -26,7 +26,6 @@ export const SignUpModal = ({ text = 'Registrar' }) => {
   }
 
   const confirmModal = async (e) => {
-    e.preventDefault()
 
     var form = document.getElementById("user-sign-up-form");
     const userForm = {

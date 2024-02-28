@@ -28,6 +28,7 @@ const { title } = Astro.props;
   <body>
     <slot />
     <ToastContainer
+      className="layout-toast"
       client:load
       position="bottom-right"
       autoClose={2000}
@@ -55,14 +56,13 @@ const { title } = Astro.props;
       margin-right: 10px;
     }
 
-    ToastContainer {
-      color-scheme: light dark;
-      --toastify-color-light: @apply bg-gray-50;
-      --toastify-color-dark: #13151a;
-      --toastify-color-info: @apply bg-blue-500;
-      --toastify-color-success: rgb(59 130 246);
-      --toastify-color-warning: @apply bg-blue-500;
-      --toastify-color-error: @apply bg-blue-500;
+    .layout-toast {
+      --toastify-color-light: rgb(59, 130, 246);
+      --toastify-color-dark: rgb(6, 11, 24);
+      --toastify-color-info: rgb(59, 130, 246);
+      --toastify-color-success: rgb(59, 130, 246);
+      --toastify-color-warning: rgb(59, 130, 246);
+      --toastify-color-error: rgb(30, 64, 175);
       --toastify-color-transparent: rgba(255, 255, 255, 0.7);
 
       --toastify-icon-color-info: var(--toastify-color-info);
@@ -71,22 +71,22 @@ const { title } = Astro.props;
       --toastify-icon-color-error: var(--toastify-color-error);
 
       --toastify-toast-width: 320px;
-      --toastify-toast-background: @apply bg-gray-50;
+      --toastify-toast-background: rgb(23, 37, 84);
       --toastify-toast-min-height: 64px;
       --toastify-toast-max-height: 800px;
       --toastify-font-family: "Motomangucode";
       --toastify-z-index: 9999;
 
-      --toastify-text-color-light: @apply bg-blue-950;
-      --toastify-text-color-dark: @apply bg-gray-50;
+      --toastify-text-color-light: rgb(30, 64, 175);
+      --toastify-text-color-dark: rgb(249, 250, 251);
 
-      --toastify-text-color-info: @apply bg-gray-50;
-      --toastify-text-color-success: @apply bg-gray-50;
-      --toastify-text-color-warning: @apply bg-gray-50;
-      --toastify-text-color-error: @apply bg-gray-50;
+      --toastify-text-color-info: rgb(249, 250, 251);
+      --toastify-text-color-success: rgb(249, 250, 251);
+      --toastify-text-color-warning: rgb(249, 250, 251);
+      --toastify-text-color-error: rgb(249, 250, 251);
 
-      --toastify-spinner-color: @apply bg-blue-500;
-      --toastify-spinner-color-empty-area: @apply bg-gray-50;
+      --toastify-spinner-color: rgb(59, 130, 246);
+      --toastify-spinner-color-empty-area: rgb(249, 250, 251);
 
       --toastify-color-progress-light: linear-gradient(
         to right,
@@ -98,7 +98,7 @@ const { title } = Astro.props;
         #ff2d55
       );
 
-      --toastify-color-progress-dark: #bb86fc;
+      --toastify-color-progress-dark: rgb(59, 130, 246);
       --toastify-color-progress-info: var(--toastify-color-info);
       --toastify-color-progress-success: var(--toastify-color-success);
       --toastify-color-progress-warning: var(--toastify-color-warning);
@@ -106,6 +106,7 @@ const { title } = Astro.props;
 
       --toastify-color-progress-bgo: 0.2;
     }
+
     @font-face {
       font-family: "Motomangucode";
       src: url("/fonts/Motomangucode.woff2") format("woff2");

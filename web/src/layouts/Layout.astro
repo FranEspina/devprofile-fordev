@@ -2,6 +2,7 @@
 import NavTop from "@/components/NavTop.astro";
 import { ToastContainer, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { ViewTransitions } from "astro:transitions";
 
 interface Props {
   title: string;
@@ -19,6 +20,7 @@ const { title } = Astro.props;
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+    <ViewTransitions />
   </head>
   <nav>
     <NavTop />
@@ -120,6 +122,4 @@ const { title } = Astro.props;
       font-display: swap;
     }
   </style>
-
-
 </html>

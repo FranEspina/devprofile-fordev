@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
-import { dbGetResourcesByUserAsync, dbCreateUserResourceAsync, getUserByIdAsync } from '../services/db'
+import { dbGetResourcesByUserAsync, dbCreateUserResourceAsync, dbUpdateUserResourceAsync, getUserByIdAsync, dbDeleteUserResourceAsync } from '../services/db'
 import { validateSchemaAsync } from '../services/validationService'
-import { DevResourceCreateSchema } from '../schemas/devResourceSchema';
-import { DevResourceCreate } from '../models/devResource';
+import { DevResourceSchema, DevResourceCreateSchema, DevResourceDeleteSchema } from '../schemas/devResourceSchema';
+import { DevResource, DevResourceCreate, DevResourceDelete } from '../models/devResource';
 import { Schema } from 'zod'
 
 export async function getUserResources(req: Request, res: Response) {
@@ -71,8 +71,8 @@ export async function createUserResource(req: Request, res: Response) {
 
     const resource = await dbCreateUserResourceAsync(data)
 
-    return res.status(200).json({
-      status: 200,
+    return res.status(201).json({
+      status: 201,
       success: true,
       code: 'OK',
       message: 'Operación realizada correctamente',
@@ -90,3 +90,124 @@ export async function createUserResource(req: Request, res: Response) {
     })
   }
 }
+
+export async function updateUserResource(req: Request, res: Response) {
+  try {
+
+    const id = Number(req.params.id);
+
+    //TODO: Pasar a un middleware de express
+    const { success, data, errors } = await validateSchemaAsync<Schema, DevResource>(DevResourceSchema, req.body)
+    if (!success || data === undefined) {
+      res.status(400).json({
+        status: 400,
+        success: false,
+        code: 'INVALID_BODY',
+        message: errors?.join(';') || 'Error inesesperado validando datos',
+      })
+      return
+    }
+
+    const user = await getUserByIdAsync(id)
+    if (!user) {
+      return res.status(400).json({
+        status: 400,
+        success: false,
+        code: 'NOT_FOUND_USER_ID',
+        message: 'El usuario no existe',
+      })
+      return
+    }
+
+    if (data.user_id !== id) {
+      res.status(400).json({
+        status: 400,
+        success: false,
+        code: 'INVALID_USER_ID',
+        message: 'El recurso no es un recurso el usuario',
+      })
+      return
+    }
+
+    const resource = await dbUpdateUserResourceAsync(data)
+
+    return res.status(200).json({
+      status: 200,
+      success: true,
+      code: 'OK',
+      message: 'Operación realizada correctamente',
+      data: resource,
+    })
+
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({
+      status: 500,
+      success: true,
+      code: 'UNEXPECTED_ERROR_UPDATE_USER_RESOURCES',
+      message: 'Error inesperado actualizando recurso de usuario',
+      data: null,
+    })
+  }
+}
+
+export async function deleteUserResource(req: Request, res: Response) {
+  try {
+
+    const id = Number(req.params.id);
+
+    //TODO: Pasar a un middleware de express
+    const { success, data, errors } = await validateSchemaAsync<Schema, DevResourceDelete>(DevResourceDeleteSchema, req.body)
+    if (!success || data === undefined) {
+      res.status(400).json({
+        status: 400,
+        success: false,
+        code: 'INVALID_BODY',
+        message: errors?.join(';') || 'Error inesesperado validando datos',
+      })
+      return
+    }
+
+    const user = await getUserByIdAsync(id)
+    if (!user) {
+      return res.status(400).json({
+        status: 400,
+        success: false,
+        code: 'NOT_FOUND_USER_ID',
+        message: 'El usuario no existe',
+      })
+      return
+    }
+
+    if (data.user_id !== id) {
+      res.status(400).json({
+        status: 400,
+        success: false,
+        code: 'INVALID_USER_ID',
+        message: 'El recurso no es un recurso el usuario',
+      })
+      return
+    }
+
+    await dbDeleteUserResourceAsync(data)
+
+    return res.status(204).json({
+      status: 204,
+      success: true,
+      code: 'OK',
+      message: 'Operación realizada correctamente',
+      data: data,
+    })
+
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({
+      status: 500,
+      success: true,
+      code: 'UNEXPECTED_ERROR_DELETE_USER_RESOURCES',
+      message: 'Error inesperado actualizando recurso de usuario',
+      data: null,
+    })
+  }
+}
+

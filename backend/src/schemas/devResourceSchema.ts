@@ -13,3 +13,13 @@ export const DevResourceSchema = z.object({
 export const DevResourceCreateSchema = DevResourceSchema.omit({
   id: true,
 })
+
+export const DevResourceDeleteSchema = DevResourceSchema.omit({
+  title: true,
+  description: true,
+  type: true,
+  url: true,
+  keywords: true
+})
+
+

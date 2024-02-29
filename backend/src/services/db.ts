@@ -1,6 +1,6 @@
 import { Pool } from 'pg'
 import { UserHashPassword, UserDTO, UserCreate } from '../models/user'
-import { DevResourceCreate, DevResource } from '../models/devResource'
+import { DevResourceCreate, DevResourceDelete, DevResource } from '../models/devResource'
 import { hashAsync } from './cryptService'
 
 const pool = new Pool({
@@ -196,6 +196,46 @@ export async function dbCreateUserResourceAsync(resource: DevResourceCreate): Pr
   }
   catch (error) {
     console.log('Error inesperado creando recurso de usuario', error)
+    throw error
+  }
+}
+
+export async function dbUpdateUserResourceAsync(resource: DevResource): Promise<DevResource> {
+  try {
+
+    const { id, user_id, title, description, type, keywords, url } = resource
+
+    const queryParams = [id, user_id, title, description, type, keywords, url]
+
+    const queryResources = `
+      UPDATE resources 
+        SET title = $3, 
+            description = $4, 
+            type = $5, 
+            keywords = $6, 
+            url = $7 
+      WHERE id = $1 
+        AND user_id = $2;`
+
+    await pool.query<DevResource>(queryResources, queryParams)
+
+    return resource
+
+  }
+  catch (error) {
+    console.log('Error inesperado creando recurso de usuario', error)
+    throw error
+  }
+}
+
+export async function dbDeleteUserResourceAsync({ id, user_id }: DevResourceDelete) {
+  try {
+    const queryParams = [id, user_id]
+    const queryResources = 'DELETE FROM resources WHERE id = $1 AND user_id = $2;'
+    await pool.query<DevResource>(queryResources, queryParams)
+  }
+  catch (error) {
+    console.log('Error inesperado eliminando recurso de usuario', error)
     throw error
   }
 }

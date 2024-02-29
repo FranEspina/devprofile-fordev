@@ -1,5 +1,6 @@
 import { Pool } from 'pg'
 import { UserHashPassword, UserDTO, UserCreate } from '../models/user'
+import { hashAsync } from './cryptService'
 
 const pool = new Pool({
   user: process.env.POSTGRES_USER,
@@ -17,7 +18,23 @@ export function query(text: string, params = null) {
   return pool.query(text)
 }
 
-export const createTables = () => {
+export const dropCreateAndSeedTables = async () => {
+
+
+  const dropTables = `
+    DROP TABLE IF EXISTS users;
+    DROP TABLE IF EXISTS resources;
+  `
+  await pool.query(dropTables)
+    .then(() => {
+      console.log('- ELiminadas todas las tablas');
+    })
+    .catch((err) => {
+      console.log('Error inesperado eliminando tablas')
+      console.log(err);
+    });
+
+
   const usersTable = `CREATE TABLE IF NOT EXISTS
       users(
         id SERIAL PRIMARY KEY,
@@ -27,14 +44,58 @@ export const createTables = () => {
         password VARCHAR(128) NOT NULL
       )`;
 
-  pool.query(usersTable)
+  await pool.query(usersTable)
     .then(() => {
-      console.log('tablas creadas');
+      console.log('- tabla usuarios creada');
     })
     .catch((err) => {
-      console.log('Error inesperado creando tablas')
+      console.log('Error inesperado creando tabla: usuarios')
       console.log(err);
     });
+
+  //Usuario por defecto en entorno de desarrollo  
+  if (process.env.NODE_ENV === 'development') {
+    const defaultUser = 'admin'
+    const defaultPassword = defaultUser
+    const defaultHashPassword = await hashAsync(defaultPassword)
+    const seedUserQuery = 'INSERT INTO users(first_name, last_name, email, password) VALUES($1, $2, $3, $4)'
+
+    await pool.query(seedUserQuery, [defaultUser, defaultUser, `${defaultUser}@correo.com`, defaultHashPassword])
+      .then(() => {
+        console.log(`- Generado usuario por defecto: ${defaultUser}@correo.com:${defaultPassword}`);
+      })
+      .catch((err) => {
+        console.log('Error inesperado creando usuario genérico')
+        console.log(err);
+      });
+  }
+
+  const resourcesTable = `
+    DO $$
+    BEGIN
+        IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'resourcetype') THEN
+            CREATE TYPE resourceType AS ENUM ('markdown', 'imagen', 'web', 'archivo');
+        END IF;
+    END
+    $$ LANGUAGE plpgsql;
+    CREATE TABLE IF NOT EXISTS
+      resources(
+        id SERIAL PRIMARY KEY,
+        title VARCHAR(128) NOT NULL,
+        description TEXT NOT NULL,
+        type resourceType NOT NULL,
+        keywords TEXT NOT NULL
+      )`;
+
+  await pool.query(resourcesTable)
+    .then(() => {
+      console.log('- tabla recursos creada');
+    })
+    .catch((err) => {
+      console.log('Error inesperado creando tabla: recursos')
+      console.log(err);
+    });
+
 };
 
 export const getUserByEmail = async (email: string): Promise<UserHashPassword | null> => {

@@ -9,7 +9,8 @@
     "test": "jest",
     "build": "tsc",
     "start": "ts-node src/index.ts",
-    "dev": "nodemon"
+    "dev": "nodemon",
+    "db-migrate": "set DB_MIGRATE=true && nodemon"
   },
   "author": "Fran Espina",
   "license": "ISC",

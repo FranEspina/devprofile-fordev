@@ -2,7 +2,7 @@ import { RequestHandler } from 'express';
 import { getUserByEmail, createUser } from '../services/db'
 import { createAccessToken, TokenPayLoad } from '../services/tokenService'
 import { hashAsync, compareHashAsync } from '../services/cryptService'
-import { validateSchemaAsync } from '../services/validations/userValidator'
+import { validateSchemaAsync } from '../services/validationService'
 import { UserLoginSchema, UserRegisterSchema } from '../schemas/userSchema'
 import { UserDTO, UserLogin, UserRegister } from '../models/user'
 import { Schema } from 'zod';

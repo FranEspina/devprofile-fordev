@@ -1,10 +1,11 @@
+import type { apiUserDto } from '@/types/apiTypes'
 import { create } from 'zustand'
 import { persist, devtools } from 'zustand/middleware'
 
 interface profileState {
-  user: any,
+  user: apiUserDto | undefined,
   token: string,
-  setUser: (user: any) => void
+  setUser: (user: apiUserDto) => void
   setToken: (token: string) => void
 }
 
@@ -13,7 +14,7 @@ export const useProfileStore = create<profileState>()(
     return {
       token: '',
       user: undefined,
-      setUser: (user: any) => set({ user }),
+      setUser: (user: apiUserDto) => set({ user }),
       setToken: (token: string) => set({ token }),
     }
   }, {

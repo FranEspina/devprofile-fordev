@@ -10,7 +10,7 @@ export const SignInModal = ({ text = 'Iniciar sesión' }) => {
   const [show, setShow] = useState(false);
   const [errors, setErrors] = useState([])
   const [loading, setLoading] = useState(false);
-  const { notifyError, notifySuccess } = useNotify()
+  const { notifySuccess } = useNotify()
   const { setUser, setToken } = useProfileStore(state => state)
 
   const showModal = () => {
@@ -48,9 +48,9 @@ export const SignInModal = ({ text = 'Iniciar sesión' }) => {
     }
 
     try {
-      var { success, message, token, user } = await login(userForm)
+      var { success, message, token, data } = await login(userForm)
       if (success) {
-        setUser(user)
+        setUser(data)
         setToken(token || '')
         notifySuccess(message)
         setErrors([])

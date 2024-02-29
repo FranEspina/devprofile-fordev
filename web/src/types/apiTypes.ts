@@ -1,34 +1,33 @@
-export interface registerType {
+export interface apiRegisterType {
   firstName: string,
   lastName: string,
   email: string,
   password: string,
 }
 
-export interface loginType {
+export interface apiLoginType {
   email: string,
   password: string,
 }
 
-export interface userType {
+export interface apiUserDto {
   id: number,
   firstName: string,
   lastName: string,
   email: string,
-  password: string,
 }
 
-export interface registerResultType {
+export interface apiResultType<T> {
   success: boolean,
   message: string,
-  user?: userType,
+  data?: T,
   token?: string,
 }
 
-export interface apiResponse {
+export interface apiResponse<T> {
   success: boolean,
   status: number,
   message: string,
-  data?: userType,
+  data?: T,
   token?: string,
 }

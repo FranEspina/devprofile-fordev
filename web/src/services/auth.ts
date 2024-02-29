@@ -1,9 +1,9 @@
 import axios from 'axios'
-import type { registerType, registerResultType, loginType, apiResponse } from '@/types/apiTypes.ts'
+import type { apiRegisterType, apiResultType, apiLoginType, apiResponse, apiUserDto } from '@/types/apiTypes.ts'
 
 const API_BASE_URL = 'https://devprofile-fordev-dev-knsf.1.ie-1.fl0.io'
 
-export async function register(user: registerType): Promise<registerResultType> {
+export async function register(user: apiRegisterType): Promise<apiResultType<apiUserDto>> {
 
   const baseUrl = `${API_BASE_URL}/auth/register`
 
@@ -12,9 +12,9 @@ export async function register(user: registerType): Promise<registerResultType> 
     const response = await axios.post(baseUrl, user)
     console.log(response)
 
-    const results: apiResponse = response.data
+    const results: apiResponse<apiUserDto> = response.data
     if (results.success === true) {
-      return { success: true, message: 'Usuario registrado correctamente', user: results.data, token: results.token }
+      return { success: true, message: 'Usuario registrado correctamente', data: results.data, token: results.token }
     }
 
     console.log(results)
@@ -24,7 +24,7 @@ export async function register(user: registerType): Promise<registerResultType> 
     if (axios.isAxiosError(error)) {
       console.error('Error axios:', error.message);
       if (error.response) {
-        const results: apiResponse = error.response.data
+        const results: apiResponse<apiUserDto> = error.response.data
         if (results) {
           return { success: false, message: results.message }
         }
@@ -41,16 +41,16 @@ export async function register(user: registerType): Promise<registerResultType> 
   }
 }
 
-export async function login(userLogin: loginType): Promise<registerResultType> {
+export async function login(userLogin: apiLoginType): Promise<apiResultType<apiUserDto>> {
 
   const baseUrl = `${API_BASE_URL}/auth/login`
 
   try {
     const response = await axios.post(baseUrl, userLogin)
     console.log(response)
-    const results: apiResponse = response.data
+    const results: apiResponse<apiUserDto> = response.data
     if (results.success === true) {
-      return { success: true, message: 'Usuario logado correctamente', user: results.data, token: results.token }
+      return { success: true, message: 'Usuario logado correctamente', data: results.data, token: results.token }
     }
     console.log(results)
     return { success: false, message: results.message }
@@ -58,7 +58,7 @@ export async function login(userLogin: loginType): Promise<registerResultType> {
     if (axios.isAxiosError(error)) {
       console.error('Error axios:', error.message);
       if (error.response) {
-        const results: apiResponse = error.response.data
+        const results: apiResponse<apiUserDto> = error.response.data
         if (results) {
           return { success: false, message: results.message }
         }

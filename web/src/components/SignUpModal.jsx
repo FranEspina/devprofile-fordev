@@ -10,7 +10,7 @@ export const SignUpModal = ({ text = 'Registrar' }) => {
   const [show, setShow] = useState(false);
   const [errors, setErrors] = useState([])
   const [loading, setLoading] = useState(false);
-  const { notifyError, notifySuccess } = useNotify()
+  const { notifySuccess } = useNotify()
   const { setUser, setToken } = useProfileStore(state => state)
 
   const showModal = () => {
@@ -51,9 +51,9 @@ export const SignUpModal = ({ text = 'Registrar' }) => {
     }
 
     try {
-      var { success, message, token, user } = await register(userForm)
+      var { success, message, token, data } = await register(userForm)
       if (success) {
-        setUser(user)
+        setUser(data)
         setToken(token || '')
         notifySuccess(message)
         setErrors([])

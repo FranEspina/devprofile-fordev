@@ -1,4 +1,4 @@
-# dev profile for dev [Working in progress]
+# dev profile for dev [Work in progress]
 ## Funcionalidad
 Web que permite a los usuario logarse y crear una cuenta de desarrollador donde poder mantener aspectos relacionados con el desarrollo: 
  - Enlaces a recursos / tips / imágenes
@@ -7,6 +7,8 @@ Web que permite a los usuario logarse y crear una cuenta de desarrollador donde 
 - Web realizada en Astro y con algún componente React. Estilada con tailwindCSS. Typescript.
 - Backend realizado con express y contra un postgresql. Typescript.
 - Gestión de autentificación y autorización con jwt tokens
+- Modelos de formularios (frontend) y base de datos (backend) validados con zod.
+- Validación de esquemas zod con tipos genéricos (servicio de validación de esquemas)
 
 # Capturas
 ![Pantalla de inicio](./resources/home.png)

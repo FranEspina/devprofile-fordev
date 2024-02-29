@@ -2,7 +2,6 @@ import { Pool } from 'pg'
 import { UserHashPassword, UserDTO, UserCreate } from '../models/user'
 import { DevResourceCreate, DevResource } from '../models/devResource'
 import { hashAsync } from './cryptService'
-import { DebugLogger } from 'util';
 
 const pool = new Pool({
   user: process.env.POSTGRES_USER,

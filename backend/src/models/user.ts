@@ -1,17 +1,9 @@
-export class User {
+import { z } from 'zod'
+import { UserHashPasswordSchema, UserRegisterSchema, UserLoginSchema, UserDTOSchema, UserCreateSchema } from '../schemas/userSchema'
 
-  id: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
+export type UserHashPassword = z.infer<typeof UserHashPasswordSchema>;
+export type UserRegister = z.infer<typeof UserRegisterSchema>;
+export type UserLogin = z.infer<typeof UserLoginSchema>;
+export type UserDTO = z.infer<typeof UserDTOSchema>;
+export type UserCreate = z.infer<typeof UserCreateSchema>;
 
-  constructor({ id, email, firstName, lastName, password }:
-    { id: number, email: string, firstName: string, lastName: string, password: string }) {
-    this.id = id;
-    this.firstName = firstName;
-    this.lastName = lastName;
-    this.email = email;
-    this.password = password;
-  }
-}

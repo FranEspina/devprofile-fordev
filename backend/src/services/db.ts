@@ -1,5 +1,5 @@
 import { Pool } from 'pg'
-import { User } from '../models/user'
+import { UserHashPassword, UserDTO, UserCreate } from '../models/user'
 
 const pool = new Pool({
   user: process.env.POSTGRES_USER,
@@ -37,19 +37,19 @@ export const createTables = () => {
     });
 };
 
-export const getUserByEmail = async (email: string): Promise<User | null> => {
+export const getUserByEmail = async (email: string): Promise<UserHashPassword | null> => {
 
   try {
-    const result = await pool.query('SELECT first_name, last_name, password FROM users WHERE email = $1', [email])
+    const result = await pool.query('SELECT id, first_name, last_name, password FROM users WHERE email = $1', [email])
     if (!result || !result.rowCount) return null
 
-    const id: number = result.rows[0]['id']
-    const password: string = result.rows[0]['password']
-    const firstName: string = result.rows[0]['first_name']
-    const lastName: string = result.rows[0]['last_name']
-
-    return new User({ id, email, firstName, lastName, password })
-
+    return {
+      id: result.rows[0]['id'],
+      email: email,
+      hashPassword: result.rows[0]['password'],
+      firstName: result.rows[0]['first_name'],
+      lastName: result.rows[0]['last_name']
+    }
   }
   catch (error) {
     console.log('Error inesperado recuperando usuario por email', error)
@@ -58,11 +58,10 @@ export const getUserByEmail = async (email: string): Promise<User | null> => {
 
 }
 
-export async function createUser({ email, firstName, lastName, hashPassword }: { email: string, firstName: string, lastName: string, hashPassword: string }) {
+export async function createUser({ email, firstName, lastName, hashPassword }: UserCreate): Promise<UserDTO> {
   try {
     const result = await pool.query('INSERT INTO users(EMAIL, FIRST_NAME, LAST_NAME, PASSWORD) VALUES ($1, $2, $3, $4) RETURNING id', [email, firstName, lastName, hashPassword])
-
-    return new User({ id: result.rows[0].id, email, firstName, lastName, password: hashPassword })
+    return ({ id: result.rows[0].id, email, firstName, lastName })
   }
   catch (error) {
     console.log('Error inesperado creando usuario', error)

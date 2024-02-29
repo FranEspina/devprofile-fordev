@@ -2,13 +2,29 @@ import { RequestHandler } from 'express';
 import { getUserByEmail, createUser } from '../services/db'
 import { createAccessToken, TokenPayLoad } from '../services/tokenService'
 import { hashAsync, compareHashAsync } from '../services/cryptService'
+import { validateSchemaAsync } from '../services/validations/userValidator'
+import { UserLoginSchema, UserRegisterSchema } from '../schemas/userSchema'
+import { UserDTO, UserLogin, UserRegister } from '../models/user'
+import { Schema } from 'zod';
+
 
 export const register: RequestHandler = async (req, res) => {
   try {
-    const user = req.body;
 
-    const { firstName, lastName, email, password } = user;
+    //TODO: Pasar a un middleware de express
+    const { success, user, errors } = await validateSchemaAsync<Schema, UserRegister>(UserRegisterSchema, req.body)
+    if (!success || user === undefined) {
+      console.log('dentro')
+      res.status(400).json({
+        status: 400,
+        success: false,
+        code: 'INVALID BODY',
+        message: errors?.join(';') || 'Error inesesperado validando datos',
+      })
+      return
+    }
 
+    const { firstName, lastName, email, password } = user
     const userSaved = await getUserByEmail(email)
     if (userSaved) {
       res.status(400).json({
@@ -25,11 +41,18 @@ export const register: RequestHandler = async (req, res) => {
     const payload: TokenPayLoad = { id: newUser.id }
     const token = await createAccessToken(payload)
 
+    const userDTO: UserDTO = {
+      id: newUser.id,
+      email: newUser.email,
+      firstName: newUser.firstName,
+      lastName: newUser.lastName,
+    }
+
     res.status(201).json({
       status: 201,
       success: true,
       message: 'Usuario registrado correctamente',
-      data: newUser,
+      data: userDTO,
       token: token
     })
   }
@@ -47,7 +70,19 @@ export const register: RequestHandler = async (req, res) => {
 
 export const login: RequestHandler = async (req, res) => {
 
-  const user = req.body;
+  //TODO: Pasar a un middleware de express
+  const { success, user, errors } = await validateSchemaAsync<Schema, UserLogin>(UserLoginSchema, req.body)
+  if (!success || user === undefined) {
+    console.log('dentro')
+    res.status(400).json({
+      status: 400,
+      success: false,
+      code: 'INVALID BODY',
+      message: errors?.join(';') || 'Error inesesperado validando datos',
+    })
+    return
+  }
+
   const { email, password } = user;
 
   const userSaved = await getUserByEmail(email)
@@ -61,7 +96,7 @@ export const login: RequestHandler = async (req, res) => {
     return
   }
 
-  const okPassword = await compareHashAsync(password, userSaved.password)
+  const okPassword = await compareHashAsync(password, userSaved.hashPassword)
 
   if (!okPassword) {
     return res.status(400)
@@ -76,11 +111,18 @@ export const login: RequestHandler = async (req, res) => {
   const payload: TokenPayLoad = { id: userSaved.id }
   const token = await createAccessToken(payload)
 
+  const userDTO: UserDTO = {
+    id: userSaved.id,
+    email: userSaved.email,
+    firstName: userSaved.firstName,
+    lastName: userSaved.lastName,
+  }
+
   res.status(200).json({
     status: 200,
     success: true,
     message: 'Usuario logado correctamente',
-    data: userSaved,
+    data: userDTO,
     token: token
   })
 

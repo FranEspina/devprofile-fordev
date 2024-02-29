@@ -1,12 +1,12 @@
 import { Schema } from 'zod'
 
-export async function validateSchemaAsync<TSchema extends Schema, TOutModel>(schema: TSchema, userToParse: unknown): Promise<{ success: boolean, user?: TOutModel, errors?: string[] }> {
+export async function validateSchemaAsync<TSchema extends Schema, TOutModel>(schema: TSchema, dataToParse: unknown): Promise<{ success: boolean, data?: TOutModel, errors?: string[] }> {
 
   try {
-    const result = await schema.safeParseAsync(userToParse)
+    const result = await schema.safeParseAsync(dataToParse)
     if (result.success) {
-      const userParsed: TOutModel = result.data
-      return { success: true, user: userParsed }
+      const parsed: TOutModel = result.data
+      return { success: true, data: parsed }
     }
     else {
       const errors = result.error.errors.map(e => e.message)

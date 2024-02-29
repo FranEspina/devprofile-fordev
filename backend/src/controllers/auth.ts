@@ -12,9 +12,8 @@ export const register: RequestHandler = async (req, res) => {
   try {
 
     //TODO: Pasar a un middleware de express
-    const { success, user, errors } = await validateSchemaAsync<Schema, UserRegister>(UserRegisterSchema, req.body)
-    if (!success || user === undefined) {
-      console.log('dentro')
+    const { success, data, errors } = await validateSchemaAsync<Schema, UserRegister>(UserRegisterSchema, req.body)
+    if (!success || data === undefined) {
       res.status(400).json({
         status: 400,
         success: false,
@@ -24,7 +23,7 @@ export const register: RequestHandler = async (req, res) => {
       return
     }
 
-    const { firstName, lastName, email, password } = user
+    const { firstName, lastName, email, password } = data
     const userSaved = await getUserByEmail(email)
     if (userSaved) {
       res.status(400).json({
@@ -71,9 +70,8 @@ export const register: RequestHandler = async (req, res) => {
 export const login: RequestHandler = async (req, res) => {
 
   //TODO: Pasar a un middleware de express
-  const { success, user, errors } = await validateSchemaAsync<Schema, UserLogin>(UserLoginSchema, req.body)
-  if (!success || user === undefined) {
-    console.log('dentro')
+  const { success, data, errors } = await validateSchemaAsync<Schema, UserLogin>(UserLoginSchema, req.body)
+  if (!success || data === undefined) {
     res.status(400).json({
       status: 400,
       success: false,
@@ -83,7 +81,7 @@ export const login: RequestHandler = async (req, res) => {
     return
   }
 
-  const { email, password } = user;
+  const { email, password } = data;
 
   const userSaved = await getUserByEmail(email)
   if (!userSaved) {

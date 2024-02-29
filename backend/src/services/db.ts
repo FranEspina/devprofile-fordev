@@ -1,6 +1,8 @@
 import { Pool } from 'pg'
 import { UserHashPassword, UserDTO, UserCreate } from '../models/user'
+import { DevResource } from '../models/devResource'
 import { hashAsync } from './cryptService'
+import { DebugLogger } from 'util';
 
 const pool = new Pool({
   user: process.env.POSTGRES_USER,
@@ -10,13 +12,6 @@ const pool = new Pool({
   database: process.env.POSTGRES_DB,
   ssl: process.env.POSTGRES_SSL === 'true'
 });
-
-export function query(text: string, params = null) {
-  if (params) {
-    return pool.query(text, params)
-  }
-  return pool.query(text)
-}
 
 export const dropCreateAndSeedTables = async () => {
 
@@ -81,10 +76,13 @@ export const dropCreateAndSeedTables = async () => {
     CREATE TABLE IF NOT EXISTS
       resources(
         id SERIAL PRIMARY KEY,
+        user_id INTEGER,
         title VARCHAR(128) NOT NULL,
         description TEXT NOT NULL,
         type resourceType NOT NULL,
-        keywords TEXT NOT NULL
+        keywords TEXT, 
+        url TEXT, 
+        FOREIGN KEY (user_id) REFERENCES users(id)
       )`;
 
   await pool.query(resourcesTable)
@@ -126,6 +124,30 @@ export async function createUser({ email, firstName, lastName, hashPassword }: U
   }
   catch (error) {
     console.log('Error inesperado creando usuario', error)
+    throw error
+  }
+}
+
+export async function getResourcesByUser(userId: number): Promise<DevResource[] | null> {
+  const resourcesQuery = 'SELECT id, title, description, type, url, keywords FROM resources WHERE user_id = $1;'
+  try {
+    const result = await pool.query(resourcesQuery, [userId])
+    if (!result || !result.rowCount) return null
+
+    const resources: DevResource[] = result.rows.map((row) => ({
+      id: row['id'],
+      user_id: row['user_id'],
+      title: row['title'],
+      description: row['description'],
+      type: row['type'],
+      url: row['url'],
+      keywords: row['keywords']
+    }))
+
+    return resources
+  }
+  catch (error) {
+    console.log('Error inesperado recuperando recursos', error)
     throw error
   }
 }

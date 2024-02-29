@@ -1,8 +1,10 @@
 import { Router } from 'express'
-import { getUserResources } from '../controllers/user'
+import { getUserResources, createUserResource } from '../controllers/user'
 
 const router = Router()
 
 router.get('/:id/resource', getUserResources)
+router.post('/:id/resource', createUserResource)
+
 
 export default router

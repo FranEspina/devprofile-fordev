@@ -1,6 +1,6 @@
 import { Pool } from 'pg'
 import { UserHashPassword, UserDTO, UserCreate } from '../models/user'
-import { DevResource } from '../models/devResource'
+import { DevResourceCreate, DevResource } from '../models/devResource'
 import { hashAsync } from './cryptService'
 import { DebugLogger } from 'util';
 
@@ -96,7 +96,7 @@ export const dropCreateAndSeedTables = async () => {
 
 };
 
-export const getUserByEmail = async (email: string): Promise<UserHashPassword | null> => {
+export const getUserByEmailAsync = async (email: string): Promise<UserHashPassword | null> => {
 
   try {
     const result = await pool.query('SELECT id, first_name, last_name, password FROM users WHERE email = $1', [email])
@@ -117,7 +117,28 @@ export const getUserByEmail = async (email: string): Promise<UserHashPassword | 
 
 }
 
-export async function createUser({ email, firstName, lastName, hashPassword }: UserCreate): Promise<UserDTO> {
+export const getUserByIdAsync = async (id: number): Promise<UserHashPassword | null> => {
+
+  try {
+    const result = await pool.query('SELECT id, first_name, last_name, email, password FROM users WHERE id = $1', [id])
+    if (!result || !result.rowCount) return null
+
+    return {
+      id: result.rows[0]['id'],
+      email: result.rows[0]['email'],
+      hashPassword: result.rows[0]['password'],
+      firstName: result.rows[0]['first_name'],
+      lastName: result.rows[0]['last_name']
+    }
+  }
+  catch (error) {
+    console.log('Error inesperado recuperando usuario por id', error)
+    throw error
+  }
+
+}
+
+export async function createUserAsync({ email, firstName, lastName, hashPassword }: UserCreate): Promise<UserDTO> {
   try {
     const result = await pool.query('INSERT INTO users(EMAIL, FIRST_NAME, LAST_NAME, PASSWORD) VALUES ($1, $2, $3, $4) RETURNING id', [email, firstName, lastName, hashPassword])
     return ({ id: result.rows[0].id, email, firstName, lastName })
@@ -128,11 +149,14 @@ export async function createUser({ email, firstName, lastName, hashPassword }: U
   }
 }
 
-export async function getResourcesByUser(userId: number): Promise<DevResource[] | null> {
+export async function dbGetResourcesByUserAsync(userId: number): Promise<DevResource[]> {
   const resourcesQuery = 'SELECT id, title, description, type, url, keywords FROM resources WHERE user_id = $1;'
   try {
+
     const result = await pool.query(resourcesQuery, [userId])
-    if (!result || !result.rowCount) return null
+    if (!result || !result.rowCount) {
+      return []
+    }
 
     const resources: DevResource[] = result.rows.map((row) => ({
       id: row['id'],
@@ -148,6 +172,31 @@ export async function getResourcesByUser(userId: number): Promise<DevResource[] 
   }
   catch (error) {
     console.log('Error inesperado recuperando recursos', error)
+    throw error
+  }
+}
+
+export async function dbCreateUserResourceAsync(resource: DevResourceCreate): Promise<DevResource> {
+  try {
+
+    const { user_id, title, description, type, keywords, url } = resource
+
+    const queryParams = [user_id, title, description, type, keywords, url]
+
+    const queryResources = `
+      INSERT INTO resources(user_id, title, description, type, keywords, url) 
+      VALUES ($1, $2, $3, $4, $5, $6) RETURNING id; `
+    const result = await pool.query(queryResources, queryParams)
+
+    const resourceSaved: DevResource = {
+      id: result.rows[0].id,
+      ...resource
+    }
+
+    return resourceSaved
+  }
+  catch (error) {
+    console.log('Error inesperado creando recurso de usuario', error)
     throw error
   }
 }

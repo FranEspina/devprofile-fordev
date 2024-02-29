@@ -6,6 +6,10 @@ export const DevResourceSchema = z.object({
   title: z.string().min(1),
   description: z.string().min(1),
   type: z.enum(['markdown', 'imagen', 'web', 'archivo']),
-  url: z.string().url(),
-  keywords: z.string()
+  url: z.string().url().optional(),
+  keywords: z.string().optional()
+})
+
+export const DevResourceCreateSchema = DevResourceSchema.omit({
+  id: true,
 })

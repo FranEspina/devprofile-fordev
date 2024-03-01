@@ -1,17 +1,17 @@
-import { Modal } from './Modal.jsx'
+import { Modal } from '@/components/Modal.jsx'
 import { useState } from 'react'
 import { useNotify } from '@/hooks/useNotify'
-import { login } from '@/services/apiService'
-import { useProfileStore } from '@/store/profileStore'
-import { UserLoginFormSchema } from '@/Schemas/userSchema';
+import { createUserDevResource } from '@/services/apiService'
+import { ResourceCreateSchema } from '@/Schemas/resourceSchema';
 import { z } from 'astro/zod'
+import { useProfileStore } from '@/store/profileStore';
 
-export const SignInModal = ({ text = 'Iniciar sesión' }) => {
+export const CreateResourceModal = ({ text = 'Crear Recurso' }) => {
   const [show, setShow] = useState(false);
   const [errors, setErrors] = useState([])
   const [loading, setLoading] = useState(false);
   const { notifySuccess } = useNotify()
-  const { setUser, setToken } = useProfileStore(state => state)
+  const { user, token } = useProfileStore(state => state)
 
   const showModal = () => {
     setShow(true)
@@ -26,14 +26,21 @@ export const SignInModal = ({ text = 'Iniciar sesión' }) => {
   const confirmModal = async (e) => {
     setLoading(true)
 
-    var form = document.getElementById("user-sign-in-form");
-    const userForm = {
-      email: form.elements['email'].value,
-      password: form.elements['password'].value,
+    var form = document.getElementById("modal-form");
+    if (!form) return
+
+    const resourceForm = {
+      user_id: user.id,
+      title: form.elements['title'].value,
+      description: form.elements['description'].value,
+      url: form.elements['url'].value,
+      type: form.elements['type'].value,
+      keywords: form.elements['keywords'].value,
     }
 
-    const parsed = await UserLoginFormSchema.safeParseAsync(userForm)
+    const parsed = await ResourceCreateSchema.safeParseAsync(resourceForm)
     if (!parsed.success) {
+      resourceForm
       const errors = {};
       if (parsed.error instanceof z.ZodError) {
         parsed.error.errors.forEach((err) => {
@@ -48,10 +55,8 @@ export const SignInModal = ({ text = 'Iniciar sesión' }) => {
     }
 
     try {
-      var { success, message, token, data } = await login(userForm)
+      const { success, message } = await createUserDevResource(resourceForm, token)
       if (success) {
-        setUser(data)
-        setToken(token || '')
         notifySuccess(message)
         setErrors([])
         setShow(false)
@@ -64,20 +69,23 @@ export const SignInModal = ({ text = 'Iniciar sesión' }) => {
       }
     }
     finally {
-      console.log('ejecutado')
       setLoading(false)
     }
   }
 
   const fields = [
-    { name: 'email', schema: 'email', desc: 'Correo:', type: 'email', placeholder: 'xxxxx@xxxx.xxx' },
-    { name: 'password', schema: 'password', desc: 'Clave:', type: 'password', placeholder: 'xxxxx' },
+    { name: 'title', schema: 'title', desc: 'Recurso:', type: 'text', placeholder: 'xxxxxxxxxxx' },
+    { name: 'description', schema: 'description', desc: 'Descripción:', type: 'text', placeholder: 'xxxxxxxxxxx' },
+    { name: 'keywords', schema: 'keywords', desc: 'Keyword(s):', type: 'text', placeholder: 'xxxxxxxxxxx' },
+    { name: 'type', schema: 'type', desc: 'Tipo:', type: 'text', placeholder: 'xxxxxxxxxxx' },
+    { name: 'url', schema: 'url', desc: 'Url:', type: 'url', placeholder: 'https://...' },
+
   ]
 
   return (
     <div>
-      <Modal className="w-80 md:w-96" title='Inicio de sesión' textConfirm="Iniciar sesión" show={show} handleCancel={hideModal} handleConfirm={confirmModal} loading={loading}>
-        <form id='user-sign-in-form' action="submit" className="px-3 md:px-5 py-2 text-xxs md:text-xs" >
+      <Modal className="w-80 md:w-96" title='Nuevo recurso' textConfirm="Crear" show={show} handleCancel={hideModal} handleConfirm={confirmModal} loading={loading}>
+        <form id='modal-form' action="submit" className="px-3 md:px-5 py-2 text-xxs md:text-xs" >
           <fieldset >
             {fields.map((field) =>
               <div key={field.name} className="flex flex-col gap-1">

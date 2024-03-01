@@ -1,3 +1,9 @@
+export interface IAuthHeader {
+  headers: {
+    Authorization: string;
+  }
+}
+
 export interface apiRegisterType {
   firstName: string,
   lastName: string,
@@ -30,4 +36,14 @@ export interface apiResponse<T> {
   message: string,
   data?: T,
   token?: string,
+}
+
+export interface apiDevResourceDto {
+  id: number,
+  user_id: number,
+  title: string,
+  description: string,
+  type: string,
+  url?: string,
+  keywords?: string
 }

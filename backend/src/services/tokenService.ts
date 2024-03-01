@@ -1,4 +1,9 @@
-import jwt from 'jsonwebtoken'
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import { Request } from 'express';
+
+export interface CustomRequest extends Request {
+  token: string | JwtPayload;
+}
 
 export interface TokenPayLoad {
   id: number,
@@ -18,5 +23,20 @@ export function createAccessToken(payload: TokenPayLoad) {
         resolve(token)
       }
     )
+  })
+}
+
+export function verifyAccessToken(token: string): Promise<string | JwtPayload> {
+  return new Promise((resolve, reject) => {
+    jwt.verify(
+      token,
+      process.env.TOKEN_SECRET || '',
+      (err, tokenDecoded) => {
+        if (err) reject(err)
+        if (tokenDecoded)
+          resolve(tokenDecoded)
+        else
+          reject('Token no decodificado')
+      })
   })
 }

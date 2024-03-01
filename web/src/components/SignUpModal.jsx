@@ -1,7 +1,7 @@
 import { Modal } from './Modal.jsx'
 import { useState } from 'react'
 import { useNotify } from '@/hooks/useNotify'
-import { register } from '@/services/auth';
+import { register } from '@/services/apiService'
 import { useProfileStore } from '@/store/profileStore'
 import { UserRegisterFormSchema } from '@/Schemas/userSchema'
 import { z } from 'astro/zod'

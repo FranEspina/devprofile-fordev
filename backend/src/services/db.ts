@@ -16,8 +16,8 @@ export const dropCreateAndSeedTables = async () => {
 
 
   const dropTables = `
-    DROP TABLE IF EXISTS users;
     DROP TABLE IF EXISTS resources;
+    DROP TABLE IF EXISTS users;
   `
   await pool.query(dropTables)
     .then(() => {

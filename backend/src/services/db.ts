@@ -75,13 +75,13 @@ export const dropCreateAndSeedTables = async () => {
     CREATE TABLE IF NOT EXISTS
       resources(
         id SERIAL PRIMARY KEY,
-        userId INTEGER,
+        user_id INTEGER,
         title VARCHAR(128) NOT NULL,
         description TEXT NOT NULL,
         type resourceType NOT NULL,
         keywords TEXT, 
         url TEXT, 
-        FOREIGN KEY (userId) REFERENCES users(id)
+        FOREIGN KEY (user_id) REFERENCES users(id)
       )`;
 
   await pool.query(resourcesTable)
@@ -149,7 +149,7 @@ export async function createUserAsync({ email, firstName, lastName, hashPassword
 }
 
 export async function dbGetResourcesByUserAsync(userId: number): Promise<DevResource[]> {
-  const resourcesQuery = 'SELECT id, title, description, type, url, keywords FROM resources WHERE userId = $1;'
+  const resourcesQuery = 'SELECT id, title, description, type, url, keywords FROM resources WHERE user_id = $1;'
   try {
 
     const result = await pool.query(resourcesQuery, [userId])
@@ -159,7 +159,7 @@ export async function dbGetResourcesByUserAsync(userId: number): Promise<DevReso
 
     const resources: DevResource[] = result.rows.map((row) => ({
       id: row['id'],
-      userId: row['userId'],
+      userId: row['user_id'],
       title: row['title'],
       description: row['description'],
       type: row['type'],
@@ -183,7 +183,7 @@ export async function dbCreateUserResourceAsync(resource: DevResourceCreate): Pr
     const queryParams = [userId, title, description, type, keywords, url]
 
     const queryResources = `
-      INSERT INTO resources(userId, title, description, type, keywords, url) 
+      INSERT INTO resources(user_id, title, description, type, keywords, url)
       VALUES ($1, $2, $3, $4, $5, $6) RETURNING id; `
     const result = await pool.query(queryResources, queryParams)
 
@@ -215,7 +215,7 @@ export async function dbUpdateUserResourceAsync(resource: DevResource): Promise<
             keywords = $6, 
             url = $7 
       WHERE id = $1 
-        AND userId = $2;`
+        AND user_id = $2;`
 
     await pool.query<DevResource>(queryResources, queryParams)
 
@@ -231,7 +231,7 @@ export async function dbUpdateUserResourceAsync(resource: DevResource): Promise<
 export async function dbDeleteUserResourceAsync({ id, userId }: DevResourceDelete) {
   try {
     const queryParams = [id, userId]
-    const queryResources = 'DELETE FROM resources WHERE id = $1 AND userId = $2;'
+    const queryResources = 'DELETE FROM resources WHERE id = $1 AND user_id = $2;'
     await pool.query<DevResource>(queryResources, queryParams)
   }
   catch (error) {

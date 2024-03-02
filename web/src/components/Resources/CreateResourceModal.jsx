@@ -6,7 +6,7 @@ import { ResourceCreateSchema } from '@/Schemas/resourceSchema';
 import { z } from 'astro/zod'
 import { useProfileStore } from '@/store/profileStore';
 
-export const CreateResourceModal = ({ text = 'Crear Recurso' }) => {
+export const CreateResourceModal = ({ text = 'Crear Recurso', callback }) => {
   const [show, setShow] = useState(false);
   const [errors, setErrors] = useState([])
   const [loading, setLoading] = useState(false);
@@ -59,6 +59,7 @@ export const CreateResourceModal = ({ text = 'Crear Recurso' }) => {
       if (success) {
         notifySuccess(message)
         setErrors([])
+        callback()
         setShow(false)
         return
       }

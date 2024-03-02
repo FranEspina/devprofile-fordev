@@ -53,17 +53,17 @@ export async function createUserResource(req: Request, res: Response) {
       return res.status(400).json({
         status: 400,
         success: false,
-        code: 'NOT_FOUND_USER_ID',
+        code: 'NOT_FOUND_userId',
         message: 'El usuario no existe',
       })
       return
     }
 
-    if (data.user_id !== id) {
+    if (data.userId !== id) {
       res.status(400).json({
         status: 400,
         success: false,
-        code: 'INVALID_USER_ID',
+        code: 'INVALID_userId',
         message: 'El recurso no es un recurso el usuario',
       })
       return
@@ -113,17 +113,17 @@ export async function updateUserResource(req: Request, res: Response) {
       return res.status(400).json({
         status: 400,
         success: false,
-        code: 'NOT_FOUND_USER_ID',
+        code: 'NOT_FOUND_userId',
         message: 'El usuario no existe',
       })
       return
     }
 
-    if (data.user_id !== id) {
+    if (data.userId !== id) {
       res.status(400).json({
         status: 400,
         success: false,
-        code: 'INVALID_USER_ID',
+        code: 'INVALID_userId',
         message: 'El recurso no es un recurso el usuario',
       })
       return
@@ -173,17 +173,17 @@ export async function deleteUserResource(req: Request, res: Response) {
       return res.status(400).json({
         status: 400,
         success: false,
-        code: 'NOT_FOUND_USER_ID',
+        code: 'NOT_FOUND_userId',
         message: 'El usuario no existe',
       })
       return
     }
 
-    if (data.user_id !== id) {
+    if (data.userId !== id) {
       res.status(400).json({
         status: 400,
         success: false,
-        code: 'INVALID_USER_ID',
+        code: 'INVALID_userId',
         message: 'El recurso no es un recurso el usuario',
       })
       return

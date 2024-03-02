@@ -40,7 +40,7 @@ export interface apiResponse<T> {
 
 export interface apiDevResourceDto {
   id: number,
-  user_id: number,
+  userId: number,
   title: string,
   description: string,
   type: string,

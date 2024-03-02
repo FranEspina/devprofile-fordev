@@ -30,7 +30,7 @@ export const CreateResourceModal = ({ text = 'Crear Recurso' }) => {
     if (!form) return
 
     const resourceForm = {
-      user_id: user.id,
+      userId: user.id,
       title: form.elements['title'].value,
       description: form.elements['description'].value,
       url: form.elements['url'].value,

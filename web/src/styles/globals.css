@@ -1,0 +1,80 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light dark;
+}
+
+html {
+  font-family: "Motomangucode", system-ui, sans-serif;
+  background: #13151a;
+  color: #f1f0e1;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.layout-toast {
+  --toastify-color-light: rgb(59, 130, 246);
+  --toastify-color-dark: rgb(6, 11, 24);
+  --toastify-color-info: rgb(59, 130, 246);
+  --toastify-color-success: rgb(59, 130, 246);
+  --toastify-color-warning: rgb(59, 130, 246);
+  --toastify-color-error: rgb(30, 64, 175);
+  --toastify-color-transparent: rgba(255, 255, 255, 0.7);
+
+  --toastify-icon-color-info: var(--toastify-color-info);
+  --toastify-icon-color-success: var(--toastify-color-success);
+  --toastify-icon-color-warning: var(--toastify-color-warning);
+  --toastify-icon-color-error: var(--toastify-color-error);
+
+  --toastify-toast-width: 320px;
+  --toastify-toast-background: rgb(23, 37, 84);
+  --toastify-toast-min-height: 64px;
+  --toastify-toast-max-height: 800px;
+  --toastify-font-family: "Motomangucode";
+  --toastify-z-index: 9999;
+
+  --toastify-text-color-light: rgb(30, 64, 175);
+  --toastify-text-color-dark: rgb(249, 250, 251);
+
+  --toastify-text-color-info: rgb(249, 250, 251);
+  --toastify-text-color-success: rgb(249, 250, 251);
+  --toastify-text-color-warning: rgb(249, 250, 251);
+  --toastify-text-color-error: rgb(249, 250, 251);
+
+  --toastify-spinner-color: rgb(59, 130, 246);
+  --toastify-spinner-color-empty-area: rgb(249, 250, 251);
+
+  --toastify-color-progress-light: linear-gradient(to right,
+      #4cd964,
+      #5ac8fa,
+      #007aff,
+      #34aadc,
+      #5856d6,
+      #ff2d55);
+
+  --toastify-color-progress-dark: rgb(59, 130, 246);
+  --toastify-color-progress-info: var(--toastify-color-info);
+  --toastify-color-progress-success: var(--toastify-color-success);
+  --toastify-color-progress-warning: var(--toastify-color-warning);
+  --toastify-color-progress-error: var(--toastify-color-error);
+
+  --toastify-color-progress-bgo: 0.2;
+}
+
+@font-face {
+  font-family: "Motomangucode";
+  src: url("/fonts/Motomangucode.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Motomangucode";
+  src: url("/fonts/MotomangucodeBold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}

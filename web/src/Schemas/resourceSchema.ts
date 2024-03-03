@@ -1,4 +1,5 @@
 import { z } from "astro/zod";
+import type { TypeOf } from "astro/zod";
 
 export enum ResourceType {
   Markdown = 'markdown',
@@ -34,4 +35,10 @@ export const ResourceSchema = z.object({
 export const ResourceCreateSchema = ResourceSchema.omit({
   id: true,
 });
+
+export const ResourceRowSchema = ResourceSchema.omit({
+  id: true,
+});
+
+export type ResourceRow = z.infer<typeof ResourceRowSchema>
 

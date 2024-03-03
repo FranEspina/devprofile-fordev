@@ -1,5 +1,6 @@
 import axios from 'axios'
 import type { apiRegisterType, apiResultType, apiLoginType, apiResponse, apiUserDto, apiDevResourceDto, IAuthHeader } from '@/types/apiTypes.ts'
+import type { ResourceRow } from '@/Schemas/resourceSchema'
 
 const API_BASE_URL = 'https://devprofile-fordev-dev-knsf.1.ie-1.fl0.io'
 
@@ -96,6 +97,39 @@ export async function getDevUserDevResources(id: number, token: string) {
       console.error('Error axios:', error.message);
       if (error.response) {
         const results: apiResponse<apiDevResourceDto[]> = error.response.data
+        if (results) {
+          return { success: false, message: results.message }
+        }
+      }
+    } else if (error instanceof Error) {
+      console.error('Exception:', error.message);
+    } else if (typeof error === "string") {
+      console.error('Error:', error);
+    } else {
+      console.error('Unknow error:', error);
+    }
+
+    return { success: false, message: 'Error inesperado recuperando recursos' }
+
+  }
+}
+
+export async function getDevUserDevResourcesRow(id: number, token: string) {
+  const endpoint = `${API_BASE_URL}/user/${id}/resource`
+  console.log(endpoint)
+  try {
+    const response = await axios.get(endpoint, authHeader(token))
+    const results: apiResponse<ResourceRow[]> = response.data
+    if (results.success === true) {
+      return { success: true, message: 'Operación realizada con éxito', data: results.data }
+    }
+    return { success: false, message: results.message }
+  } catch (error) {
+    console.log(error)
+    if (axios.isAxiosError(error)) {
+      console.error('Error axios:', error.message);
+      if (error.response) {
+        const results: apiResponse<ResourceRow[]> = error.response.data
         if (results) {
           return { success: false, message: results.message }
         }

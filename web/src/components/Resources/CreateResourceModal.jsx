@@ -21,6 +21,7 @@ export const CreateResourceModal = ({ text = 'Crear Recurso', callback }) => {
     e.preventDefault()
     setErrors([])
     setShow(false)
+    setLoading(false)
   }
 
   const confirmModal = async (e) => {
@@ -28,6 +29,8 @@ export const CreateResourceModal = ({ text = 'Crear Recurso', callback }) => {
 
     var form = document.getElementById("modal-form");
     if (!form) return
+
+    console.log(user)
 
     const resourceForm = {
       userId: user.id,

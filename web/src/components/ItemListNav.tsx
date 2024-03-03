@@ -28,7 +28,7 @@ export function ItemListNav({ authRequired, hideLogged, children, hoverStyled = 
   }
 
   return (
-    <li className={hoverStyled ? 'hover:text-blue-400 hover:cursor-pointer hover:shadow-lg transition-colors duration-300 uppercase text-xxs md:text-base' : 'text-xxs md:text-base'}
+    <li className={hoverStyled ? 'hover:text-blue-400 hover:cursor-pointer hover:shadow-lg transition-colors duration-300 uppercase text-xs md:text-base' : 'text-xs md:text-base'}
       onClick={onClick}>
       {children}
     </li>

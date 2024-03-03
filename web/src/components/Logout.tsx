@@ -1,7 +1,7 @@
 import { useProfileStore } from '@/store/profileStore'
 import { ItemListNav } from "@/components/ItemListNav.tsx";
 import { useNotify } from '@/hooks/useNotify'
-
+import { navigate } from "astro:transitions/client";
 
 interface LogoutProps {
   authRequired?: boolean,
@@ -17,6 +17,7 @@ export function Logout({ authRequired, children }: LogoutProps) {
     setUser(undefined)
     setToken('')
     notifySuccess('Sesión cerrada')
+    navigate('/')
   }
 
   return <ItemListNav hoverStyled={true} authRequired={authRequired} onClick={handleClick}>{children}</ItemListNav>

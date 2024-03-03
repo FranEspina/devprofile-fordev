@@ -10,19 +10,19 @@ import { DataTable } from '@/components/Resources/data-table'
 export const columns: ColumnDef<ResourceRow>[] = [
   {
     accessorKey: "title",
-    header: "Título",
+    header: () => <div className="text-white">Título</div>,
   },
   {
     accessorKey: "description",
-    header: "Descripción",
+    header: () => <div className="text-white">Descripción</div>,
   },
   {
     accessorKey: "url",
-    header: "Url",
+    header: () => <div className="text-white">Url</div>,
   },
   {
     accessorKey: "type",
-    header: "Tipo",
+    header: () => <div className="text-white">Tipo</div>,
   }
 ]
 
@@ -57,7 +57,6 @@ export function ResourcesList() {
       </header>
       {/* {resources.map(r => <li className="list-none" key={r.id}>{r.title} - {r.description}</li>)} */}
       {!loading && <DataTable columns={columns} data={resources} />}
-      {!loading && resources.length === 0 && <p>No existen recursos</p>}
       {loading && <p>Cargando ... </p>}
     </section>
   )

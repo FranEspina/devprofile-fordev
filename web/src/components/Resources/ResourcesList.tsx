@@ -8,7 +8,6 @@ import type { ResourceRow } from '@/Schemas/resourceSchema'
 import { DataTable } from '@/components/Resources/data-table'
 import { useNotify } from "@/hooks/useNotify"
 import { navigate } from "astro/virtual-modules/transitions-router.js"
-import { useAuthorization } from "@/hooks/useAuthorization"
 
 export const columns: ColumnDef<ResourceRow>[] = [
   {

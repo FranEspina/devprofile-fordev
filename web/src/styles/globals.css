@@ -8,10 +8,12 @@
 
 html {
   font-family: "Motomangucode", system-ui, sans-serif;
-  background: #13151a;
-  color: #f1f0e1;
   margin-left: 10px;
   margin-right: 10px;
+}
+
+body {
+  @apply bg-gray-50 text-[#13151a] dark:bg-[#13151a] dark:text-gray-50;
 }
 
 .layout-toast {

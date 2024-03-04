@@ -5,8 +5,10 @@ import { persist, devtools } from 'zustand/middleware'
 interface profileState {
   user: apiUserDto | undefined,
   token: string,
+  theme: "theme-light" | "dark" | "system" | "not-loaded"
   setUser: (user: apiUserDto | undefined) => void
   setToken: (token: string) => void
+  setThemeState: (theme: "theme-light" | "dark" | "system") => void
 }
 
 export const useProfileStore = create<profileState>()(
@@ -14,8 +16,10 @@ export const useProfileStore = create<profileState>()(
     return {
       token: 'not-loaded',
       user: undefined,
+      theme: 'not-loaded',
       setUser: (user: apiUserDto | undefined) => set({ user }),
       setToken: (token: string) => set({ token }),
+      setThemeState: (theme: "theme-light" | "dark" | "system") => set({ theme })
     }
   }, {
     name: 'profile'

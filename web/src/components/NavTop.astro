@@ -3,7 +3,8 @@ import { SignUpModal } from "./SignUpModal";
 import { ItemListNav } from "@/components/ItemListNav.tsx";
 import { Logout } from "@/components/Logout";
 import { SignInModal } from "@/components/SignInModal";
-
+import "../styles/globals.css";
+import { ModeToggle } from "@/components/ModeToggle";
 function onLogout() {
   console.log("hola");
 }
@@ -28,7 +29,7 @@ function onLogout() {
         <a class="uppercase" href="/">Inicio</a>
       </ItemListNav>
       <ItemListNav hoverStyled={true} authRequired={true} client:load>
-        <a class="uppercase" href="/proyectos/">Proyectos</a>
+        <a class="uppercase" href="/curriculum/">CV</a>
       </ItemListNav>
       <ItemListNav hoverStyled={true} authRequired={true} client:load>
         <a class="uppercase" href="/recursos/">Recursos</a>
@@ -37,7 +38,7 @@ function onLogout() {
   </div>
 
   <div class="">
-    <ul class="flex flex-row gap-3">
+    <ul class="flex flex-row gap-3 items-center">
       <ItemListNav client:load hideLogged={true}>
         <SignUpModal client:load />
       </ItemListNav>
@@ -45,6 +46,7 @@ function onLogout() {
         <SignInModal text="Iniciar" client:load />
       </ItemListNav>
       <Logout client:load authRequired={true}>Cerrar Sesión</Logout>
+      <ModeToggle client:load />
     </ul>
   </div>
 </section>

@@ -1,0 +1,18 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { ProfileDialog } from "../components/Curriculum/ProfileDialog";
+import { WorkDialog } from "../components/Curriculum/WorkDialog";
+---
+
+<Layout title="dev profile for dev ">
+  <main
+    class="flex flex-col justify-center items-center content-center text-center max-w-[800px] mx-auto"
+  >
+    <h1 class="text-3xl md:text-5xl mb-6 mt-10 text-blue-500">CV</h1>
+    <div class="grid grid-cols-3 gap-2">
+      <ProfileDialog client:load />
+      <WorkDialog client:load />
+    </div>
+  </main>
+</Layout>
+<script src="/src/scripts/theme.js" is:inline></script>

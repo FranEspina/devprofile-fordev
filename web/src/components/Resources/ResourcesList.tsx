@@ -38,9 +38,15 @@ export function ResourcesList() {
   const refresh = () => setReloadStamp(Date.now())
 
   useEffect(() => {
+
+    if (token === 'not-loaded') {
+      console.log('dentro')
+      return
+    }
+
     if (!user || !token) {
       navigate('/').then(() =>
-        notifySuccess('Usuario no logado')
+        notifySuccess('Usuario no autorizado')
       )
       return
     }
@@ -60,7 +66,7 @@ export function ResourcesList() {
       notifyError('Error inesperado obteniendo recursos')
     })
       .finally(() => setLoading(false))
-  }, [user, reloadStamp])
+  }, [user, token, reloadStamp])
 
   return (
     <section className="w-full mx-auto my-2">

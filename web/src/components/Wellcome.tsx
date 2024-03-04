@@ -7,7 +7,7 @@ export function Wellcome() {
   return (
     <>
       <div className='m-4 text-xs md:text-base '>
-        {token && user && <p>{`Bienvenido ${user.firstName}`}</p>}
+        {token && user && <p>Bienvenido <span className='text-lg md:text-xl text-blue-500'>{user.firstName}</span></p>}
         {!(token && user) &&
           <div className='flex flex-col'>
             <div className='flex flex-row'>

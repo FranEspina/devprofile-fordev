@@ -12,7 +12,7 @@ interface profileState {
 export const useProfileStore = create<profileState>()(
   devtools(persist((set) => {
     return {
-      token: '',
+      token: 'not-loaded',
       user: undefined,
       setUser: (user: apiUserDto | undefined) => set({ user }),
       setToken: (token: string) => set({ token }),

@@ -6,6 +6,9 @@ import { CreateResourceModal } from '@/components/Resources/CreateResourceModal'
 import type { ColumnDef } from "@tanstack/react-table"
 import type { ResourceRow } from '@/Schemas/resourceSchema'
 import { DataTable } from '@/components/Resources/data-table'
+import { useNotify } from "@/hooks/useNotify"
+import { navigate } from "astro/virtual-modules/transitions-router.js"
+import { useAuthorization } from "@/hooks/useAuthorization"
 
 export const columns: ColumnDef<ResourceRow>[] = [
   {
@@ -31,11 +34,18 @@ export function ResourcesList() {
   const { user, token } = useProfileStore(state => state)
   const [reloadStamp, setReloadStamp] = useState(Date.now())
   const [loading, setLoading] = useState(false)
+  const { notifyError, notifySuccess } = useNotify()
 
   const refresh = () => setReloadStamp(Date.now())
 
   useEffect(() => {
-    if (!user) return
+    if (!user || !token) {
+      navigate('/').then(() =>
+        notifySuccess('Usuario no logado')
+      )
+      return
+    }
+
     setLoading(true)
     getDevUserDevResourcesRow(user.id, token).then((apiResult) => {
       if (apiResult.success) {
@@ -46,7 +56,11 @@ export function ResourcesList() {
           setResources([])
         }
       }
-    }).finally(() => setLoading(false))
+    }).catch((error) => {
+      console.log(error)
+      notifyError('Error inesperado obteniendo recursos')
+    })
+      .finally(() => setLoading(false))
   }, [user, reloadStamp])
 
   return (
@@ -55,7 +69,6 @@ export function ResourcesList() {
         <h2 className="flex-1 text-start uppercase mb-2">Lista de recursos del usuario</h2>
         <CreateResourceModal callback={refresh} />
       </header>
-      {/* {resources.map(r => <li className="list-none" key={r.id}>{r.title} - {r.description}</li>)} */}
       {!loading && <DataTable columns={columns} data={resources} />}
       {loading && <p>Cargando ... </p>}
     </section>

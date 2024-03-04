@@ -8,8 +8,18 @@ export function Wellcome() {
     <>
       <div className='m-4 text-xs md:text-base '>
         {token && user && <p>{`Bienvenido ${user.firstName}`}</p>}
-        {(!token) && <p className='flex flex-row'>Para continuar ➡️<span className='mx-2'><SignInModal text='Inicia sesión' /></span></p>}
-        {(!token) && <p className='flex flex-row'>También puedes ➡️<span className='mx-2'><SignUpModal text='Crear cuenta' /></span></p>}
+        {!(token && user) &&
+          <div className='flex flex-col'>
+            <div className='flex flex-row'>
+              <p className='columns-1'>Para continuar ➡️</p>
+              <SignInModal text='Inicia sesión' />
+            </div>
+            <div className='flex flex-row'>
+              <p className='columns-1'>También puedes ➡️</p>
+              <SignUpModal text='Crear cuenta' />
+            </div >
+          </div >
+        }
       </div>
     </>
   )

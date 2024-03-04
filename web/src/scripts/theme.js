@@ -29,6 +29,5 @@ const setDarkMode = () => {
 }
 
 document.addEventListener('astro:before-swap', ev => {
-  // Pasa el documento entrante para establecer el tema en él
   setDarkMode();
 });

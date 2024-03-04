@@ -1,6 +1,7 @@
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import type { apiRegisterType, apiResultType, apiLoginType, apiResponse, apiUserDto, apiDevResourceDto, IAuthHeader } from '@/types/apiTypes.ts'
 import type { ResourceRow } from '@/Schemas/resourceSchema'
+import type { ProfileCreate } from '@/Schemas/profileSchema'
 
 const API_BASE_URL = 'https://devprofile-fordev-dev-knsf.1.ie-1.fl0.io'
 
@@ -94,19 +95,19 @@ export async function getDevUserDevResources(id: number, token: string) {
   } catch (error) {
     console.log(error)
     if (axios.isAxiosError(error)) {
-      console.error('Error axios:', error.message);
+      console.log('Error axios:', error.message);
       if (error.response) {
         const results: apiResponse<apiDevResourceDto[]> = error.response.data
         if (results) {
-          return { success: false, message: results.message }
+          return { success: false, message: 'Error inesperado recuperando recursos' }
         }
       }
     } else if (error instanceof Error) {
-      console.error('Exception:', error.message);
+      console.log('Exception:', error.message);
     } else if (typeof error === "string") {
-      console.error('Error:', error);
+      console.log('Error:', error);
     } else {
-      console.error('Unknow error:', error);
+      console.log('Unknow error:', error);
     }
 
     return { success: false, message: 'Error inesperado recuperando recursos' }
@@ -127,19 +128,19 @@ export async function getDevUserDevResourcesRow(id: number, token: string) {
   } catch (error) {
     console.log(error)
     if (axios.isAxiosError(error)) {
-      console.error('Error axios:', error.message);
+      console.log('Error axios:', error.message);
       if (error.response) {
         const results: apiResponse<ResourceRow[]> = error.response.data
         if (results) {
-          return { success: false, message: results.message }
+          return { success: false, message: 'Error inesperado recuperando recursos' }
         }
       }
     } else if (error instanceof Error) {
-      console.error('Exception:', error.message);
+      console.log('Exception:', error.message);
     } else if (typeof error === "string") {
-      console.error('Error:', error);
+      console.log('Error:', error);
     } else {
-      console.error('Unknow error:', error);
+      console.log('Unknow error:', error);
     }
 
     return { success: false, message: 'Error inesperado recuperando recursos' }
@@ -163,22 +164,59 @@ export async function createUserDevResource(resource: apiDevResourceDto, token: 
     return { success: false, message: results.message }
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      console.error('Error axios:', error.message);
+      console.log('Error axios:', error.message);
       if (error.response) {
         const results: apiResponse<apiUserDto> = error.response.data
         if (results) {
-          return { success: false, message: results.message }
+          return { success: false, message: 'Error inesperado iniciando sesión' }
         }
       }
     } else if (error instanceof Error) {
-      console.error('Exception:', error.message);
+      console.log('Exception:', error.message);
     } else if (typeof error === "string") {
-      console.error('Error:', error);
+      console.log('Error:', error);
     } else {
-      console.error('Unknow error:', error);
+      console.log('Unknow error:', error);
     }
 
     return { success: false, message: 'Error inesperado iniciando sesión' }
+
+  }
+}
+
+export async function createProfileNetwork(profile: ProfileCreate, userId: number, token: string): Promise<apiResultType<ProfileCreate>> {
+
+  const endpoint = `${API_BASE_URL}/user/${userId}/profile`
+
+  console.log(endpoint)
+  try {
+    const response = await axios.post(endpoint, profile, authHeader(token))
+    console.log(response)
+    const results: apiResponse<ProfileCreate> = response.data
+    if (results.success === true) {
+      return { success: true, message: 'Perfil creado correctamente', data: results.data, token: results.token }
+    }
+    return { success: false, message: results.message }
+  } catch (error) {
+    console.log(error)
+    console.log(axios.isAxiosError(error))
+    if (axios.isAxiosError(error)) {
+      console.log(error.message);
+      if (error.response) {
+        const results: apiResponse<ProfileCreate> = error.response.data
+        if (results) {
+          return { success: false, message: 'Error inesperado creando perfil' }
+        }
+      }
+    } else if (error instanceof Error) {
+      console.log('Exception:', error.message);
+    } else if (typeof error === "string") {
+      console.log('Error:', error);
+    } else {
+      console.log('Unknow error:', error);
+    }
+
+    return { success: false, message: 'Error inesperado creando perfil' }
 
   }
 }

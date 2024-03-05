@@ -53,14 +53,14 @@ export function ProfileDialog() {
 
     const network = document.getElementById("network").value;
     const username = document.getElementById("username").value;
-    const link = document.getElementById("link").value;
+    const url = document.getElementById("url").value;
 
     const formData = {
+      userId: user.id,
       network: network ? network : '',
       username: username ? username : '',
-      link: link ? link : '',
+      url: url ? url : '',
     }
-
 
     const parsed = await ProfileCreateSchema.safeParseAsync(formData)
     if (!parsed.success) {
@@ -140,8 +140,8 @@ export function ProfileDialog() {
             <Label htmlFor="link" className="text-right">
               Usuario
             </Label>
-            <Input id="link" placeholder="https://..." className="col-span-3" />
-            {errors['link'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['link']}</p>}
+            <Input id="url" placeholder="https://..." className="col-span-3" />
+            {errors['url'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['url']}</p>}
           </div>
         </div>
         <DialogFooter className="flex flex-row items-center gap-2">

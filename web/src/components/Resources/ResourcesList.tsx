@@ -40,7 +40,6 @@ export function ResourcesList() {
   useEffect(() => {
 
     if (token === 'not-loaded') {
-      console.log('dentro')
       return
     }
 

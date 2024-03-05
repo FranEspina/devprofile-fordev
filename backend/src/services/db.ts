@@ -1,6 +1,7 @@
 import { Pool } from 'pg'
 import { UserHashPassword, UserDTO, UserCreate } from '../models/user'
-import { DevResourceCreate, DevResourceDelete, DevResource } from '../models/devResource'
+import { DevResourceCreate, DevResourceDelete, DevResource } from '../models/modelSchemas'
+import { ProfileCreate, ProfileDelete, Profile } from '../models/modelSchemas'
 import { hashAsync } from './cryptService'
 
 const pool = new Pool({
@@ -16,6 +17,7 @@ export const dropCreateAndSeedTables = async () => {
 
 
   const dropTables = `
+    DROP TABLE IF EXISTS profiles;
     DROP TABLE IF EXISTS resources;
     DROP TABLE IF EXISTS users;
   `
@@ -93,6 +95,25 @@ export const dropCreateAndSeedTables = async () => {
       console.log(err);
     });
 
+  const profilesTable = `
+    CREATE TABLE IF NOT EXISTS
+      profiles(
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER,
+        network VARCHAR(50) NOT NULL,
+        username VARCHAR(50) NOT NULL,
+        url TEXT NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id)
+      )`;
+
+  await pool.query(profilesTable)
+    .then(() => {
+      console.log('- tabla perfiles creada');
+    })
+    .catch((err) => {
+      console.log('Error inesperado creando tabla: perfiles')
+      console.log(err);
+    });
 };
 
 export const getUserByEmailAsync = async (email: string): Promise<UserHashPassword | null> => {
@@ -232,7 +253,95 @@ export async function dbDeleteUserResourceAsync({ id, userId }: DevResourceDelet
   try {
     const queryParams = [id, userId]
     const queryResources = 'DELETE FROM resources WHERE id = $1 AND user_id = $2;'
-    await pool.query<DevResource>(queryResources, queryParams)
+    await pool.query(queryResources, queryParams)
+  }
+  catch (error) {
+    console.log('Error inesperado eliminando recurso de usuario', error)
+    throw error
+  }
+}
+
+export async function dbCreateUserProfileAsync(profile: ProfileCreate): Promise<Profile> {
+  try {
+
+    const { userId, network, username, url } = profile
+
+    const queryParams = [userId, network, username, url]
+
+    const queryResources = `
+      INSERT INTO profiles(user_id, network, username, url)
+      VALUES ($1, $2, $3, $4) RETURNING id; `
+    const result = await pool.query(queryResources, queryParams)
+
+    const profileSaved: Profile = {
+      id: result.rows[0].id,
+      ...profile
+    }
+
+    return profileSaved
+  }
+  catch (error) {
+    console.log('Error inesperado creando perfil de usuario', error)
+    throw error
+  }
+}
+
+export async function dbGetProfilesByUserAsync(userId: number): Promise<Profile[]> {
+  const profilesQuery = 'SELECT id, network, username, url FROM profiles WHERE user_id = $1;'
+  try {
+
+    const result = await pool.query(profilesQuery, [userId])
+    if (!result || !result.rowCount) {
+      return []
+    }
+
+    const profiles: Profile[] = result.rows.map((row) => ({
+      id: row['id'],
+      userId: row['user_id'],
+      network: row['network'],
+      username: row['username'],
+      url: row['url'],
+    }))
+
+    return profiles
+  }
+  catch (error) {
+    console.log('Error inesperado recuperando perfiles', error)
+    throw error
+  }
+}
+
+export async function dbUpdateUserProfileAsync(profile: Profile): Promise<Profile> {
+  try {
+
+    const { id, userId, network, username, url } = profile
+
+    const queryParams = [id, userId, network, username, url]
+
+    const queryProfiles = `
+      UPDATE profiles 
+        SET network = $3, 
+            username = $4, 
+            url = $5 
+      WHERE id = $1 
+        AND user_id = $2;`
+
+    await pool.query<Profile>(queryProfiles, queryParams)
+
+    return profile
+
+  }
+  catch (error) {
+    console.log('Error inesperado creando perfil de usuario', error)
+    throw error
+  }
+}
+
+export async function dbDeleteUserProfileAsync({ id, userId }: ProfileDelete) {
+  try {
+    const queryParams = [id, userId]
+    const queryResources = 'DELETE FROM profiles WHERE id = $1 AND user_id = $2;'
+    await pool.query(queryResources, queryParams)
   }
   catch (error) {
     console.log('Error inesperado eliminando recurso de usuario', error)

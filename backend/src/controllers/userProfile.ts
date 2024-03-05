@@ -1,21 +1,21 @@
 import { Request, Response } from 'express'
-import { dbGetResourcesByUserAsync, dbCreateUserResourceAsync, dbUpdateUserResourceAsync, getUserByIdAsync, dbDeleteUserResourceAsync } from '../services/db'
+import { dbGetProfilesByUserAsync, dbCreateUserProfileAsync, dbUpdateUserProfileAsync, getUserByIdAsync, dbDeleteUserProfileAsync } from '../services/db'
 import { validateSchemaAsync } from '../services/validationService'
-import { DevResourceSchema, DevResourceCreateSchema, DevResourceDeleteSchema } from '../schemas/devResourceSchema';
-import { DevResource, DevResourceCreate, DevResourceDelete } from '../models/modelSchemas';
+import { ProfileSchema, ProfileCreateSchema, ProfileDeleteSchema } from '../schemas/profileSchema';
+import { Profile, ProfileCreate, ProfileDelete } from '../models/modelSchemas';
 import { Schema } from 'zod'
 
-export async function getUserResources(req: Request, res: Response) {
+export async function getUserProfiles(req: Request, res: Response) {
   try {
     const id = Number(req.params.id);
-    const resources = await dbGetResourcesByUserAsync(id)
+    const profiles = await dbGetProfilesByUserAsync(id)
 
-    return res.status((resources.length === 0) ? 404 : 200).json({
-      status: (resources.length === 0) ? 404 : 200,
+    return res.status((profiles.length === 0) ? 404 : 200).json({
+      status: (profiles.length === 0) ? 404 : 200,
       success: true,
-      code: (resources.length === 0) ? 'NOT_FOUND_GET_USER_RESOURCES' : 'OK',
-      message: (resources.length === 0) ? 'No existen datos' : 'Operación realizada correctamente',
-      data: resources,
+      code: (profiles.length === 0) ? 'NOT_FOUND_GET_USER_PROFILES' : 'OK',
+      message: (profiles.length === 0) ? 'No existen datos' : 'Operación realizada correctamente',
+      data: profiles,
     })
 
   } catch (error) {
@@ -23,20 +23,20 @@ export async function getUserResources(req: Request, res: Response) {
     return res.status(500).json({
       status: 500,
       success: true,
-      code: 'UNEXPECTED_ERROR_GET_USER_RESOURCES',
-      message: 'Error inesperado recuperando recursos',
+      code: 'UNEXPECTED_ERROR_GET_USER_PROFILES',
+      message: 'Error inesperado recuperando perfiles',
       data: null,
     })
   }
 }
 
-export async function createUserResource(req: Request, res: Response) {
+export async function createUserProfile(req: Request, res: Response) {
   try {
 
     const id = Number(req.params.id);
 
     //TODO: Pasar a un middleware de express
-    const { success, data, errors } = await validateSchemaAsync<Schema, DevResourceCreate>(DevResourceCreateSchema, req.body)
+    const { success, data, errors } = await validateSchemaAsync<Schema, ProfileCreate>(ProfileCreateSchema, req.body)
     if (!success || data === undefined) {
       res.status(400).json({
         status: 400,
@@ -63,19 +63,19 @@ export async function createUserResource(req: Request, res: Response) {
         status: 400,
         success: false,
         code: 'INVALID_userId',
-        message: 'El recurso no es un recurso el usuario',
+        message: 'El perfil no es un perfil el usuario',
       })
       return
     }
 
-    const resource = await dbCreateUserResourceAsync(data)
+    const profile = await dbCreateUserProfileAsync(data)
 
     return res.status(201).json({
       status: 201,
       success: true,
       code: 'OK',
       message: 'Operación realizada correctamente',
-      data: resource,
+      data: profile,
     })
 
   } catch (error) {
@@ -83,20 +83,20 @@ export async function createUserResource(req: Request, res: Response) {
     return res.status(500).json({
       status: 500,
       success: true,
-      code: 'UNEXPECTED_ERROR_CREATE_USER_RESOURCES',
-      message: 'Error inesperado creand recurso de usuario',
+      code: 'UNEXPECTED_ERROR_CREATE_USER_PROFILES',
+      message: 'Error inesperado creando perfil de usuario',
       data: null,
     })
   }
 }
 
-export async function updateUserResource(req: Request, res: Response) {
+export async function updateUserProfile(req: Request, res: Response) {
   try {
 
     const id = Number(req.params.id);
 
     //TODO: Pasar a un middleware de express
-    const { success, data, errors } = await validateSchemaAsync<Schema, DevResource>(DevResourceSchema, req.body)
+    const { success, data, errors } = await validateSchemaAsync<Schema, Profile>(ProfileSchema, req.body)
     if (!success || data === undefined) {
       res.status(400).json({
         status: 400,
@@ -123,19 +123,19 @@ export async function updateUserResource(req: Request, res: Response) {
         status: 400,
         success: false,
         code: 'INVALID_userId',
-        message: 'El recurso no es un recurso el usuario',
+        message: 'El perfil no es un perfil el usuario',
       })
       return
     }
 
-    const resource = await dbUpdateUserResourceAsync(data)
+    const profile = await dbUpdateUserProfileAsync(data)
 
     return res.status(200).json({
       status: 200,
       success: true,
       code: 'OK',
       message: 'Operación realizada correctamente',
-      data: resource,
+      data: profile,
     })
 
   } catch (error) {
@@ -143,20 +143,20 @@ export async function updateUserResource(req: Request, res: Response) {
     return res.status(500).json({
       status: 500,
       success: true,
-      code: 'UNEXPECTED_ERROR_UPDATE_USER_RESOURCES',
-      message: 'Error inesperado actualizando recurso de usuario',
+      code: 'UNEXPECTED_ERROR_UPDATE_USER_PROFILES',
+      message: 'Error inesperado actualizando perfil de usuario',
       data: null,
     })
   }
 }
 
-export async function deleteUserResource(req: Request, res: Response) {
+export async function deleteUserProfile(req: Request, res: Response) {
   try {
 
     const id = Number(req.params.id);
 
     //TODO: Pasar a un middleware de express
-    const { success, data, errors } = await validateSchemaAsync<Schema, DevResourceDelete>(DevResourceDeleteSchema, req.body)
+    const { success, data, errors } = await validateSchemaAsync<Schema, ProfileDelete>(ProfileDeleteSchema, req.body)
     if (!success || data === undefined) {
       res.status(400).json({
         status: 400,
@@ -183,12 +183,12 @@ export async function deleteUserResource(req: Request, res: Response) {
         status: 400,
         success: false,
         code: 'INVALID_userId',
-        message: 'El recurso no es un recurso el usuario',
+        message: 'El perfil no es un perfil el usuario',
       })
       return
     }
 
-    await dbDeleteUserResourceAsync(data)
+    await dbDeleteUserProfileAsync(data)
 
     return res.status(204).json({
       status: 204,
@@ -203,10 +203,9 @@ export async function deleteUserResource(req: Request, res: Response) {
     return res.status(500).json({
       status: 500,
       success: true,
-      code: 'UNEXPECTED_ERROR_DELETE_USER_RESOURCES',
-      message: 'Error inesperado actualizando recurso de usuario',
+      code: 'UNEXPECTED_ERROR_DELETE_USER_PROFILES',
+      message: 'Error inesperado actualizando perfil de usuario',
       data: null,
     })
   }
 }
-

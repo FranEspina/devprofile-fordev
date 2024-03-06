@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import CloseButton from './CloseButton'
 import { cn } from '@/lib/utils'
+import { LoadIndicator } from '@/components/LoadIndicator'
 
 // Modal Component
 export const Modal = ({ title, show, handleConfirm, textConfirm, handleCancel, className = '', loading, children }) => {
@@ -18,19 +19,7 @@ export const Modal = ({ title, show, handleConfirm, textConfirm, handleCancel, c
           <button
             className={cn('uppercase border border-gray-50 px-2 md:px-5 py-1', loading ? '' : ' hover:border-blue-500 hover:text-blue-500 hover:cursor-pointer hover:shadow-lg transition-colors duration-300')}
             onClick={handleConfirm} disabled={loading}>
-            {loading &&
-              <svg className="animate-spin h-5 w-5 "
-                fill="none"
-                viewBox='0 0 24 24'
-                stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            }
+            <LoadIndicator loading={loading} />
             {!loading && textConfirm}
           </button>
 

@@ -1,7 +1,7 @@
 import axios, { AxiosError } from 'axios'
 import type { apiRegisterType, apiResultType, apiLoginType, apiResponse, apiUserDto, apiDevResourceDto, IAuthHeader } from '@/types/apiTypes.ts'
 import type { ResourceRow } from '@/Schemas/resourceSchema'
-import type { ProfileCreate, Profile } from '@/Schemas/profileSchema'
+import type { ProfileCreate, ProfileDelete, Profile } from '@/Schemas/profileSchema'
 
 const API_BASE_URL = 'https://devprofile-fordev-dev-knsf.1.ie-1.fl0.io'
 
@@ -226,7 +226,7 @@ export async function createProfileNetwork(profile: ProfileCreate, userId: numbe
     console.log(response)
     const results: apiResponse<ProfileCreate> = response.data
     if (results.success === true) {
-      return { success: true, message: 'Perfil creado correctamente', data: results.data, token: results.token }
+      return { success: true, message: 'Perfil creado correctamente', data: results.data }
     }
     return { success: false, message: results.message }
   } catch (error) {
@@ -249,6 +249,71 @@ export async function createProfileNetwork(profile: ProfileCreate, userId: numbe
     }
 
     return { success: false, message: 'Error inesperado creando perfil' }
+
+  }
+}
+
+export async function deleteProfileNetwork(id: number, userId: number, token: string): Promise<apiResultType<ProfileDelete>> {
+
+  const endpoint = `${API_BASE_URL}/user/${userId}/profile/${id}`
+  const profileIds: ProfileDelete = {
+    id: id, userId: userId
+  }
+  try {
+    const response = await axios.delete(endpoint, authHeader(token))
+    return { success: true, message: 'Perfil eliminado correctamente', data: profileIds }
+  } catch (error) {
+    console.log(error)
+    if (axios.isAxiosError(error)) {
+      console.log(error.message);
+    } else if (error instanceof Error) {
+      console.log('Exception:', error.message);
+    } else if (typeof error === "string") {
+      console.log('Error:', error);
+    } else {
+      console.log('Unknow error:', error);
+    }
+
+    return { success: false, message: 'Error inesperado eliminando perfil', data: profileIds }
+
+  }
+}
+
+export async function updateProfileNetwork(profile: Profile, token: string): Promise<apiResultType<Profile>> {
+
+  const endpoint = `${API_BASE_URL}/user/${profile.userId}/profile/${profile.id}`
+
+  console.log(endpoint)
+  try {
+    const response = await axios.put(endpoint, profile, authHeader(token))
+    console.log(response)
+    const results: apiResponse<Profile> = response.data
+
+    if (results.success === true) {
+      return { success: true, message: 'Perfil actualizado correctamente', data: results.data }
+    }
+    return { success: false, message: 'Error inesperado actualizando perfil' }
+
+  } catch (error) {
+    console.log(error)
+    console.log(axios.isAxiosError(error))
+    if (axios.isAxiosError(error)) {
+      console.log(error.message);
+      if (error.response) {
+        const results: apiResponse<ProfileCreate> = error.response.data
+        if (results) {
+          return { success: false, message: 'Error inesperado actualizando perfil' }
+        }
+      }
+    } else if (error instanceof Error) {
+      console.log('Exception:', error.message);
+    } else if (typeof error === "string") {
+      console.log('Error:', error);
+    } else {
+      console.log('Unknow error:', error);
+    }
+
+    return { success: false, message: 'Error inesperado actualizando perfil' }
 
   }
 }

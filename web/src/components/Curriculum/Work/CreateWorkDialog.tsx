@@ -11,13 +11,14 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from '@/components/ui/textarea'
-import { DatePicker } from "../ui/DatePicker"
+import { DatePicker } from "../../ui/DatePicker"
+import { Plus } from 'lucide-react'
 
-export function WorkDialog() {
+export function CreateWorkDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">Puesto de trabajo</Button>
+        <Button variant="outline"><Plus className="mr-1 text-blue-500" />puestro de trabajo</Button>
       </DialogTrigger>
       <DialogContent className="max-w-[75%]">
         <DialogHeader>

@@ -11,31 +11,39 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { ProfileCreateSchema } from '@/Schemas/profileSchema'
-import { useEffect, useState } from "react"
+import { ProfileSchema, type Profile } from '@/Schemas/profileSchema'
+import { useEffect, useRef, useState, type ChangeEvent } from "react"
 import { z } from 'astro/zod'
 import type { ClassDictionary } from "clsx"
 import { useNotify } from '@/hooks/useNotify'
-import { createProfileNetwork } from '@/services/apiService'
+import { updateProfileNetwork } from '@/services/apiService'
 import { useProfileStore } from "@/store/profileStore"
 import { navigate } from "astro/virtual-modules/transitions-router.js"
+import { useRefreshStore } from '@/store/refreshStore'
+import { Edit } from 'lucide-react'
+import { LoadIndicator } from '@/components/LoadIndicator'
 
-
-export function ProfileDialog() {
+export function EditProfileDialog({ profile }: { profile: Profile }) {
 
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
   const [loading, setLoading] = useState(false);
   const { notifySuccess } = useNotify()
   const { user, token } = useProfileStore(state => state)
+  const { setProfileStamp } = useRefreshStore(state => state)
+  const [profileState, setProfileState] = useState(profile)
+
+  const networkInputRef = useRef<HTMLInputElement>(null)
+  const usernameInputRef = useRef<HTMLInputElement>(null)
+  const urlInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     setLoading(false)
     setErrors({})
-  }, [])
+    setProfileState(profile)
+  }, [isOpen])
 
   if (token === 'not-loaded') {
-    console.log('dentro')
     return
   }
 
@@ -46,23 +54,40 @@ export function ProfileDialog() {
     return
   }
 
-  const handleCreate = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleChangeNetwork = (event: ChangeEvent<HTMLInputElement>) => {
+    const newProfile = structuredClone(profileState)
+    newProfile.network = event.target.value
+    setProfileState(newProfile);
+  };
+  const handleChangeUsername = (event: ChangeEvent<HTMLInputElement>) => {
+    const newProfile = structuredClone(profileState)
+    newProfile.username = event.target.value
+    setProfileState(newProfile);
+  };
+  const handleChangeUrl = (event: ChangeEvent<HTMLInputElement>) => {
+    const newProfile = structuredClone(profileState)
+    newProfile.url = event.target.value
+    setProfileState(newProfile);
+  };
+
+  const handleEdit = async (e: React.MouseEvent<HTMLButtonElement>) => {
 
     setLoading(true)
     e.preventDefault()
 
-    const network = document.getElementById("network").value;
-    const username = document.getElementById("username").value;
-    const url = document.getElementById("url").value;
+    const network = networkInputRef?.current?.value || ''
+    const username = usernameInputRef?.current?.value || ''
+    const url = urlInputRef?.current?.value || ''
 
     const formData = {
+      id: profile.id,
       userId: user.id,
-      network: network ? network : '',
-      username: username ? username : '',
-      url: url ? url : '',
+      network: network,
+      username: username,
+      url: url,
     }
 
-    const parsed = await ProfileCreateSchema.safeParseAsync(formData)
+    const parsed = await ProfileSchema.safeParseAsync(formData)
     if (!parsed.success) {
       const errors: { [key: string]: string } = {}
       if (parsed.error instanceof z.ZodError) {
@@ -80,12 +105,13 @@ export function ProfileDialog() {
     }
 
     try {
-      var { success, message, data } = await createProfileNetwork(formData, user.id, token)
+      var { success, message, data } = await updateProfileNetwork(formData, token)
       console.log(success)
       console.log(message)
       if (success) {
         notifySuccess(message)
         setErrors({})
+        setProfileStamp(Date.now())
         setIsOpen(false)
         return
       }
@@ -104,21 +130,21 @@ export function ProfileDialog() {
     finally {
       setLoading(false)
     }
-
-
   }
-
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen} modal defaultOpen={isOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Perfil Red Social</Button>
+        <Button variant="outline">
+          <Edit className="h-3 w-3" />
+          <span className="sr-only">Editar perfil</span>
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Añadir perfil público</DialogTitle>
+          <DialogTitle>Editar perfil público</DialogTitle>
           <DialogDescription>
-            Añade un nuevo perfil público y guarda cambios cuando finalices.
+            Modifica y guarda cambios cuando finalices.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
@@ -126,27 +152,28 @@ export function ProfileDialog() {
             <Label htmlFor="network" className="text-right">
               Red Social
             </Label>
-            <Input id="network" placeholder="nombre" className="col-span-3" autoComplete="off" />
+            <Input ref={networkInputRef} value={profileState.network} onChange={handleChangeNetwork} id="network" placeholder="nombre" className="col-span-3" autoComplete="off" />
             {errors['network'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['network']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="username" className="text-right">
               Usuario
             </Label>
-            <Input id="username" placeholder="username" className="col-span-3" autoComplete="off" />
+            <Input ref={usernameInputRef} value={profileState.username} onChange={handleChangeUsername} id="username" placeholder="username" className="col-span-3" autoComplete="off" />
             {errors['username'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['username']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="link" className="text-right">
               Usuario
             </Label>
-            <Input id="url" placeholder="https://..." className="col-span-3" />
+            <Input ref={urlInputRef} value={profileState.url} onChange={handleChangeUrl} id="url" placeholder="https://..." className="col-span-3" />
             {errors['url'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['url']}</p>}
           </div>
         </div>
         <DialogFooter className="flex flex-row items-center gap-2">
           {errors['generic'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['generic']}</p>}
-          <Button variant="outline" onClick={handleCreate}>Crear</Button>
+          <LoadIndicator loading={loading} />
+          <Button variant="outline" onClick={handleEdit} disabled={loading}>Guardar</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

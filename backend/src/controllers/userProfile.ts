@@ -184,10 +184,9 @@ export async function deleteUserProfile(req: Request, res: Response) {
       return
     }
 
-
     await dbDeleteUserProfileAsync(data)
 
-    return res.status(204).json({
+    res.status(204).json({
       status: 204,
       success: true,
       code: 'OK',

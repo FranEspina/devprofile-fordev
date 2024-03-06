@@ -30,33 +30,33 @@ export function CreateWorkDialog() {
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="name" className="text-right">
-              Trabajo
+              Título
             </Label>
-            <Input id="name" placeholder="Nombre del puesto" className="col-span-3" />
+            <Input id="name" placeholder="Título del puesto" className="col-span-3" autoComplete="off" />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="position" className="text-right">
-              Posición
+              Puesto
             </Label>
-            <Input id="position" placeholder="posición / puesto" className="col-span-3" />
+            <Input id="position" placeholder="posición / puesto" className="col-span-3" autoComplete="off" />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label className="text-right">
+              Desde
+            </Label>
+            <DatePicker />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label className="text-right">
+              Hasta
+            </Label>
+            <DatePicker />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="description" className="text-right">
               Descripción
             </Label>
-            <Textarea id="description" placeholder="Descripción del puesto de trabajo" className="col-span-3" />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right">
-              Desde:
-            </Label>
-            <DatePicker />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right">
-              Hasta:
-            </Label>
-            <DatePicker />
+            <Textarea id="description" placeholder="Descripción del puesto de trabajo" className="col-span-3" autoComplete="off" />
           </div>
         </div>
         <DialogFooter>

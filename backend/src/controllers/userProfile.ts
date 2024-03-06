@@ -1,14 +1,15 @@
 import { Request, Response } from 'express'
 import { dbGetProfilesByUserAsync, dbCreateUserProfileAsync, dbUpdateUserProfileAsync, getUserByIdAsync, dbDeleteUserProfileAsync } from '../services/db'
 import { validateSchemaAsync } from '../services/validationService'
-import { ProfileSchema, ProfileCreateSchema, ProfileDeleteSchema } from '../schemas/profileSchema';
-import { Profile, ProfileCreate, ProfileDelete } from '../models/modelSchemas';
+import { ProfileSchema, ProfileCreateSchema, ProfileDeleteSchema } from '../schemas/profileSchema'
+import { Profile, ProfileCreate, ProfileDelete } from '../models/modelSchemas'
 import { Schema } from 'zod'
 
 export async function getUserProfiles(req: Request, res: Response) {
   try {
-    const id = Number(req.params.id);
-    const profiles = await dbGetProfilesByUserAsync(id)
+    const userId = Number(req.params.userId)
+
+    const profiles = await dbGetProfilesByUserAsync(userId)
 
     return res.status((profiles.length === 0) ? 404 : 200).json({
       status: (profiles.length === 0) ? 404 : 200,
@@ -33,7 +34,7 @@ export async function getUserProfiles(req: Request, res: Response) {
 export async function createUserProfile(req: Request, res: Response) {
   try {
 
-    const id = Number(req.params.id);
+    const userId = Number(req.params.userId)
 
     //TODO: Pasar a un middleware de express
     const { success, data, errors } = await validateSchemaAsync<Schema, ProfileCreate>(ProfileCreateSchema, req.body)
@@ -42,12 +43,12 @@ export async function createUserProfile(req: Request, res: Response) {
         status: 400,
         success: false,
         code: 'INVALID_BODY',
-        message: errors?.join(';') || 'Error inesesperado validando datos',
+        message: errors?.join('') || 'Error inesesperado validando datos',
       })
       return
     }
 
-    const user = await getUserByIdAsync(id)
+    const user = await getUserByIdAsync(userId)
     if (!user) {
       return res.status(400).json({
         status: 400,
@@ -58,7 +59,7 @@ export async function createUserProfile(req: Request, res: Response) {
       return
     }
 
-    if (data.userId !== id) {
+    if (data.userId !== userId) {
       res.status(400).json({
         status: 400,
         success: false,
@@ -93,7 +94,9 @@ export async function createUserProfile(req: Request, res: Response) {
 export async function updateUserProfile(req: Request, res: Response) {
   try {
 
-    const id = Number(req.params.id);
+    const userId = Number(req.params.userId)
+    const id = Number(req.params.id)
+
 
     //TODO: Pasar a un middleware de express
     const { success, data, errors } = await validateSchemaAsync<Schema, Profile>(ProfileSchema, req.body)
@@ -102,12 +105,12 @@ export async function updateUserProfile(req: Request, res: Response) {
         status: 400,
         success: false,
         code: 'INVALID_BODY',
-        message: errors?.join(';') || 'Error inesesperado validando datos',
+        message: errors?.join('') || 'Error inesesperado validando datos',
       })
       return
     }
 
-    const user = await getUserByIdAsync(id)
+    const user = await getUserByIdAsync(userId)
     if (!user) {
       return res.status(400).json({
         status: 400,
@@ -118,15 +121,26 @@ export async function updateUserProfile(req: Request, res: Response) {
       return
     }
 
-    if (data.userId !== id) {
+    if (data.id !== id) {
       res.status(400).json({
         status: 400,
         success: false,
-        code: 'INVALID_userId',
+        code: 'INVALID_ID',
+        message: 'Identificadores de ruta no válidos',
+      })
+      return
+    }
+
+    if (data.userId !== userId) {
+      res.status(400).json({
+        status: 400,
+        success: false,
+        code: 'INVALID_USER_ID',
         message: 'El perfil no es un perfil el usuario',
       })
       return
     }
+
 
     const profile = await dbUpdateUserProfileAsync(data)
 
@@ -153,40 +167,23 @@ export async function updateUserProfile(req: Request, res: Response) {
 export async function deleteUserProfile(req: Request, res: Response) {
   try {
 
-    const id = Number(req.params.id);
+    const userId = Number(req.params.userId)
+    const id = Number(req.params.id)
+
+    const profileDeleted = { id: id, userId: userId }
 
     //TODO: Pasar a un middleware de express
-    const { success, data, errors } = await validateSchemaAsync<Schema, ProfileDelete>(ProfileDeleteSchema, req.body)
+    const { success, data, errors } = await validateSchemaAsync<Schema, ProfileDelete>(ProfileCreateSchema, profileDeleted)
     if (!success || data === undefined) {
       res.status(400).json({
         status: 400,
         success: false,
-        code: 'INVALID_BODY',
-        message: errors?.join(';') || 'Error inesesperado validando datos',
+        code: 'INVALID_DELETE_ROUTE',
+        message: errors?.join('') || 'Error inesesperado validando datos',
       })
       return
     }
 
-    const user = await getUserByIdAsync(id)
-    if (!user) {
-      return res.status(400).json({
-        status: 400,
-        success: false,
-        code: 'NOT_FOUND_userId',
-        message: 'El usuario no existe',
-      })
-      return
-    }
-
-    if (data.userId !== id) {
-      res.status(400).json({
-        status: 400,
-        success: false,
-        code: 'INVALID_userId',
-        message: 'El perfil no es un perfil el usuario',
-      })
-      return
-    }
 
     await dbDeleteUserProfileAsync(data)
 
@@ -195,7 +192,7 @@ export async function deleteUserProfile(req: Request, res: Response) {
       success: true,
       code: 'OK',
       message: 'Operación realizada correctamente',
-      data: data,
+      data: profileDeleted,
     })
 
   } catch (error) {

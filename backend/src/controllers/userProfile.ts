@@ -173,7 +173,7 @@ export async function deleteUserProfile(req: Request, res: Response) {
     const profileDeleted = { id: id, userId: userId }
 
     //TODO: Pasar a un middleware de express
-    const { success, data, errors } = await validateSchemaAsync<Schema, ProfileDelete>(ProfileCreateSchema, profileDeleted)
+    const { success, data, errors } = await validateSchemaAsync<Schema, ProfileDelete>(ProfileDeleteSchema, profileDeleted)
     if (!success || data === undefined) {
       res.status(400).json({
         status: 400,

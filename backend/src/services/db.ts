@@ -2,6 +2,8 @@ import { Pool } from 'pg'
 import { UserHashPassword, UserDTO, UserCreate } from '../models/user'
 import { DevResourceCreate, DevResourceDelete, DevResource } from '../models/modelSchemas'
 import { ProfileCreate, ProfileDelete, Profile } from '../models/modelSchemas'
+import { WorkCreate, WorkDelete, Work } from '../models/modelSchemas'
+
 import { hashAsync } from './cryptService'
 
 const pool = new Pool({
@@ -17,6 +19,7 @@ export const dropCreateAndSeedTables = async () => {
 
 
   const dropTables = `
+    DROP TABLE IF EXISTS works;
     DROP TABLE IF EXISTS profiles;
     DROP TABLE IF EXISTS resources;
     DROP TABLE IF EXISTS users;
@@ -29,7 +32,6 @@ export const dropCreateAndSeedTables = async () => {
       console.log('Error inesperado eliminando tablas')
       console.log(err);
     });
-
 
   const usersTable = `CREATE TABLE IF NOT EXISTS
       users(
@@ -114,6 +116,30 @@ export const dropCreateAndSeedTables = async () => {
       console.log('Error inesperado creando tabla: perfiles')
       console.log(err);
     });
+
+  const worksTable = `
+    CREATE TABLE IF NOT EXISTS
+      works(
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER,
+        title VARCHAR(50) NOT NULL,
+        position VARCHAR(50) NOT NULL,
+        description TEXT NOT NULL,
+        start_date DATE NOT NULL, 
+        end_date DATE, 
+        highlights TEXT,
+        FOREIGN KEY (user_id) REFERENCES users(id)
+      )`;
+
+  await pool.query(worksTable)
+    .then(() => {
+      console.log('- tabla works creada');
+    })
+    .catch((err) => {
+      console.log('Error inesperado creando tabla: works')
+      console.log(err);
+    });
+
 };
 
 export const getUserByEmailAsync = async (email: string): Promise<UserHashPassword | null> => {
@@ -345,6 +371,98 @@ export async function dbDeleteUserProfileAsync({ id, userId }: ProfileDelete) {
   }
   catch (error) {
     console.log('Error inesperado eliminando recurso de usuario', error)
+    throw error
+  }
+}
+
+export async function dbCreateUserWorkAsync(work: WorkCreate): Promise<Work> {
+  try {
+
+    const { userId, title, position, description, startDate, endDate } = work
+
+    const queryParams = [userId, title, position, description, startDate, endDate]
+
+    const queryResources = `
+      INSERT INTO works(user_id, title, position, description, start_date, end_date)
+      VALUES ($1, $2, $3, $4, $5, $6) RETURNING id; `
+    const result = await pool.query(queryResources, queryParams)
+
+    const workSaved: Work = {
+      id: result.rows[0].id,
+      ...work
+    }
+
+    return workSaved
+  }
+  catch (error) {
+    console.log('Error inesperado creando puesto de trabajo de usuario', error)
+    throw error
+  }
+}
+
+export async function dbGetWorksByUserAsync(userId: number): Promise<Work[]> {
+  const profilesQuery = 'SELECT id, title, position, description, start_date, end_date FROM works WHERE user_id = $1;'
+  try {
+
+    const result = await pool.query(profilesQuery, [userId])
+    if (!result || !result.rowCount) {
+      return []
+    }
+
+    const works: Work[] = result.rows.map((row) => ({
+      id: row['id'],
+      userId: row['user_id'],
+      title: row['title'],
+      position: row['position'],
+      description: row['description'],
+      startDate: row['start_date'],
+      endDate: row['end_date'],
+    }))
+
+    return works
+  }
+  catch (error) {
+    console.log('Error inesperado recuperando puestos de trabajo', error)
+    throw error
+  }
+}
+
+export async function dbUpdateUserWorkAsync(work: Work): Promise<Work> {
+  try {
+
+    const { id, userId, title, position, description, startDate, endDate } = work
+
+    const queryParams = [id, userId, title, position, description, startDate, endDate]
+
+    const queryWorks = `
+      UPDATE works 
+        SET title = $3, 
+            position = $4, 
+            description = $5, 
+            start_date = $6,
+            end_date = $7
+      WHERE id = $1 
+        AND user_id = $2;`
+
+    await pool.query<Work>(queryWorks, queryParams)
+
+    return work
+
+  }
+  catch (error) {
+    console.log('Error inesperado creando perfil de usuario', error)
+    throw error
+  }
+}
+
+export async function dbDeleteUserWorkAsync({ id, userId }: WorkDelete) {
+  try {
+    const queryParams = [id, userId]
+    const queryResources = 'DELETE FROM works WHERE id = $1 AND user_id = $2;'
+    await pool.query(queryResources, queryParams)
+  }
+  catch (error) {
+    console.log('Error inesperado eliminando puesto de trabajo', error)
     throw error
   }
 }

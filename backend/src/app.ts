@@ -4,6 +4,7 @@ import cors from 'cors'
 import authRoute from './routes/authRoute'
 import userRoute from './routes/userRoute'
 import userProfileRoute from './routes/userProfileRoute'
+import userWorkRoute from './routes/userWorkRoute'
 
 const app = express()
 
@@ -23,5 +24,6 @@ app.use(morgan('combined'))
 app.use('/auth', authRoute)
 app.use('/user', userRoute)
 app.use('/user', userProfileRoute)
+app.use('/user', userWorkRoute)
 
 export default app

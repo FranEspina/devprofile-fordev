@@ -37,7 +37,6 @@ export async function createUserWork(req: Request, res: Response) {
     const userId = Number(req.params.userId)
 
     const formatBody = {
-      id: req.body.id,
       userId: req.body.userId,
       title: req.body.title,
       description: req.body.description,
@@ -107,9 +106,18 @@ export async function updateUserWork(req: Request, res: Response) {
     const userId = Number(req.params.userId)
     const id = Number(req.params.id)
 
+    const formatBody = {
+      id: req.body.id,
+      userId: req.body.userId,
+      title: req.body.title,
+      description: req.body.description,
+      position: req.body.position,
+      startDate: new Date(req.body.startDate),
+      endDate: (req.body.endDate) ? new Date(req.body.endDate) : undefined
+    }
 
     //TODO: Pasar a un middleware de express
-    const { success, data, errors } = await validateSchemaAsync<Schema, Work>(WorkSchema, req.body)
+    const { success, data, errors } = await validateSchemaAsync<Schema, Work>(WorkSchema, formatBody)
     if (!success || data === undefined) {
       res.status(400).json({
         status: 400,

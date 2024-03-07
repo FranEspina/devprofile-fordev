@@ -12,9 +12,20 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { type SelectSingleEventHandler } from 'react-day-picker'
 
-export function DatePicker() {
-  const [date, setDate] = React.useState<Date>()
+
+export interface DatePickerProps {
+  date: Date | undefined,
+  onSelect: SelectSingleEventHandler | undefined
+}
+
+export function DatePicker({ date, onSelect }: DatePickerProps) {
+  // const [date, setDate] = React.useState<Date>()
+
+  const handleClick: SelectSingleEventHandler = (e) => {
+    console.log(e)
+  }
 
   return (
     <Popover>
@@ -34,7 +45,7 @@ export function DatePicker() {
         <Calendar
           mode="single"
           selected={date}
-          onSelect={setDate}
+          onSelect={onSelect}
           initialFocus
         />
       </PopoverContent>

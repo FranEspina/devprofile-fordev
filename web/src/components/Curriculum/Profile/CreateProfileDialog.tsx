@@ -20,6 +20,7 @@ import { useProfileStore } from "@/store/profileStore"
 import { navigate } from "astro/virtual-modules/transitions-router.js"
 import { useRefreshStore } from '@/store/refreshStore'
 import { Plus } from "lucide-react"
+import { validateSchemaAsync } from '@/lib/validations'
 
 export function CreateProfileDialog() {
 
@@ -67,19 +68,9 @@ export function CreateProfileDialog() {
       url: url,
     }
 
-    const parsed = await ProfileCreateSchema.safeParseAsync(formData)
-    if (!parsed.success) {
-      const errors: { [key: string]: string } = {}
-      if (parsed.error instanceof z.ZodError) {
-        parsed.error.errors.forEach((err) => {
-          if (!errors[err.path[0]]) {
-            errors[err.path[0]] = err.message;
-          }
-        });
-      } else {
-        errors['generic'] = parsed.error
-      }
-      setErrors(errors)
+    const validated = await validateSchemaAsync(ProfileCreateSchema, formData)
+    if (!validated.success) {
+      setErrors(validated.errors)
       setLoading(false)
       return
     }

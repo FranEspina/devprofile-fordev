@@ -313,7 +313,7 @@ export async function dbCreateUserProfileAsync(profile: ProfileCreate): Promise<
 }
 
 export async function dbGetProfilesByUserAsync(userId: number): Promise<Profile[]> {
-  const profilesQuery = 'SELECT id, network, username, url FROM profiles WHERE user_id = $1;'
+  const profilesQuery = 'SELECT id, user_id, network, username, url FROM profiles WHERE user_id = $1;'
   try {
 
     const result = await pool.query(profilesQuery, [userId])
@@ -401,7 +401,7 @@ export async function dbCreateUserWorkAsync(work: WorkCreate): Promise<Work> {
 }
 
 export async function dbGetWorksByUserAsync(userId: number): Promise<Work[]> {
-  const profilesQuery = 'SELECT id, title, position, description, start_date, end_date FROM works WHERE user_id = $1;'
+  const profilesQuery = 'SELECT id, user_id, title, position, description, start_date, end_date FROM works WHERE user_id = $1;'
   try {
 
     const result = await pool.query(profilesQuery, [userId])

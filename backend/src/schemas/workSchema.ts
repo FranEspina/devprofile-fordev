@@ -6,8 +6,8 @@ export const WorkSchema = z.object({
   title: z.string({ required_error: 'Título obligatorio' }).min(1, 'Título obligatorio'),
   position: z.string({ required_error: 'Posición obligatoria' }).min(1, 'Posición obligatoria'),
   description: z.string({ required_error: 'Descripción obligatoria' }).min(1, 'Descripción obligatoria'),
-  startDate: z.date({ required_error: 'Fecha desde obligatoria' }),
-  endDate: z.date().optional()
+  startDate: z.string({ required_error: 'Fecha desde obligatoria' }).datetime(),
+  endDate: z.string().datetime().optional()
 })
 
 export const WorkCreateSchema = WorkSchema.omit({

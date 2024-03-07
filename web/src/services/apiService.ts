@@ -255,74 +255,10 @@ export async function createProfileNetwork(profile: ProfileCreate, userId: numbe
   }
 }
 
-export async function deleteProfileNetwork(id: number, userId: number, token: string): Promise<apiResultType<ProfileDelete>> {
-
-  const endpoint = `${API_BASE_URL}/user/${userId}/profile/${id}`
-  const profileIds: ProfileDelete = {
-    id: id, userId: userId
-  }
-  try {
-    const response = await axios.delete(endpoint, authHeader(token))
-    return { success: true, message: 'Perfil eliminado correctamente', data: profileIds }
-  } catch (error) {
-    console.log(error)
-    if (axios.isAxiosError(error)) {
-      console.log(error.message);
-    } else if (error instanceof Error) {
-      console.log('Exception:', error.message);
-    } else if (typeof error === "string") {
-      console.log('Error:', error);
-    } else {
-      console.log('Unknow error:', error);
-    }
-
-    return { success: false, message: 'Error inesperado eliminando perfil', data: profileIds }
-
-  }
-}
-
-export async function updateProfileNetwork(profile: Profile, token: string): Promise<apiResultType<Profile>> {
-
-  const endpoint = `${API_BASE_URL}/user/${profile.userId}/profile/${profile.id}`
-
-  console.log(endpoint)
-  try {
-    const response = await axios.put(endpoint, profile, authHeader(token))
-    console.log(response)
-    const results: apiResponse<Profile> = response.data
-
-    if (results.success === true) {
-      return { success: true, message: 'Perfil actualizado correctamente', data: results.data }
-    }
-    return { success: false, message: 'Error inesperado actualizando perfil' }
-
-  } catch (error) {
-    console.log(error)
-    console.log(axios.isAxiosError(error))
-    if (axios.isAxiosError(error)) {
-      console.log(error.message);
-      if (error.response) {
-        const results: apiResponse<ProfileCreate> = error.response.data
-        if (results) {
-          return { success: false, message: 'Error inesperado actualizando perfil' }
-        }
-      }
-    } else if (error instanceof Error) {
-      console.log('Exception:', error.message);
-    } else if (typeof error === "string") {
-      console.log('Error:', error);
-    } else {
-      console.log('Unknow error:', error);
-    }
-
-    return { success: false, message: 'Error inesperado actualizando perfil' }
-
-  }
-}
-
 export async function createWork(work: WorkCreate, userId: number, token: string): Promise<apiResultType<WorkCreate>> {
   const endpoint = `${API_BASE_URL}/user/${userId}/work`
   try {
+    console.log(work)
     const response = await axios.post(endpoint, work, authHeader(token))
     const results: apiResponse<WorkCreate> = response.data
     if (results.success === true) {
@@ -348,6 +284,106 @@ export async function createWork(work: WorkCreate, userId: number, token: string
     }
 
     return { success: false, message: 'Error inesperado creando puesto' }
+
+  }
+}
+
+export async function getUserSection<T>(section: string, id: number, token: string) {
+  const endpoint = `${API_BASE_URL}/user/${id}/${section}`
+  console.log(endpoint)
+  try {
+    const response = await axios.get(endpoint, authHeader(token))
+    const results: apiResponse<T[]> = response.data
+    if (results.success === true) {
+      return { success: true, message: 'Operación realizada con éxito', data: results.data }
+    }
+    return { success: false, message: results.message }
+  } catch (error) {
+    console.log(error)
+    if (axios.isAxiosError(error)) {
+      console.log('Error axios:', error.message);
+      if (error.response) {
+        const results: apiResponse<T[]> = error.response.data
+        if (results) {
+          return { success: false, message: 'Error inesperado recuperando puestos' }
+        }
+      }
+    } else if (error instanceof Error) {
+      console.log('Exception:', error.message);
+    } else if (typeof error === "string") {
+      console.log('Error:', error);
+    } else {
+      console.log('Unknow error:', error);
+    }
+
+    return { success: false, message: 'Error inesperado recuperando puestos' }
+
+  }
+}
+
+export interface UserSection {
+  id: number,
+  userId: number,
+}
+
+export async function deleteUserSection<T extends UserSection>(sectionName: string, userSection: UserSection, token: string): Promise<apiResultType<ProfileDelete>> {
+
+  const endpoint = `${API_BASE_URL}/user/${userSection.userId}/${sectionName}/${userSection.id}`
+  try {
+    const response = await axios.delete(endpoint, authHeader(token))
+    return { success: true, message: 'Sección eliminada correctamente', data: userSection }
+  } catch (error) {
+    console.log(error)
+    if (axios.isAxiosError(error)) {
+      console.log(error.message);
+    } else if (error instanceof Error) {
+      console.log('Exception:', error.message);
+    } else if (typeof error === "string") {
+      console.log('Error:', error);
+    } else {
+      console.log('Unknow error:', error);
+    }
+
+    return { success: false, message: 'Error inesperado eliminando sección', data: userSection }
+
+  }
+}
+
+export async function updateUserSection<T extends UserSection>(sectionName: string, userSection: T, token: string): Promise<apiResultType<T>> {
+
+  const endpoint = `${API_BASE_URL}/user/${userSection.userId}/${sectionName}/${userSection.id}`
+
+  console.log(endpoint)
+  try {
+    const response = await axios.put(endpoint, userSection, authHeader(token))
+    console.log(response)
+    const results: apiResponse<T> = response.data
+
+    if (results.success === true) {
+      return { success: true, message: 'Sección actualizada correctamente', data: results.data }
+    }
+    return { success: false, message: 'Error inesperado actualizando sección' }
+
+  } catch (error) {
+    console.log(error)
+    console.log(axios.isAxiosError(error))
+    if (axios.isAxiosError(error)) {
+      console.log(error.message);
+      if (error.response) {
+        const results: apiResponse<ProfileCreate> = error.response.data
+        if (results) {
+          return { success: false, message: 'Error inesperado actualizando sección' }
+        }
+      }
+    } else if (error instanceof Error) {
+      console.log('Exception:', error.message);
+    } else if (typeof error === "string") {
+      console.log('Error:', error);
+    } else {
+      console.log('Unknow error:', error);
+    }
+
+    return { success: false, message: 'Error inesperado actualizando sección' }
 
   }
 }

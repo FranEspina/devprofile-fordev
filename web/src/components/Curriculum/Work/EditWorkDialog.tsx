@@ -12,33 +12,73 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from '@/components/ui/textarea'
 import { DatePicker } from "../../ui/DatePicker"
-import { Plus } from 'lucide-react'
-import { useRef, useState, useEffect } from 'react'
+import { Edit } from 'lucide-react'
+import { useRef, useState, useEffect, type ChangeEvent } from 'react'
 import { useProfileStore } from '@/store/profileStore'
-import { type WorkCreate, WorkCreateSchema } from '@/Schemas/workSchema'
+import { type Work, WorkSchema } from '@/Schemas/workSchema'
 import { navigate } from "astro/virtual-modules/transitions-router.js"
 import { useNotify } from '@/hooks/useNotify'
 import { validateSchemaAsync } from '@/lib/validations'
-import { createWork } from '@/services/apiService'
+import { updateUserSection } from '@/services/apiService'
 import { useRefreshStore } from '@/store/refreshStore'
+import { type SelectSingleEventHandler } from 'react-day-picker'
+import { LoadIndicator } from '@/components/LoadIndicator'
 
-export function CreateWorkDialog() {
+export function EditWorkDialog({ work }: { work: Work }) {
   const [loading, setLoading] = useState(false)
   const [isOpen, setIsOpen] = useState<boolean>()
   const { user, token } = useProfileStore(state => state)
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
   const { notifyError, notifySuccess } = useNotify()
-  const [startDate, setStartDate] = useState<Date>()
-  const [endDate, setEndDate] = useState<Date>()
-  const titleInputRef = useRef<HTMLInputElement>(null)
-  const positionInputRef = useRef<HTMLInputElement>(null)
-  const descInputRef = useRef<HTMLTextAreaElement>(null)
   const { setWorkStamp } = useRefreshStore(state => state)
+  const [workState, setWorkState] = useState(work)
+
+  console.log(work)
 
   useEffect(() => {
     setLoading(false)
     setErrors({})
-  }, [])
+
+    //TODO: FIX en servidor que devuelva fechas
+    work.startDate = new Date(work.startDate)
+    if (work.endDate) {
+      work.endDate = new Date(work.endDate)
+    }
+
+    setWorkState(work)
+
+  }, [isOpen])
+
+  const handleChangeTitle = (event: ChangeEvent<HTMLInputElement>) => {
+    const newWork = structuredClone(workState)
+    newWork.title = event.target.value
+    setWorkState(newWork);
+  }
+
+  const handleChangePosition = (event: ChangeEvent<HTMLInputElement>) => {
+    const newWork = structuredClone(workState)
+    newWork.position = event.target.value
+    setWorkState(newWork);
+  }
+
+  const handleChangeDescription = (event: ChangeEvent<HTMLInputElement>) => {
+    const newWork = structuredClone(workState)
+    newWork.description = event.target.value
+    setWorkState(newWork);
+  }
+
+  const handleSelectStart: SelectSingleEventHandler = (day, selectedDay, activeModifiers, e) => {
+    const newWork = structuredClone(workState)
+    newWork.startDate = selectedDay
+    setWorkState(newWork);
+  }
+
+  const handleSelectEnd: SelectSingleEventHandler = (day, selectedDay, activeModifiers, e) => {
+    const newWork = structuredClone(workState)
+    console.log(day)
+    newWork.endDate = day
+    setWorkState(newWork);
+  }
 
   const handleSave = async () => {
     setLoading(true)
@@ -53,28 +93,21 @@ export function CreateWorkDialog() {
       return
     }
 
-    let work: WorkCreate | undefined
+    let work: Work | undefined
 
-    const formData = {
-      userId: user?.id,
-      title: titleInputRef.current?.value,
-      description: descInputRef.current?.value,
-      position: positionInputRef.current?.value,
-      startDate: startDate,
-      endDate: endDate,
-      highlights: []
-    }
-
-    console.log(formData)
+    console.log(workState)
 
     try {
 
-      const validated = await validateSchemaAsync<WorkCreate>(WorkCreateSchema, formData)
+      const validated = await validateSchemaAsync<Work>(WorkSchema, workState)
       if (!validated.success) {
+        console.log(errors)
         setErrors(validated.errors)
         setLoading(false)
         return
       }
+
+      console.log(validated.data)
 
       work = validated.data
 
@@ -90,8 +123,7 @@ export function CreateWorkDialog() {
     }
 
     try {
-      if (!work) return
-      var { success, message, data } = await createWork(work, user.id, token)
+      var { success, message, data } = await updateUserSection<Work>("work", workState, token)
       console.log(success)
       console.log(message)
       if (success) {
@@ -110,7 +142,7 @@ export function CreateWorkDialog() {
     catch (error) {
       console.log(error)
       const errors: { [key: string]: string } = {}
-      errors['generic'] = "Error inesperado creando perfil"
+      errors['generic'] = "Error inesperado actualizando puesto"
       setErrors(errors)
     }
     finally {
@@ -121,13 +153,16 @@ export function CreateWorkDialog() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen} modal defaultOpen={isOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline"><Plus className="mr-1 text-blue-500" />puesto de trabajo</Button>
+        <Button variant="outline">
+          <Edit className="h-3 w-3" />
+          <span className="sr-only">Editar perfil</span>
+        </Button>
       </DialogTrigger>
       <DialogContent className="max-w-[75%]">
         <DialogHeader>
-          <DialogTitle>Añadir puesto de trabajo</DialogTitle>
+          <DialogTitle>Editar puesto de trabajo</DialogTitle>
           <DialogDescription>
-            Añade un nuevo puesto y guarda cambios cuando finalices.
+            Modifica puesto y guarda cambios cuando finalices.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
@@ -135,21 +170,21 @@ export function CreateWorkDialog() {
             <Label htmlFor="title" className="text-right">
               Título
             </Label>
-            <Input ref={titleInputRef} id="title" placeholder="Título del puesto" className="col-span-3" autoComplete="off" />
+            <Input value={workState.title} onChange={handleChangeTitle} id="title" placeholder="Título del puesto" className="col-span-3" autoComplete="off" />
             {errors['title'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['title']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="position" className="text-right">
               Puesto
             </Label>
-            <Input ref={positionInputRef} id="position" placeholder="posición / puesto" className="col-span-3" autoComplete="off" />
+            <Input value={workState.position} onChange={handleChangePosition} id="position" placeholder="posición / puesto" className="col-span-3" autoComplete="off" />
             {errors['position'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['position']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-right">
               Desde
             </Label>
-            <DatePicker date={startDate} onSelect={setStartDate} />
+            <DatePicker date={workState.startDate} onSelect={handleSelectStart} />
             {errors['startDate'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['startDate']}</p>}
 
           </div>
@@ -157,7 +192,7 @@ export function CreateWorkDialog() {
             <Label className="text-right">
               Hasta
             </Label>
-            <DatePicker date={endDate} onSelect={setEndDate} />
+            <DatePicker date={workState.endDate} onSelect={handleSelectEnd} />
             {errors['endDate'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['endDate']}</p>}
 
           </div>
@@ -165,13 +200,14 @@ export function CreateWorkDialog() {
             <Label htmlFor="description" className="text-right">
               Descripción
             </Label>
-            <Textarea ref={descInputRef} id="description" placeholder="Descripción del puesto de trabajo" className="col-span-3" autoComplete="off" />
+            <Textarea id="description" placeholder="Descripción del puesto de trabajo" className="col-span-3" autoComplete="off" />
             {errors['description'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['description']}</p>}
           </div>
         </div>
-        <DialogFooter className="flex flex-row items-center gap-2">
+        <DialogFooter className="flex flex-row items-center justify-end gap-2">
           {errors['generic'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['generic']}</p>}
-          <Button variant="outline" type="submit" onClick={handleSave} disabled={loading}>Crear</Button>
+          <LoadIndicator loading={loading} />
+          <Button variant="outline" type="submit" onClick={handleSave} disabled={loading}>Guardar</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

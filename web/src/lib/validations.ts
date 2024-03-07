@@ -6,14 +6,14 @@ interface validateSchemaAsyncOutput<T> {
   data: T | undefined
 }
 
-export async function validateSchemaAsync<T>(schema: Schema, data: unknown)
-  : Promise<validateSchemaAsyncOutput<T>> {
+export async function validateSchemaAsync<T>(schema: Schema, data: unknown): Promise<validateSchemaAsyncOutput<T>> {
 
   const errors: { [key: string]: string } = {}
   let success: boolean = false
 
   try {
     const parsed = await schema.safeParseAsync(data)
+    console.log(parsed)
     if (!parsed.success) {
       if (parsed.error instanceof z.ZodError) {
         parsed.error.errors.forEach((err) => {

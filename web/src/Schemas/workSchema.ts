@@ -9,7 +9,7 @@ export const WorkSchema = z.object(
     description: z.string({ required_error: 'Es obligatorio informar descripción' }).min(1, 'Descripción obligatoria'),
     startDate: z.date({ required_error: 'Es obligatorio informar fecha desde' }),
     endDate: z.date().optional(),
-    highlights: z.array(z.string())
+    highlights: z.array(z.string()).optional()
   }
 )
 

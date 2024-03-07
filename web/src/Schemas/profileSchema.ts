@@ -23,3 +23,5 @@ export const ProfileDeleteSchema = ProfileSchema.omit({
 export type Profile = z.infer<typeof ProfileSchema>
 export type ProfileCreate = z.infer<typeof ProfileCreateSchema>
 export type ProfileDelete = z.infer<typeof ProfileDeleteSchema>
+
+

@@ -21,12 +21,6 @@ export interface DatePickerProps {
 }
 
 export function DatePicker({ date, onSelect }: DatePickerProps) {
-  // const [date, setDate] = React.useState<Date>()
-
-  const handleClick: SelectSingleEventHandler = (e) => {
-    console.log(e)
-  }
-
   return (
     <Popover>
       <PopoverTrigger asChild>

@@ -16,7 +16,7 @@ import { useEffect, useRef, useState, type ChangeEvent } from "react"
 import { z } from 'astro/zod'
 import type { ClassDictionary } from "clsx"
 import { useNotify } from '@/hooks/useNotify'
-import { updateProfileNetwork } from '@/services/apiService'
+import { updateUserSection } from '@/services/apiService'
 import { useProfileStore } from "@/store/profileStore"
 import { navigate } from "astro/virtual-modules/transitions-router.js"
 import { useRefreshStore } from '@/store/refreshStore'
@@ -105,7 +105,7 @@ export function EditProfileDialog({ profile }: { profile: Profile }) {
     }
 
     try {
-      var { success, message, data } = await updateProfileNetwork(formData, token)
+      var { success, message, data } = await updateUserSection<Profile>("profile", formData, token)
       console.log(success)
       console.log(message)
       if (success) {
@@ -170,7 +170,7 @@ export function EditProfileDialog({ profile }: { profile: Profile }) {
             {errors['url'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['url']}</p>}
           </div>
         </div>
-        <DialogFooter className="flex flex-row items-center gap-2">
+        <DialogFooter className="flex flex-row items-center justify-end gap-2">
           {errors['generic'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['generic']}</p>}
           <LoadIndicator loading={loading} />
           <Button variant="outline" onClick={handleEdit} disabled={loading}>Guardar</Button>

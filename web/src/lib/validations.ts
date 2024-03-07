@@ -1,7 +1,13 @@
 import { type Schema, z } from "astro/zod";
 
+interface validateSchemaAsyncOutput<T> {
+  success: boolean,
+  errors: { [Key: string]: string },
+  data: T | undefined
+}
 
-export async function validateSchemaAsync(schema: Schema, data: unknown) {
+export async function validateSchemaAsync<T>(schema: Schema, data: unknown)
+  : Promise<validateSchemaAsyncOutput<T>> {
 
   const errors: { [key: string]: string } = {}
   let success: boolean = false
@@ -18,14 +24,14 @@ export async function validateSchemaAsync(schema: Schema, data: unknown) {
       } else {
         errors['generic'] = parsed.error
       }
-      return { success: false, errors }
+      return { success: false, errors, data: undefined }
     }
 
-    return { success: true, errors: {} }
+    return { success: true, errors: {}, data: parsed.data }
   }
   catch (error) {
     errors['generic'] = 'Error inesperado validando datos'
-    return { success: false, errors }
+    return { success: false, errors, data: undefined }
   }
 
 }

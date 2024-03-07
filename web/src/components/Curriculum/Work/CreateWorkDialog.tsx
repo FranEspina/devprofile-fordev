@@ -13,30 +13,32 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from '@/components/ui/textarea'
 import { DatePicker } from "../../ui/DatePicker"
 import { Plus } from 'lucide-react'
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { useProfileStore } from '@/store/profileStore'
-import { type UserWorkCreate, UserWorkCreateSchema } from '@/Schemas/workSchema'
+import { type WorkCreate, WorkCreateSchema } from '@/Schemas/workSchema'
 import { navigate } from "astro/virtual-modules/transitions-router.js"
 import { useNotify } from '@/hooks/useNotify'
-import { z } from 'astro/zod'
 import { validateSchemaAsync } from '@/lib/validations'
+import { createWork } from '@/services/apiService'
+import { useRefreshStore } from '@/store/refreshStore'
 
 export function CreateWorkDialog() {
   const [loading, setLoading] = useState(false)
+  const [isOpen, setIsOpen] = useState<boolean>()
   const { user, token } = useProfileStore(state => state)
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
-  const { notifyError } = useNotify()
-
+  const { notifyError, notifySuccess } = useNotify()
   const [startDate, setStartDate] = useState<Date>()
   const [endDate, setEndDate] = useState<Date>()
-
-
-
   const titleInputRef = useRef<HTMLInputElement>(null)
   const positionInputRef = useRef<HTMLInputElement>(null)
   const descInputRef = useRef<HTMLTextAreaElement>(null)
+  const { setWorkStamp } = useRefreshStore(state => state)
 
-
+  useEffect(() => {
+    setLoading(false)
+    setErrors({})
+  }, [])
 
   const handleSave = async () => {
     setLoading(true)
@@ -51,23 +53,28 @@ export function CreateWorkDialog() {
       return
     }
 
-    try {
-      const formData = {
-        userId: user?.id,
-        title: titleInputRef.current?.value,
-        description: descInputRef.current?.value,
-        position: positionInputRef.current?.value,
-        startDate: startDate,
-        endDate: endDate,
-        highlights: []
-      }
+    let work: WorkCreate | undefined
 
-      const validated = await validateSchemaAsync(UserWorkCreateSchema, formData)
+    const formData = {
+      userId: user?.id,
+      title: titleInputRef.current?.value,
+      description: descInputRef.current?.value,
+      position: positionInputRef.current?.value,
+      startDate: startDate,
+      endDate: endDate,
+      highlights: []
+    }
+
+    try {
+
+      const validated = await validateSchemaAsync<WorkCreate>(WorkCreateSchema, formData)
       if (!validated.success) {
         setErrors(validated.errors)
         setLoading(false)
         return
       }
+
+      work = validated.data
 
       setErrors({})
 
@@ -80,14 +87,28 @@ export function CreateWorkDialog() {
       setLoading(false)
     }
 
-
     try {
-      setLoading(true)
-
-
-    } catch (error) {
+      if (!work) return
+      var { success, message, data } = await createWork(work, user.id, token)
+      console.log(success)
+      console.log(message)
+      if (success) {
+        notifySuccess(message)
+        setErrors({})
+        setWorkStamp(Date.now())
+        setIsOpen(false)
+        return
+      }
+      else {
+        const errors: { [key: string]: string } = {}
+        errors['generic'] = message
+        setErrors(errors)
+      }
+    }
+    catch (error) {
+      console.log(error)
       const errors: { [key: string]: string } = {}
-      errors['generic'] = 'Error inesperado guardando cambios'
+      errors['generic'] = "Error inesperado creando perfil"
       setErrors(errors)
     }
     finally {
@@ -95,9 +116,8 @@ export function CreateWorkDialog() {
     }
   }
 
-
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen} modal defaultOpen={isOpen}>
       <DialogTrigger asChild>
         <Button variant="outline"><Plus className="mr-1 text-blue-500" />puesto de trabajo</Button>
       </DialogTrigger>

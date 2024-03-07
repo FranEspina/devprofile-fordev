@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { ProfileCreateSchema } from '@/Schemas/profileSchema'
+import { ProfileCreateSchema, type ProfileCreate } from '@/Schemas/profileSchema'
 import { useEffect, useRef, useState } from "react"
 import { z } from 'astro/zod'
 import { useNotify } from '@/hooks/useNotify'
@@ -68,7 +68,7 @@ export function CreateProfileDialog() {
       url: url,
     }
 
-    const validated = await validateSchemaAsync(ProfileCreateSchema, formData)
+    const validated = await validateSchemaAsync<ProfileCreate>(ProfileCreateSchema, formData)
     if (!validated.success) {
       setErrors(validated.errors)
       setLoading(false)

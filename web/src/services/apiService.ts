@@ -2,6 +2,8 @@ import axios, { AxiosError } from 'axios'
 import type { apiRegisterType, apiResultType, apiLoginType, apiResponse, apiUserDto, apiDevResourceDto, IAuthHeader } from '@/types/apiTypes.ts'
 import type { ResourceRow } from '@/Schemas/resourceSchema'
 import type { ProfileCreate, ProfileDelete, Profile } from '@/Schemas/profileSchema'
+import type { WorkCreate, WorkDelete, Work } from '@/Schemas/workSchema'
+
 
 const API_BASE_URL = 'https://devprofile-fordev-dev-knsf.1.ie-1.fl0.io'
 
@@ -314,6 +316,38 @@ export async function updateProfileNetwork(profile: Profile, token: string): Pro
     }
 
     return { success: false, message: 'Error inesperado actualizando perfil' }
+
+  }
+}
+
+export async function createWork(work: WorkCreate, userId: number, token: string): Promise<apiResultType<WorkCreate>> {
+  const endpoint = `${API_BASE_URL}/user/${userId}/work`
+  try {
+    const response = await axios.post(endpoint, work, authHeader(token))
+    const results: apiResponse<WorkCreate> = response.data
+    if (results.success === true) {
+      return { success: true, message: 'Puesto creado correctamente', data: results.data }
+    }
+    return { success: false, message: results.message }
+  } catch (error) {
+    console.log(error)
+    if (axios.isAxiosError(error)) {
+      console.log(error.message);
+      if (error.response) {
+        const results: apiResponse<WorkCreate> = error.response.data
+        if (results) {
+          return { success: false, message: 'Error inesperado creando puesto' }
+        }
+      }
+    } else if (error instanceof Error) {
+      console.log('Exception:', error.message);
+    } else if (typeof error === "string") {
+      console.log('Error:', error);
+    } else {
+      console.log('Unknow error:', error);
+    }
+
+    return { success: false, message: 'Error inesperado creando puesto' }
 
   }
 }

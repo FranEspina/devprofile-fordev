@@ -1,6 +1,6 @@
 import { z } from 'astro/zod'
 
-export const UserWorkSchema = z.object(
+export const WorkSchema = z.object(
   {
     id: z.number().positive().min(1),
     userId: z.number().positive().min(1),
@@ -13,10 +13,20 @@ export const UserWorkSchema = z.object(
   }
 )
 
-export const UserWorkCreateSchema = UserWorkSchema.omit({
+export const WorkCreateSchema = WorkSchema.omit({
   id: true,
 })
 
-export type UserWork = z.infer<typeof UserWorkSchema>
-export type UserWorkCreate = z.infer<typeof UserWorkCreateSchema>
+export const WorkDeleteSchema = WorkSchema.omit({
+  title: true,
+  position: true,
+  description: true,
+  startDate: true,
+  endDate: true,
+})
+
+export type Work = z.infer<typeof WorkSchema>
+export type WorkCreate = z.infer<typeof WorkCreateSchema>
+export type WorkDelete = z.infer<typeof WorkDeleteSchema>
+
 

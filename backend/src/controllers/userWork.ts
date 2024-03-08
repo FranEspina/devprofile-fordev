@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
-import { dbGetWorksByUserAsync, dbCreateUserWorkAsync, dbUpdateUserWorkAsync, getUserByIdAsync, dbDeleteUserWorkAsync } from '../services/db'
+import { dbGetWorksByUserAsync, dbCreateUserSectionAsync, dbUpdateUserSectionAsync, getUserByIdAsync, dbDeleteUserSectionAsync } from '../services/db'
 import { validateSchemaAsync } from '../services/validationService'
 import { WorkSchema, WorkCreateSchema, WorkDeleteSchema } from '../schemas/workSchema'
-import { Work, WorkCreate, WorkDelete } from '../models/modelSchemas'
+import { UserDeleteSection, Work, WorkCreate, WorkDelete } from '../models/modelSchemas'
 import { Schema } from 'zod'
 
 export async function getUserWorks(req: Request, res: Response) {
@@ -78,14 +78,18 @@ export async function createUserWork(req: Request, res: Response) {
       return
     }
 
-    const work = await dbCreateUserWorkAsync(data)
+    const workId = await dbCreateUserSectionAsync('works', data)
+    const newWork: Work = {
+      id: workId,
+      ...data
+    }
 
     return res.status(201).json({
       status: 201,
       success: true,
       code: 'OK',
       message: 'Operación realizada correctamente',
-      data: work,
+      data: newWork,
     })
 
   } catch (error) {
@@ -159,16 +163,16 @@ export async function updateUserWork(req: Request, res: Response) {
       return
     }
 
-
-    const work = await dbUpdateUserWorkAsync(data)
+    await dbUpdateUserSectionAsync('works', data)
 
     return res.status(200).json({
       status: 200,
       success: true,
       code: 'OK',
       message: 'Operación realizada correctamente',
-      data: work,
+      data: data,
     })
+
 
   } catch (error) {
     console.log(error)
@@ -202,7 +206,13 @@ export async function deleteUserWork(req: Request, res: Response) {
       return
     }
 
-    await dbDeleteUserWorkAsync(data)
+    const section: UserDeleteSection = {
+      tablename: 'works',
+      id: workDeleted.id,
+      userId: workDeleted.userId
+    }
+
+    await dbDeleteUserSectionAsync(section)
 
     res.status(204).json({
       status: 204,

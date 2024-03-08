@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
-import { dbGetProfilesByUserAsync, dbCreateUserProfileAsync, dbUpdateUserProfileAsync, getUserByIdAsync, dbDeleteUserProfileAsync } from '../services/db'
+import { dbGetProfilesByUserAsync, dbCreateUserSectionAsync, dbUpdateUserProfileAsync, getUserByIdAsync, dbDeleteUserSectionAsync } from '../services/db'
 import { validateSchemaAsync } from '../services/validationService'
 import { ProfileSchema, ProfileCreateSchema, ProfileDeleteSchema } from '../schemas/profileSchema'
-import { Profile, ProfileCreate, ProfileDelete } from '../models/modelSchemas'
+import { Profile, ProfileCreate, ProfileDelete, UserDeleteSection } from '../models/modelSchemas'
 import { Schema } from 'zod'
 
 export async function getUserProfiles(req: Request, res: Response) {
@@ -69,14 +69,18 @@ export async function createUserProfile(req: Request, res: Response) {
       return
     }
 
-    const profile = await dbCreateUserProfileAsync(data)
+    const profileId = await dbCreateUserSectionAsync('profiles', data)
+    const newProfile: Profile = {
+      id: profileId,
+      ...data
+    }
 
     return res.status(201).json({
       status: 201,
       success: true,
       code: 'OK',
       message: 'Operación realizada correctamente',
-      data: profile,
+      data: newProfile,
     })
 
   } catch (error) {
@@ -96,7 +100,6 @@ export async function updateUserProfile(req: Request, res: Response) {
 
     const userId = Number(req.params.userId)
     const id = Number(req.params.id)
-
 
     //TODO: Pasar a un middleware de express
     const { success, data, errors } = await validateSchemaAsync<Schema, Profile>(ProfileSchema, req.body)
@@ -184,7 +187,13 @@ export async function deleteUserProfile(req: Request, res: Response) {
       return
     }
 
-    await dbDeleteUserProfileAsync(data)
+    const section: UserDeleteSection = {
+      tablename: 'profiles',
+      id: profileDeleted.id,
+      userId: profileDeleted.userId
+    }
+
+    await dbDeleteUserSectionAsync(section)
 
     res.status(204).json({
       status: 204,

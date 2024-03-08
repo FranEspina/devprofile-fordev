@@ -14,3 +14,9 @@ export type ProfileDelete = z.infer<typeof ProfileDeleteSchema>
 export type Work = z.infer<typeof WorkSchema>;
 export type WorkCreate = z.infer<typeof WorkCreateSchema>
 export type WorkDelete = z.infer<typeof WorkDeleteSchema>
+
+export type UserDeleteSection = {
+  tablename: string,
+  id: number,
+  userId: number
+}

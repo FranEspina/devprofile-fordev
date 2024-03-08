@@ -2,7 +2,10 @@ import { Pool } from 'pg'
 import { UserHashPassword, UserDTO, UserCreate } from '../models/user'
 import { DevResourceCreate, DevResourceDelete, DevResource } from '../models/modelSchemas'
 import { ProfileCreate, ProfileDelete, Profile } from '../models/modelSchemas'
-import { WorkCreate, WorkDelete, Work } from '../models/modelSchemas'
+import { WorkCreate, Work } from '../models/modelSchemas'
+import { UserDeleteSection } from '../models/modelSchemas'
+import { camelToSnakeCase } from '../services/strings'
+//import { QueryResultRow } from 'pg'
 
 import { hashAsync } from './cryptService'
 
@@ -299,30 +302,6 @@ export async function dbDeleteUserResourceAsync({ id, userId }: DevResourceDelet
   }
 }
 
-export async function dbCreateUserProfileAsync(profile: ProfileCreate): Promise<Profile> {
-  try {
-
-    const { userId, network, username, url } = profile
-
-    const queryParams = [userId, network, username, url]
-
-    const queryResources = `
-      INSERT INTO profiles(user_id, network, username, url)
-      VALUES ($1, $2, $3, $4) RETURNING id; `
-    const result = await pool.query(queryResources, queryParams)
-
-    const profileSaved: Profile = {
-      id: result.rows[0].id,
-      ...profile
-    }
-
-    return profileSaved
-  }
-  catch (error) {
-    console.log('Error inesperado creando perfil de usuario', error)
-    throw error
-  }
-}
 
 export async function dbGetProfilesByUserAsync(userId: number): Promise<Profile[]> {
   const profilesQuery = 'SELECT id, user_id, network, username, url FROM profiles WHERE user_id = $1;'
@@ -387,31 +366,6 @@ export async function dbDeleteUserProfileAsync({ id, userId }: ProfileDelete) {
   }
 }
 
-export async function dbCreateUserWorkAsync(work: WorkCreate): Promise<Work> {
-  try {
-
-    const { userId, title, position, description, startDate, endDate } = work
-
-    const queryParams = [userId, title, position, description, startDate, endDate]
-
-    const queryResources = `
-      INSERT INTO works(user_id, title, position, description, start_date, end_date)
-      VALUES ($1, $2, $3, $4, $5::timestamptz, $6::timestamptz) RETURNING id; `
-    const result = await pool.query(queryResources, queryParams)
-
-    const workSaved: Work = {
-      id: result.rows[0].id,
-      ...work
-    }
-
-    return workSaved
-  }
-  catch (error) {
-    console.log('Error inesperado creando puesto de trabajo de usuario', error)
-    throw error
-  }
-}
-
 export async function dbGetWorksByUserAsync(userId: number): Promise<Work[]> {
   const profilesQuery = 'SELECT id, user_id, title, position, description, start_date, end_date FROM works WHERE user_id = $1;'
   try {
@@ -439,42 +393,81 @@ export async function dbGetWorksByUserAsync(userId: number): Promise<Work[]> {
   }
 }
 
-export async function dbUpdateUserWorkAsync(work: Work): Promise<Work> {
+export async function dbDeleteUserSectionAsync(userSection: UserDeleteSection) {
   try {
-
-    const { id, userId, title, position, description, startDate, endDate } = work
-
-    const queryParams = [id, userId, title, position, description, startDate, endDate]
-
-    const queryWorks = `
-      UPDATE works 
-        SET title = $3, 
-            position = $4, 
-            description = $5, 
-            start_date = $6,
-            end_date = $7
-      WHERE id = $1 
-        AND user_id = $2;`
-
-    await pool.query<Work>(queryWorks, queryParams)
-
-    return work
-
+    const queryParams = [userSection.id, userSection.userId]
+    const queryResources = `DELETE FROM ${userSection.tablename} WHERE id = $1 AND user_id = $2;`
+    await pool.query(queryResources, queryParams)
   }
   catch (error) {
-    console.log('Error inesperado creando perfil de usuario', error)
+    console.log(`Error inesperado eliminando sección: ${userSection.tablename}`, error)
     throw error
   }
 }
 
-export async function dbDeleteUserWorkAsync({ id, userId }: WorkDelete) {
+export async function dbUpdateUserSectionAsync<T>(tablename: string, model: T): Promise<number | null> {
   try {
-    const queryParams = [id, userId]
-    const queryResources = 'DELETE FROM works WHERE id = $1 AND user_id = $2;'
-    await pool.query(queryResources, queryParams)
+
+    const queryParams = []
+    const setClause: string[] = []
+    const whereClause: string[] = []
+    let index = 1
+
+    for (const fieldName in model) {
+      if (fieldName === 'id' || fieldName === 'userId') {
+        whereClause.push(`${camelToSnakeCase(fieldName)} = $${index}`)
+      } else {
+        setClause.push(`${camelToSnakeCase(fieldName)} = $${index}`)
+      }
+      queryParams.push(model[fieldName])
+      index++
+    }
+
+    const updateQuery = `UPDATE ${tablename} SET ${setClause.join(', ')} WHERE ${whereClause.join(' AND ')}`
+    const updated = await pool.query(updateQuery, queryParams)
+
+    if (updated.rowCount === 0) {
+      console.log('Actualización de modelo que no existe')
+      console.log(updated)
+      console.log(updateQuery)
+      console.log(queryParams)
+    }
+
+    return updated.rowCount
+
   }
   catch (error) {
-    console.log('Error inesperado eliminando puesto de trabajo', error)
+    console.log('Error inesperado actualizando de usuario', error)
+    throw error
+  }
+}
+
+export async function dbCreateUserSectionAsync<T>(tablename: string, model: T): Promise<number> {
+  try {
+
+    const queryParams = []
+    const fieldsClause: string[] = []
+    const valuesClause: string[] = []
+    let index = 1
+
+    for (const fieldName in model) {
+
+      fieldsClause.push(`${camelToSnakeCase(fieldName)}`)
+      valuesClause.push(`$${index}${(model[fieldName] instanceof Date) ? '::timestamptz' : ''}`)
+      queryParams.push(model[fieldName])
+      index++
+    }
+
+    const queryInsert = `
+      INSERT INTO ${tablename}(${fieldsClause.join(', ')})
+      VALUES (${valuesClause.join(', ')}) RETURNING id; `
+    const result = await pool.query(queryInsert, queryParams)
+
+    return result.rows[0].id
+
+  }
+  catch (error) {
+    console.log('Error inesperado creando puesto de trabajo de usuario', error)
     throw error
   }
 }

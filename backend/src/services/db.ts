@@ -33,6 +33,18 @@ export const dropCreateAndSeedTables = async () => {
       console.log(err);
     });
 
+  const setTimeZoneQuery = `
+    SET TIME ZONE 'Europe/Madrid';
+  `
+  await pool.query(setTimeZoneQuery)
+    .then(() => {
+      console.log('- Establecida zona horaria \'Europe/Madrid\'');
+    })
+    .catch((err) => {
+      console.log('Error estableciendo zona horaria')
+      console.log(err);
+    });
+
   const usersTable = `CREATE TABLE IF NOT EXISTS
       users(
         id SERIAL PRIMARY KEY,
@@ -125,8 +137,8 @@ export const dropCreateAndSeedTables = async () => {
         title VARCHAR(50) NOT NULL,
         position VARCHAR(50) NOT NULL,
         description TEXT NOT NULL,
-        start_date DATE NOT NULL, 
-        end_date DATE, 
+        start_date TIMESTAMPTZ NOT NULL,
+        end_date TIMESTAMPTZ,
         highlights TEXT,
         FOREIGN KEY (user_id) REFERENCES users(id)
       )`;
@@ -384,7 +396,7 @@ export async function dbCreateUserWorkAsync(work: WorkCreate): Promise<Work> {
 
     const queryResources = `
       INSERT INTO works(user_id, title, position, description, start_date, end_date)
-      VALUES ($1, $2, $3, $4, $5, $6) RETURNING id; `
+      VALUES ($1, $2, $3, $4, $5::timestamptz, $6::timestamptz) RETURNING id; `
     const result = await pool.query(queryResources, queryParams)
 
     const workSaved: Work = {

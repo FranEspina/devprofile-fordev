@@ -21,6 +21,7 @@ import { useNotify } from '@/hooks/useNotify'
 import { validateSchemaAsync } from '@/lib/validations'
 import { createWork } from '@/services/apiService'
 import { useRefreshStore } from '@/store/refreshStore'
+import { LoadIndicator } from '@/components/LoadIndicator'
 
 export function CreateWorkDialog() {
   const [loading, setLoading] = useState(false)
@@ -84,8 +85,6 @@ export function CreateWorkDialog() {
       const errors: { [key: string]: string } = {}
       errors['generic'] = 'Error inesperado guardando cambios'
       setErrors(errors)
-    }
-    finally {
       setLoading(false)
     }
 
@@ -171,6 +170,7 @@ export function CreateWorkDialog() {
         </div>
         <DialogFooter className="flex flex-row items-center gap-2">
           {errors['generic'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['generic']}</p>}
+          <LoadIndicator loading={loading} />
           <Button className="text-xs md:text-sm" variant="outline" type="submit" onClick={handleSave} disabled={loading}>Crear</Button>
         </DialogFooter>
       </DialogContent>

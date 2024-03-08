@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Edit, Moon, Trash } from 'lucide-react'
 import { useRefreshStore } from "@/store/refreshStore"
 import { EditWorkDialog } from '@/components/Curriculum/Work/EditWorkDialog'
+import { LoadIndicator } from "@/components/LoadIndicator"
 
 export function WorkList() {
 
@@ -88,9 +89,11 @@ export function WorkList() {
 
   return (
     <section className="my-2">
+      <div className="w-full flex items-center justify-center">
+        <LoadIndicator loading={loading} />
+      </div>
       {!loading && <ul>{works.map(w =>
         <li key={w.id} className="flex flex-row w-full gap-2 items-center">
-
           <p className="flex-1 text-start text-xs md:text-sm">{w.title}</p>
           <Button variant={"outline"} onClick={() => handleDeleteWork(w.id)}>
             <Trash className="h-3 w-3" />
@@ -99,7 +102,7 @@ export function WorkList() {
           <EditWorkDialog work={w} />
         </li>
       )}</ul>}
-      {loading && <p className="text-xs md:text-sm">Cargando ... </p>}
+      <div></div>
     </section>
   )
 }

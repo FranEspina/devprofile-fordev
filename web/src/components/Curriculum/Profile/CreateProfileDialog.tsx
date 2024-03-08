@@ -21,6 +21,7 @@ import { navigate } from "astro/virtual-modules/transitions-router.js"
 import { useRefreshStore } from '@/store/refreshStore'
 import { Plus } from "lucide-react"
 import { validateSchemaAsync } from '@/lib/validations'
+import { LoadIndicator } from '@/components/LoadIndicator'
 
 export function CreateProfileDialog() {
 
@@ -142,6 +143,7 @@ export function CreateProfileDialog() {
         </div>
         <DialogFooter className="flex flex-row items-center gap-2">
           {errors['generic'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['generic']}</p>}
+          <LoadIndicator loading={loading} />
           <Button className="text-xs md:text-sm" variant="outline" onClick={handleCreate} disabled={loading}>Crear</Button>
         </DialogFooter>
       </DialogContent>

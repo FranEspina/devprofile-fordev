@@ -116,10 +116,8 @@ export function EditWorkDialog({ work }: { work: Work }) {
     } catch (error) {
       const errors: { [key: string]: string } = {}
       errors['generic'] = 'Error inesperado guardando cambios'
-      setErrors(errors)
-    }
-    finally {
       setLoading(false)
+      setErrors(errors)
     }
 
     try {

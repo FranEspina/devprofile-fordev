@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Edit, Moon, Trash } from 'lucide-react'
 import { useRefreshStore } from "@/store/refreshStore"
 import { EditProfileDialog } from '@/components/Curriculum/Profile/EditProfileDialog'
+import { LoadIndicator } from '@/components/LoadIndicator'
 
 export function ProfileList() {
 
@@ -88,6 +89,9 @@ export function ProfileList() {
 
   return (
     <section className="my-2">
+      <div className="w-full flex items-center justify-center">
+        <LoadIndicator loading={loading} />
+      </div>
       {!loading && <ul>{profiles.map(p =>
         <li key={p.id} className="flex flex-row w-full gap-2 items-center">
 
@@ -99,7 +103,6 @@ export function ProfileList() {
           <EditProfileDialog profile={p} />
         </li>
       )}</ul>}
-      {loading && <p className="text-xs md:text-sm">Cargando ... </p>}
     </section>
   )
 }

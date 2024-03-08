@@ -85,7 +85,6 @@ const authHeader = (token: string): IAuthHeader => {
 
 export async function getUserProfiles(id: number, token: string) {
   const endpoint = `${API_BASE_URL}/user/${id}/profile`
-  console.log(endpoint)
   try {
     const response = await axios.get(endpoint, authHeader(token))
     const results: apiResponse<Profile[]> = response.data
@@ -118,7 +117,6 @@ export async function getUserProfiles(id: number, token: string) {
 
 export async function getDevUserDevResources(id: number, token: string) {
   const endpoint = `${API_BASE_URL}/user/${id}/resource`
-  console.log(endpoint)
   try {
     const response = await axios.get(endpoint, authHeader(token))
     const results: apiResponse<apiDevResourceDto[]> = response.data
@@ -151,7 +149,6 @@ export async function getDevUserDevResources(id: number, token: string) {
 
 export async function getDevUserDevResourcesRow(id: number, token: string) {
   const endpoint = `${API_BASE_URL}/user/${id}/resource`
-  console.log(endpoint)
   try {
     const response = await axios.get(endpoint, authHeader(token))
     const results: apiResponse<ResourceRow[]> = response.data
@@ -187,7 +184,6 @@ export async function createUserDevResource(resource: apiDevResourceDto, token: 
   console.log(resource)
   const endpoint = `${API_BASE_URL}/user/${resource.userId}/resource`
 
-  console.log(endpoint)
   try {
     const response = await axios.post(endpoint, resource, authHeader(token))
     console.log(response)
@@ -222,7 +218,6 @@ export async function createProfileNetwork(profile: ProfileCreate, userId: numbe
 
   const endpoint = `${API_BASE_URL}/user/${userId}/profile`
 
-  console.log(endpoint)
   try {
     const response = await axios.post(endpoint, profile, authHeader(token))
     console.log(response)
@@ -290,7 +285,6 @@ export async function createWork(work: WorkCreate, userId: number, token: string
 
 export async function getUserSection<T>(section: string, id: number, token: string) {
   const endpoint = `${API_BASE_URL}/user/${id}/${section}`
-  console.log(endpoint)
   try {
     const response = await axios.get(endpoint, authHeader(token))
     const results: apiResponse<T[]> = response.data
@@ -353,10 +347,8 @@ export async function updateUserSection<T extends UserSection>(sectionName: stri
 
   const endpoint = `${API_BASE_URL}/user/${userSection.userId}/${sectionName}/${userSection.id}`
 
-  console.log(endpoint)
   try {
     const response = await axios.put(endpoint, userSection, authHeader(token))
-    console.log(response)
     const results: apiResponse<T> = response.data
 
     if (results.success === true) {

@@ -15,7 +15,7 @@ import { ProfileCreateSchema, type ProfileCreate } from '@/Schemas/profileSchema
 import { useEffect, useRef, useState } from "react"
 import { z } from 'astro/zod'
 import { useNotify } from '@/hooks/useNotify'
-import { createProfileNetwork } from '@/services/apiService'
+import { createUserSection } from '@/services/apiService'
 import { useProfileStore } from "@/store/profileStore"
 import { navigate } from "astro/virtual-modules/transitions-router.js"
 import { useRefreshStore } from '@/store/refreshStore'
@@ -31,7 +31,6 @@ export function CreateProfileDialog() {
   const { notifySuccess } = useNotify()
   const { user, token } = useProfileStore(state => state)
   const { setProfileStamp } = useRefreshStore(state => state)
-
 
   const networkInputRef = useRef<HTMLInputElement>(null)
   const usernameInputRef = useRef<HTMLInputElement>(null)
@@ -77,9 +76,7 @@ export function CreateProfileDialog() {
     }
 
     try {
-      var { success, message, data } = await createProfileNetwork(formData, user.id, token)
-      console.log(success)
-      console.log(message)
+      const { success, message } = await createUserSection<ProfileCreate>("profile", formData, user.id, token)
       if (success) {
         notifySuccess(message)
         setErrors({})

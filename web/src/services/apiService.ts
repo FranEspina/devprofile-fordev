@@ -214,27 +214,23 @@ export async function createUserDevResource(resource: apiDevResourceDto, token: 
   }
 }
 
-export async function createProfileNetwork(profile: ProfileCreate, userId: number, token: string): Promise<apiResultType<ProfileCreate>> {
-
-  const endpoint = `${API_BASE_URL}/user/${userId}/profile`
-
+export async function createUserSection<T>(sectionName: string, userSection: T, userId: number, token: string): Promise<apiResultType<T>> {
+  const endpoint = `${API_BASE_URL}/user/${userId}/${sectionName}`
   try {
-    const response = await axios.post(endpoint, profile, authHeader(token))
-    console.log(response)
-    const results: apiResponse<ProfileCreate> = response.data
+    const response = await axios.post(endpoint, userSection, authHeader(token))
+    const results: apiResponse<T> = response.data
     if (results.success === true) {
-      return { success: true, message: 'Perfil creado correctamente', data: results.data }
+      return { success: true, message: 'Sección creada correctamente', data: results.data }
     }
     return { success: false, message: results.message }
   } catch (error) {
     console.log(error)
-    console.log(axios.isAxiosError(error))
     if (axios.isAxiosError(error)) {
       console.log(error.message);
       if (error.response) {
-        const results: apiResponse<ProfileCreate> = error.response.data
+        const results: apiResponse<T> = error.response.data
         if (results) {
-          return { success: false, message: 'Error inesperado creando perfil' }
+          return { success: false, message: 'Error inesperado creando sección' }
         }
       }
     } else if (error instanceof Error) {
@@ -245,40 +241,7 @@ export async function createProfileNetwork(profile: ProfileCreate, userId: numbe
       console.log('Unknow error:', error);
     }
 
-    return { success: false, message: 'Error inesperado creando perfil' }
-
-  }
-}
-
-export async function createWork(work: WorkCreate, userId: number, token: string): Promise<apiResultType<WorkCreate>> {
-  const endpoint = `${API_BASE_URL}/user/${userId}/work`
-  try {
-    console.log(work)
-    const response = await axios.post(endpoint, work, authHeader(token))
-    const results: apiResponse<WorkCreate> = response.data
-    if (results.success === true) {
-      return { success: true, message: 'Puesto creado correctamente', data: results.data }
-    }
-    return { success: false, message: results.message }
-  } catch (error) {
-    console.log(error)
-    if (axios.isAxiosError(error)) {
-      console.log(error.message);
-      if (error.response) {
-        const results: apiResponse<WorkCreate> = error.response.data
-        if (results) {
-          return { success: false, message: 'Error inesperado creando puesto' }
-        }
-      }
-    } else if (error instanceof Error) {
-      console.log('Exception:', error.message);
-    } else if (typeof error === "string") {
-      console.log('Error:', error);
-    } else {
-      console.log('Unknow error:', error);
-    }
-
-    return { success: false, message: 'Error inesperado creando puesto' }
+    return { success: false, message: 'Error inesperado creando sección' }
 
   }
 }

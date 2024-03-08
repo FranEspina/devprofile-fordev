@@ -19,7 +19,7 @@ import { type WorkCreate, WorkCreateSchema } from '@/Schemas/workSchema'
 import { navigate } from "astro/virtual-modules/transitions-router.js"
 import { useNotify } from '@/hooks/useNotify'
 import { validateSchemaAsync } from '@/lib/validations'
-import { createWork } from '@/services/apiService'
+import { createUserSection } from '@/services/apiService'
 import { useRefreshStore } from '@/store/refreshStore'
 import { LoadIndicator } from '@/components/LoadIndicator'
 
@@ -66,8 +66,6 @@ export function CreateWorkDialog() {
       highlights: []
     }
 
-    console.log(formData)
-
     try {
 
       const validated = await validateSchemaAsync<WorkCreate>(WorkCreateSchema, formData)
@@ -90,9 +88,7 @@ export function CreateWorkDialog() {
 
     try {
       if (!work) return
-      var { success, message, data } = await createWork(work, user.id, token)
-      console.log(success)
-      console.log(message)
+      const { success, message } = await createUserSection<WorkCreate>("work", work, user.id, token)
       if (success) {
         notifySuccess(message)
         setErrors({})

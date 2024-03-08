@@ -42,3 +42,4 @@ export const ResourceRowSchema = ResourceSchema.omit({
 
 export type ResourceRow = z.infer<typeof ResourceRowSchema>
 
+export type ResourceCreate = z.infer<typeof ResourceCreateSchema>

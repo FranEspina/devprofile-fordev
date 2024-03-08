@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useState, useRef } from "react"
 import type { Profile } from '@/Schemas/profileSchema'
 import { useProfileStore } from "@/store/profileStore"
 import { useNotify } from "@/hooks/useNotify"
@@ -9,6 +9,7 @@ import { Edit, Moon, Trash } from 'lucide-react'
 import { useRefreshStore } from "@/store/refreshStore"
 import { EditProfileDialog } from '@/components/Curriculum/Profile/EditProfileDialog'
 import { LoadIndicator } from '@/components/LoadIndicator'
+import { AlertDialogPrompt } from '@/components/AlertDialogPrompt'
 
 export function ProfileList() {
 
@@ -17,6 +18,8 @@ export function ProfileList() {
   const [loading, setLoading] = useState(false)
   const { notifyError, notifySuccess } = useNotify()
   const { profileStamp, setProfileStamp } = useRefreshStore(state => state)
+  const [isOpenAlert, setIsOpenAlert] = useState(false)
+  const deleteRef = useRef(() => undefined);
 
   useEffect(() => {
 
@@ -49,6 +52,15 @@ export function ProfileList() {
       .finally(() => setLoading(false))
 
   }, [token, user, profileStamp])
+
+
+  const alertDelete = (id: number) => {
+    console.log('dentro')
+    deleteRef.current = () => {
+      handleDeleteProfile(id)
+    };
+    setIsOpenAlert(true)
+  }
 
   const handleDeleteProfile = (id: number) => {
 
@@ -96,13 +108,14 @@ export function ProfileList() {
         <li key={p.id} className="flex flex-row w-full gap-2 items-center">
 
           <p className="flex-1 text-start text-xs md:text-sm">{p.network}</p>
-          <Button variant={"outline"} onClick={() => handleDeleteProfile(p.id)}>
+          <Button variant={"outline"} onClick={() => alertDelete(p.id)}>
             <Trash className="h-3 w-3" />
             <span className="sr-only">Eliminar perfil</span>
           </Button>
           <EditProfileDialog profile={p} />
         </li>
       )}</ul>}
+      <AlertDialogPrompt open={isOpenAlert} setOpen={setIsOpenAlert} onActionClick={deleteRef.current} />
     </section>
   )
 }

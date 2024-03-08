@@ -33,8 +33,6 @@ export function EditWorkDialog({ work }: { work: Work }) {
   const { setWorkStamp } = useRefreshStore(state => state)
   const [workState, setWorkState] = useState(work)
 
-  console.log(work)
-
   useEffect(() => {
     setLoading(false)
     setErrors({})
@@ -106,9 +104,6 @@ export function EditWorkDialog({ work }: { work: Work }) {
         setLoading(false)
         return
       }
-
-      console.log(validated.data)
-
       work = validated.data
 
       setErrors({})

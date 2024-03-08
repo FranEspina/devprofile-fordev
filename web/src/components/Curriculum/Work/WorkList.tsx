@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useState, useCallback, useRef } from "react"
 import type { Work } from '@/Schemas/workSchema'
 import { useProfileStore } from "@/store/profileStore"
 import { useNotify } from "@/hooks/useNotify"
@@ -9,6 +9,7 @@ import { Edit, Moon, Trash } from 'lucide-react'
 import { useRefreshStore } from "@/store/refreshStore"
 import { EditWorkDialog } from '@/components/Curriculum/Work/EditWorkDialog'
 import { LoadIndicator } from "@/components/LoadIndicator"
+import { AlertDialogPrompt } from '@/components/AlertDialogPrompt'
 
 export function WorkList() {
 
@@ -17,6 +18,8 @@ export function WorkList() {
   const [loading, setLoading] = useState(false)
   const { notifyError, notifySuccess } = useNotify()
   const { workStamp, setWorkStamp } = useRefreshStore(state => state)
+  const [isOpenAlert, setIsOpenAlert] = useState(false)
+  const deleteRef = useRef(() => undefined);
 
   useEffect(() => {
 
@@ -50,9 +53,16 @@ export function WorkList() {
 
   }, [token, user, workStamp])
 
-  const handleDeleteWork = (id: number) => {
 
-    console.log(id)
+  const alertDelete = (id: number) => {
+    console.log('dentro')
+    deleteRef.current = () => {
+      handleDeleteWork(id)
+    };
+    setIsOpenAlert(true)
+  }
+
+  const handleDeleteWork = (id: number) => {
     if (token === 'not-loaded') {
       return
     }
@@ -95,14 +105,14 @@ export function WorkList() {
       {!loading && <ul>{works.map(w =>
         <li key={w.id} className="flex flex-row w-full gap-2 items-center">
           <p className="flex-1 text-start text-xs md:text-sm">{w.title}</p>
-          <Button variant={"outline"} onClick={() => handleDeleteWork(w.id)}>
+          <Button variant={"outline"} onClick={() => alertDelete(w.id)}>
             <Trash className="h-3 w-3" />
             <span className="sr-only">Eliminar perfil</span>
           </Button>
           <EditWorkDialog work={w} />
         </li>
       )}</ul>}
-      <div></div>
+      <AlertDialogPrompt open={isOpenAlert} setOpen={setIsOpenAlert} onActionClick={deleteRef.current} />
     </section>
   )
 }

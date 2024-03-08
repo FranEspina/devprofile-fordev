@@ -13,7 +13,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { type SelectSingleEventHandler } from 'react-day-picker'
-
+import { es } from 'date-fns/locale';
 
 export interface DatePickerProps {
   date: Date | undefined,
@@ -27,7 +27,7 @@ export function DatePicker({ date, onSelect }: DatePickerProps) {
         <Button
           variant={"outline"}
           className={cn(
-            "w-[240px] justify-start text-left font-normal",
+            "w-[240px] justify-start text-left font-normal text-xs md:text-sm",
             !date && "text-muted-foreground"
           )}
         >
@@ -36,7 +36,8 @@ export function DatePicker({ date, onSelect }: DatePickerProps) {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
-        <Calendar
+        <Calendar weekStartsOn={1} locale={es}
+          className="text-xs md:text-sm"
           mode="single"
           selected={date}
           onSelect={onSelect}

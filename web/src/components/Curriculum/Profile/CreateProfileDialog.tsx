@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogClose
+  DialogOverlay
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -106,11 +106,11 @@ export function CreateProfileDialog() {
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen} modal defaultOpen={isOpen}>
+    <Dialog open={isOpen} onOpenChange={setIsOpen} modal={true} defaultOpen={isOpen} >
       <DialogTrigger asChild>
-        <Button variant="outline"><Plus className="mr-1 text-blue-500" />perfil social</Button>
+        <Button className="text-xs md:text-sm" variant="outline"><Plus className="mr-1 text-blue-500" />perfil social</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px]" onInteractOutside={(e) => { e.preventDefault() }}>
         <DialogHeader>
           <DialogTitle>Añadir perfil público</DialogTitle>
           <DialogDescription>
@@ -119,30 +119,30 @@ export function CreateProfileDialog() {
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="network" className="text-right">
+            <Label htmlFor="network" className="text-right text-xs md:text-sm">
               Red Social
             </Label>
-            <Input ref={networkInputRef} id="network" placeholder="nombre" className="col-span-3" autoComplete="off" />
+            <Input ref={networkInputRef} id="network" placeholder="nombre" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['network'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['network']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="username" className="text-right">
+            <Label htmlFor="username" className="text-right text-xs md:text-sm">
               Usuario
             </Label>
-            <Input ref={usernameInputRef} id="username" placeholder="username" className="col-span-3" autoComplete="off" />
+            <Input ref={usernameInputRef} id="username" placeholder="username" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['username'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['username']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="link" className="text-right">
+            <Label htmlFor="link" className="text-right text-xs md:text-sm">
               Usuario
             </Label>
-            <Input ref={urlInputRef} id="url" placeholder="https://..." className="col-span-3" />
+            <Input ref={urlInputRef} id="url" placeholder="https://..." className="col-span-3 text-xs md:text-sm" />
             {errors['url'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['url']}</p>}
           </div>
         </div>
         <DialogFooter className="flex flex-row items-center gap-2">
           {errors['generic'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['generic']}</p>}
-          <Button variant="outline" onClick={handleCreate} disabled={loading}>Crear</Button>
+          <Button className="text-xs md:text-sm" variant="outline" onClick={handleCreate} disabled={loading}>Crear</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

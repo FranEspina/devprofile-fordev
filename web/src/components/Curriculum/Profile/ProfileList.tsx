@@ -91,7 +91,7 @@ export function ProfileList() {
       {!loading && <ul>{profiles.map(p =>
         <li key={p.id} className="flex flex-row w-full gap-2 items-center">
 
-          <p className="flex-1 text-start">{p.network}</p>
+          <p className="flex-1 text-start text-xs md:text-sm">{p.network}</p>
           <Button variant={"outline"} onClick={() => handleDeleteProfile(p.id)}>
             <Trash className="h-3 w-3" />
             <span className="sr-only">Eliminar perfil</span>
@@ -99,7 +99,7 @@ export function ProfileList() {
           <EditProfileDialog profile={p} />
         </li>
       )}</ul>}
-      {loading && <p>Cargando ... </p>}
+      {loading && <p className="text-xs md:text-sm">Cargando ... </p>}
     </section>
   )
 }

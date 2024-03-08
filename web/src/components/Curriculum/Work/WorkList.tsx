@@ -91,7 +91,7 @@ export function WorkList() {
       {!loading && <ul>{works.map(w =>
         <li key={w.id} className="flex flex-row w-full gap-2 items-center">
 
-          <p className="flex-1 text-start">{w.title}</p>
+          <p className="flex-1 text-start text-xs md:text-sm">{w.title}</p>
           <Button variant={"outline"} onClick={() => handleDeleteWork(w.id)}>
             <Trash className="h-3 w-3" />
             <span className="sr-only">Eliminar perfil</span>
@@ -99,7 +99,7 @@ export function WorkList() {
           <EditWorkDialog work={w} />
         </li>
       )}</ul>}
-      {loading && <p>Cargando ... </p>}
+      {loading && <p className="text-xs md:text-sm">Cargando ... </p>}
     </section>
   )
 }

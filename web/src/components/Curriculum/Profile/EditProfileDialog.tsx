@@ -140,40 +140,40 @@ export function EditProfileDialog({ profile }: { profile: Profile }) {
           <span className="sr-only">Editar perfil</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] " onInteractOutside={(e) => { e.preventDefault() }}>
         <DialogHeader>
           <DialogTitle>Editar perfil público</DialogTitle>
           <DialogDescription>
             Modifica y guarda cambios cuando finalices.
           </DialogDescription>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
+        <div className="grid gap-4 py-4 ">
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="network" className="text-right">
+            <Label htmlFor="network" className="text-right text-xs md:text-sm">
               Red Social
             </Label>
-            <Input ref={networkInputRef} value={profileState.network} onChange={handleChangeNetwork} id="network" placeholder="nombre" className="col-span-3" autoComplete="off" />
+            <Input ref={networkInputRef} value={profileState.network} onChange={handleChangeNetwork} id="network" placeholder="nombre" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['network'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['network']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="username" className="text-right">
+            <Label htmlFor="username" className="text-right text-xs md:text-sm">
               Usuario
             </Label>
-            <Input ref={usernameInputRef} value={profileState.username} onChange={handleChangeUsername} id="username" placeholder="username" className="col-span-3" autoComplete="off" />
+            <Input ref={usernameInputRef} value={profileState.username} onChange={handleChangeUsername} id="username" placeholder="username" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['username'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['username']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="link" className="text-right">
+            <Label htmlFor="link" className="text-right text-xs md:text-s">
               Usuario
             </Label>
-            <Input ref={urlInputRef} value={profileState.url} onChange={handleChangeUrl} id="url" placeholder="https://..." className="col-span-3" />
+            <Input ref={urlInputRef} value={profileState.url} onChange={handleChangeUrl} id="url" placeholder="https://..." className="col-span-3 text-xs md:text-sm" />
             {errors['url'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['url']}</p>}
           </div>
         </div>
         <DialogFooter className="flex flex-row items-center justify-end gap-2">
           {errors['generic'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['generic']}</p>}
           <LoadIndicator loading={loading} />
-          <Button variant="outline" onClick={handleEdit} disabled={loading}>Guardar</Button>
+          <Button className="text-xs md:text-sm" variant="outline" onClick={handleEdit} disabled={loading}>Guardar</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

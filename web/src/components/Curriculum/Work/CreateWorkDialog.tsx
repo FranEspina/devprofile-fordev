@@ -121,9 +121,9 @@ export function CreateWorkDialog() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen} modal defaultOpen={isOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline"><Plus className="mr-1 text-blue-500" />puesto de trabajo</Button>
+        <Button className="text-xs md:text-sm" variant="outline"><Plus className="mr-1 text-blue-500" />puesto de trabajo</Button>
       </DialogTrigger>
-      <DialogContent className="max-w-[75%]">
+      <DialogContent className="max-w-[75%]" onInteractOutside={(e) => { e.preventDefault() }}>
         <DialogHeader>
           <DialogTitle>Añadir puesto de trabajo</DialogTitle>
           <DialogDescription>
@@ -132,21 +132,21 @@ export function CreateWorkDialog() {
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="title" className="text-right">
+            <Label htmlFor="title" className="text-right text-xs md:text-sm">
               Título
             </Label>
-            <Input ref={titleInputRef} id="title" placeholder="Título del puesto" className="col-span-3" autoComplete="off" />
+            <Input ref={titleInputRef} id="title" placeholder="Título del puesto" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['title'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['title']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="position" className="text-right">
+            <Label htmlFor="position" className="text-right text-xs md:text-sm">
               Puesto
             </Label>
-            <Input ref={positionInputRef} id="position" placeholder="posición / puesto" className="col-span-3" autoComplete="off" />
+            <Input ref={positionInputRef} id="position" placeholder="posición / puesto" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['position'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['position']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right">
+            <Label className="text-right text-xs md:text-sm">
               Desde
             </Label>
             <DatePicker date={startDate} onSelect={setStartDate} />
@@ -154,7 +154,7 @@ export function CreateWorkDialog() {
 
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right">
+            <Label className="text-right text-xs md:text-sm">
               Hasta
             </Label>
             <DatePicker date={endDate} onSelect={setEndDate} />
@@ -162,16 +162,16 @@ export function CreateWorkDialog() {
 
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="description" className="text-right">
+            <Label htmlFor="description" className="text-right text-xs md:text-sm">
               Descripción
             </Label>
-            <Textarea ref={descInputRef} id="description" placeholder="Descripción del puesto de trabajo" className="col-span-3" autoComplete="off" />
+            <Textarea ref={descInputRef} id="description" placeholder="Descripción del puesto de trabajo" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['description'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['description']}</p>}
           </div>
         </div>
         <DialogFooter className="flex flex-row items-center gap-2">
           {errors['generic'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['generic']}</p>}
-          <Button variant="outline" type="submit" onClick={handleSave} disabled={loading}>Crear</Button>
+          <Button className="text-xs md:text-sm" variant="outline" type="submit" onClick={handleSave} disabled={loading}>Crear</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

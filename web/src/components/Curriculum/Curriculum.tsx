@@ -9,7 +9,7 @@ export function CurriculumView() {
 
   return (<section className="w-full ">
     <header>
-      <h2 className="text-left">Secciones del Curriculum</h2>
+      <h2 className="text-left text-sm md:text-base">Secciones del Curriculum</h2>
     </header>
     < div className="mt-2 w-full flex flex-col md:grid md:grid-cols-2 gap-4" >
       <div className="flex flex-col justify-start gap-1">

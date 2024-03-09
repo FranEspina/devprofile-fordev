@@ -1,6 +1,6 @@
 import { z } from 'astro/zod'
 
-export const WorkSchema = z.object(
+export const WorkBaseSchema = z.object(
   {
     id: z.number().positive().min(1),
     userId: z.number().positive().min(1),
@@ -13,11 +13,23 @@ export const WorkSchema = z.object(
   }
 )
 
-export const WorkCreateSchema = WorkSchema.omit({
-  id: true,
-})
 
-export const WorkDeleteSchema = WorkSchema.omit({
+export const WorkSchema = WorkBaseSchema
+  .refine(p => (!p.endDate || (p.endDate && p.endDate > p.startDate)),
+    {
+      message: "La fecha fin debe ser mayor o igual que la fecha inicio",
+      path: ['endDate']
+    })
+
+export const WorkCreateSchema = WorkBaseSchema.omit({
+  id: true,
+}).refine(p => (!p.endDate || (p.endDate && p.endDate > p.startDate)),
+  {
+    message: "La fecha fin debe ser mayor o igual que la fecha inicio",
+    path: ['endDate']
+  })
+
+export const WorkDeleteSchema = WorkBaseSchema.omit({
   title: true,
   position: true,
   description: true,

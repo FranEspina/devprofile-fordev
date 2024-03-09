@@ -1,6 +1,6 @@
 import { z } from 'astro/zod'
 
-export const ProjectSchema = z.object(
+const ProjectBaseSchema = z.object(
   {
     id: z.number({ required_error: 'Identificador del perfil obligatorio' }),
     userId: z.number({ required_error: 'Identificador del usuario obligatorio' }),
@@ -17,11 +17,22 @@ export const ProjectSchema = z.object(
   }
 )
 
-export const ProjectCreateSchema = ProjectSchema.omit({
-  id: true,
-})
+export const ProjectSchema = ProjectBaseSchema
+  .refine(p => (!p.endDate || (p.endDate && p.endDate > p.startDate)),
+    {
+      message: "La fecha fin debe ser mayor o igual que la fecha inicio",
+      path: ['endDate']
+    })
 
-export const ProjectDeleteSchema = ProjectSchema.omit({
+export const ProjectCreateSchema = ProjectBaseSchema.omit({
+  id: true,
+}).refine(p => (!p.endDate || (p.endDate && p.endDate > p.startDate)),
+  {
+    message: "La fecha fin debe ser mayor o igual que la fecha inicio",
+    path: ['endDate']
+  })
+
+export const ProjectDeleteSchema = ProjectBaseSchema.omit({
   name: true,
   description: true,
   startDate: true,

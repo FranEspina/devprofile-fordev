@@ -4,7 +4,7 @@ import { DevResourceCreate, DevResourceDelete, DevResource } from '../models/mod
 import { ProfileDelete, Profile } from '../models/modelSchemas'
 import { Work } from '../models/modelSchemas'
 import { UserDeleteSection } from '../models/modelSchemas'
-import { camelToSnakeCase } from '../services/strings'
+import { camelToSnakeCase, snakeToCamelCase } from '../services/strings'
 //import { QueryResultRow } from 'pg'
 
 
@@ -328,6 +328,44 @@ export async function dbCreateUserSectionAsync<T>(tablename: string, model: T): 
   }
   catch (error) {
     console.log('Error inesperado creando puesto de trabajo de usuario', error)
+    throw error
+  }
+}
+
+
+function updateObject<T>(obj: T, key: keyof T, value: unknown): T {
+  return { ...obj, [key]: value };
+}
+
+export async function dbGetUserSectionByUserAsync<T extends { [key: string]: unknown }>(tablename: string, userId: number): Promise<T[]> {
+  const userSectionQuery = `SELECT * FROM ${tablename} WHERE user_id = $1 order by id asc;`
+  try {
+
+    //TODO: Crear todos los modelos tanto de BBDD como de los DTO de la API
+    //No queremos tener dos clases, una para los controladores (camelCase) y otra para la bbdd (snake_case)
+    //const result = await pool.query<T>(userSectionQuery, [userId])
+    const result = await pool.query(userSectionQuery, [userId])
+    if (!result || !result.rowCount) {
+      return []
+    }
+
+    //TODO eliminar cuando existan los modelos
+    const sections: T[] = []
+    for (let indexRow = 0; indexRow < result.rows.length; indexRow++) {
+      const row = result.rows[indexRow]
+      let section: T = {} as T
+
+      for (let index = 0; index < result.fields.length; index++) {
+        const field = result.fields[index];
+        const name: string = field['name']
+        section = updateObject(section, snakeToCamelCase(name), row[name])
+      }
+      sections.push(section)
+    }
+    return sections
+  }
+  catch (error) {
+    console.log(`Error inesperado recuperando sección de usuario: '${tablename}'`, error)
     throw error
   }
 }

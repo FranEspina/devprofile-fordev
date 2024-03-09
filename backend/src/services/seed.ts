@@ -15,6 +15,7 @@ export const dropCreateAndSeedTables = async () => {
   if (process.env.DB_MIGRATE_DROP_TABLES === 'true') {
     console.log('- Configuración de Eliminación de tablas activada ');
     const dropTables = `
+      DROP TABLE IF EXISTS projects;
       DROP TABLE IF EXISTS works;
       DROP TABLE IF EXISTS profiles;
       DROP TABLE IF EXISTS resources;
@@ -148,6 +149,33 @@ export const dropCreateAndSeedTables = async () => {
     })
     .catch((err) => {
       console.log('Error inesperado creando tabla: works')
+      console.log(err);
+    });
+
+  const projectsTable = `
+    CREATE TABLE IF NOT EXISTS
+      projects(
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER,
+        name VARCHAR(50) NOT NULL,
+        description TEXT NOT NULL,
+        highlights TEXT,
+        keywords TEXT,
+        start_date TIMESTAMPTZ NOT NULL,
+        end_date TIMESTAMPTZ,
+        url VARCHAR(250) NOT NULL,
+        roles TEXT,
+        entity VARCHAR(250),
+        type VARCHAR(250),
+        FOREIGN KEY (user_id) REFERENCES users(id)
+      )`;
+
+  await pool.query(projectsTable)
+    .then(() => {
+      console.log('- tabla projects creada');
+    })
+    .catch((err) => {
+      console.log('Error inesperado creando tabla: projects')
       console.log(err);
     });
 

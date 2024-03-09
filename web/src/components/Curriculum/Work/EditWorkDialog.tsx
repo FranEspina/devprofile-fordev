@@ -92,9 +92,6 @@ export function EditWorkDialog({ work }: { work: Work }) {
     }
 
     let work: Work | undefined
-
-    console.log(workState)
-
     try {
 
       const validated = await validateSchemaAsync<Work>(WorkSchema, workState)

@@ -4,7 +4,9 @@ interface refreshState {
   profileStamp: number,
   setProfileStamp: (profileStamp: number) => void,
   workStamp: number,
-  setWorkStamp: (workStamp: number) => void
+  setWorkStamp: (workStamp: number) => void,
+  projectStamp: number,
+  setProjectStamp: (projectStamp: number) => void
 }
 
 export const useRefreshStore = create<refreshState>()(
@@ -14,6 +16,8 @@ export const useRefreshStore = create<refreshState>()(
       setProfileStamp: (profileStamp: number) => set({ profileStamp }),
       workStamp: 0,
       setWorkStamp: (workStamp: number) => set({ workStamp }),
+      projectStamp: 0,
+      setProjectStamp: (projectStamp: number) => set({ projectStamp }),
     }
   }
 )

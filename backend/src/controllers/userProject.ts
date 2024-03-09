@@ -1,24 +1,25 @@
 import { Request, Response } from 'express'
 import { dbGetUserSectionByUserAsync, dbCreateUserSectionAsync, dbUpdateUserSectionAsync, getUserByIdAsync, dbDeleteUserSectionAsync } from '../services/db'
 import { validateSchemaAsync } from '../services/validationService'
-import { WorkSchema, WorkCreateSchema, WorkDeleteSchema } from '../schemas/workSchema'
-import { UserDeleteSection, Work, WorkCreate, WorkDelete } from '../models/modelSchemas'
+import { ProjectSchema, ProjectCreateSchema, ProjectDeleteSchema } from '../schemas/projectSchema'
+import { UserDeleteSection, Project, ProjectCreate, ProjectDelete } from '../models/modelSchemas'
 import { Schema } from 'zod'
 
-export async function getUserWorks(req: Request, res: Response) {
+const TABLE_NAME: string = 'projects'
+const TABLE_DESC: string = 'proyectos'
+
+export async function getUserProjects(req: Request, res: Response) {
   try {
     const userId = Number(req.params.userId)
 
-    console.log('dentro')
+    const rows = await dbGetUserSectionByUserAsync<Project>(TABLE_NAME, userId)
 
-    const works = await dbGetUserSectionByUserAsync<Work>('works', userId)
-
-    return res.status((works.length === 0) ? 404 : 200).json({
-      status: (works.length === 0) ? 404 : 200,
+    return res.status((rows.length === 0) ? 404 : 200).json({
+      status: (rows.length === 0) ? 404 : 200,
       success: true,
-      code: (works.length === 0) ? 'NOT_FOUND_GET_USER_WORKS' : 'OK',
-      message: (works.length === 0) ? 'No existen datos' : 'Operación realizada correctamente',
-      data: works,
+      code: (rows.length === 0) ? `NOT_FOUND_GET_USER_${TABLE_NAME.toUpperCase()}` : 'OK',
+      message: (rows.length === 0) ? 'No existen datos' : 'Operación realizada correctamente',
+      data: rows,
     })
 
   } catch (error) {
@@ -26,29 +27,34 @@ export async function getUserWorks(req: Request, res: Response) {
     return res.status(500).json({
       status: 500,
       success: true,
-      code: 'UNEXPECTED_ERROR_GET_USER_WORKS',
-      message: 'Error inesperado recuperando puestoes',
+      code: `UNEXPECTED_ERROR_GET_USER_${TABLE_NAME.toUpperCase()}`,
+      message: `Error inesperado recuperando ${TABLE_DESC}`,
       data: null,
     })
   }
 }
 
-export async function createUserWork(req: Request, res: Response) {
+export async function createUserProject(req: Request, res: Response) {
   try {
 
     const userId = Number(req.params.userId)
 
     const formatBody = {
       userId: req.body.userId,
-      title: req.body.title,
+      name: req.body.name,
       description: req.body.description,
-      position: req.body.position,
+      highlights: req.body.highlights,
+      keywords: req.body.highlights,
       startDate: new Date(req.body.startDate),
-      endDate: (req.body.endDate) ? new Date(req.body.endDate) : undefined
+      endDate: (req.body.endDate) ? new Date(req.body.endDate) : undefined,
+      url: req.body.url,
+      roles: req.body.roles,
+      entity: req.body.entity,
+      type: req.body.type,
     }
 
     //TODO: Pasar a un middleware de express
-    const { success, data, errors } = await validateSchemaAsync<Schema, WorkCreate>(WorkCreateSchema, formatBody)
+    const { success, data, errors } = await validateSchemaAsync<Schema, ProjectCreate>(ProjectCreateSchema, formatBody)
     if (!success || data === undefined) {
       res.status(400).json({
         status: 400,
@@ -75,14 +81,14 @@ export async function createUserWork(req: Request, res: Response) {
         status: 400,
         success: false,
         code: 'INVALID_userId',
-        message: 'El puesto no es un puesto el usuario',
+        message: `El ${TABLE_DESC} no es un ${TABLE_DESC} el usuario`,
       })
       return
     }
 
-    const workId = await dbCreateUserSectionAsync('works', data)
-    const newWork: Work = {
-      id: workId,
+    const newId = await dbCreateUserSectionAsync(TABLE_NAME, data)
+    const created: Project = {
+      id: newId,
       ...data
     }
 
@@ -91,7 +97,7 @@ export async function createUserWork(req: Request, res: Response) {
       success: true,
       code: 'OK',
       message: 'Operación realizada correctamente',
-      data: newWork,
+      data: created,
     })
 
   } catch (error) {
@@ -99,8 +105,8 @@ export async function createUserWork(req: Request, res: Response) {
     return res.status(500).json({
       status: 500,
       success: true,
-      code: 'UNEXPECTED_ERROR_CREATE_USER_WORKS',
-      message: 'Error inesperado creando puesto de usuario',
+      code: `UNEXPECTED_ERROR_CREATE_USER_${TABLE_NAME.toUpperCase()}`,
+      message: `Error inesperado creando ${TABLE_DESC} de usuario`,
       data: null,
     })
   }
@@ -115,15 +121,20 @@ export async function updateUserWork(req: Request, res: Response) {
     const formatBody = {
       id: req.body.id,
       userId: req.body.userId,
-      title: req.body.title,
+      name: req.body.name,
       description: req.body.description,
-      position: req.body.position,
+      highlights: req.body.highlights,
+      keywords: req.body.highlights,
       startDate: new Date(req.body.startDate),
-      endDate: (req.body.endDate) ? new Date(req.body.endDate) : undefined
+      endDate: (req.body.endDate) ? new Date(req.body.endDate) : undefined,
+      url: req.body.url,
+      roles: req.body.roles,
+      entity: req.body.entity,
+      type: req.body.type
     }
 
     //TODO: Pasar a un middleware de express
-    const { success, data, errors } = await validateSchemaAsync<Schema, Work>(WorkSchema, formatBody)
+    const { success, data, errors } = await validateSchemaAsync<Schema, Project>(ProjectSchema, formatBody)
     if (!success || data === undefined) {
       res.status(400).json({
         status: 400,
@@ -160,12 +171,12 @@ export async function updateUserWork(req: Request, res: Response) {
         status: 400,
         success: false,
         code: 'INVALID_USER_ID',
-        message: 'El puesto no es un puesto el usuario',
+        message: `El ${TABLE_DESC} no es un ${TABLE_DESC} el usuario`,
       })
       return
     }
 
-    await dbUpdateUserSectionAsync('works', data)
+    await dbUpdateUserSectionAsync(TABLE_NAME, data)
 
     return res.status(200).json({
       status: 200,
@@ -181,8 +192,8 @@ export async function updateUserWork(req: Request, res: Response) {
     return res.status(500).json({
       status: 500,
       success: true,
-      code: 'UNEXPECTED_ERROR_UPDATE_USER_WORKS',
-      message: 'Error inesperado actualizando puesto de usuario',
+      code: `UNEXPECTED_ERROR_UPDATE_USER_${TABLE_NAME.toLowerCase()}`,
+      message: `Error inesperado actualizando ${TABLE_DESC} de usuario`,
       data: null,
     })
   }
@@ -194,10 +205,10 @@ export async function deleteUserWork(req: Request, res: Response) {
     const userId = Number(req.params.userId)
     const id = Number(req.params.id)
 
-    const workDeleted = { id: id, userId: userId }
+    const deleted = { id: id, userId: userId }
 
     //TODO: Pasar a un middleware de express
-    const { success, data, errors } = await validateSchemaAsync<Schema, WorkDelete>(WorkDeleteSchema, workDeleted)
+    const { success, data, errors } = await validateSchemaAsync<Schema, ProjectDelete>(ProjectDeleteSchema, deleted)
     if (!success || data === undefined) {
       res.status(400).json({
         status: 400,
@@ -209,9 +220,8 @@ export async function deleteUserWork(req: Request, res: Response) {
     }
 
     const section: UserDeleteSection = {
-      tablename: 'works',
-      id: workDeleted.id,
-      userId: workDeleted.userId
+      tablename: TABLE_NAME,
+      ...deleted
     }
 
     await dbDeleteUserSectionAsync(section)
@@ -221,7 +231,7 @@ export async function deleteUserWork(req: Request, res: Response) {
       success: true,
       code: 'OK',
       message: 'Operación realizada correctamente',
-      data: workDeleted,
+      data: deleted,
     })
 
   } catch (error) {
@@ -229,8 +239,8 @@ export async function deleteUserWork(req: Request, res: Response) {
     return res.status(500).json({
       status: 500,
       success: true,
-      code: 'UNEXPECTED_ERROR_DELETE_USER_WORKS',
-      message: 'Error inesperado actualizando puesto de usuario',
+      code: `UNEXPECTED_ERROR_DELETE_USER_${TABLE_NAME.toUpperCase()}`,
+      message: `Error inesperado actualizando ${TABLE_DESC} de usuario`,
       data: null,
     })
   }

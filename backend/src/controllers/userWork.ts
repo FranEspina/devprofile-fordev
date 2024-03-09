@@ -1,15 +1,16 @@
 import { Request, Response } from 'express'
-import { dbGetWorksByUserAsync, dbCreateUserSectionAsync, dbUpdateUserSectionAsync, getUserByIdAsync, dbDeleteUserSectionAsync } from '../services/db'
+import { dbGetUserSectionByUserAsync, dbCreateUserSectionAsync, dbUpdateUserSectionAsync, getUserByIdAsync, dbDeleteUserSectionAsync } from '../services/db'
 import { validateSchemaAsync } from '../services/validationService'
 import { WorkSchema, WorkCreateSchema, WorkDeleteSchema } from '../schemas/workSchema'
 import { UserDeleteSection, Work, WorkCreate, WorkDelete } from '../models/modelSchemas'
 import { Schema } from 'zod'
 
+const TABLENAME: string = 'projects'
+
 export async function getUserWorks(req: Request, res: Response) {
   try {
     const userId = Number(req.params.userId)
-
-    const works = await dbGetWorksByUserAsync(userId)
+    const works = await dbGetUserSectionByUserAsync<Work>(TABLENAME, userId)
 
     return res.status((works.length === 0) ? 404 : 200).json({
       status: (works.length === 0) ? 404 : 200,

@@ -1,15 +1,17 @@
 import { Request, Response } from 'express'
-import { dbGetProfilesByUserAsync, dbCreateUserSectionAsync, dbUpdateUserProfileAsync, getUserByIdAsync, dbDeleteUserSectionAsync } from '../services/db'
+import { dbGetUserSectionByUserAsync, dbCreateUserSectionAsync, dbUpdateUserProfileAsync, getUserByIdAsync, dbDeleteUserSectionAsync } from '../services/db'
 import { validateSchemaAsync } from '../services/validationService'
 import { ProfileSchema, ProfileCreateSchema, ProfileDeleteSchema } from '../schemas/profileSchema'
 import { Profile, ProfileCreate, ProfileDelete, UserDeleteSection } from '../models/modelSchemas'
 import { Schema } from 'zod'
 
+const TABLENAME: string = 'profiles'
+
 export async function getUserProfiles(req: Request, res: Response) {
   try {
     const userId = Number(req.params.userId)
 
-    const profiles = await dbGetProfilesByUserAsync(userId)
+    const profiles = await dbGetUserSectionByUserAsync<Profile>(TABLENAME, userId)
 
     return res.status((profiles.length === 0) ? 404 : 200).json({
       status: (profiles.length === 0) ? 404 : 200,

@@ -2,7 +2,6 @@ import { Pool } from 'pg'
 import { UserHashPassword, UserDTO, UserCreate } from '../models/user'
 import { DevResourceCreate, DevResourceDelete, DevResource } from '../models/modelSchemas'
 import { ProfileDelete, Profile } from '../models/modelSchemas'
-import { Work } from '../models/modelSchemas'
 import { UserDeleteSection } from '../models/modelSchemas'
 import { camelToSnakeCase, snakeToCamelCase } from '../services/strings'
 //import { QueryResultRow } from 'pg'
@@ -162,32 +161,6 @@ export async function dbDeleteUserResourceAsync({ id, userId }: DevResourceDelet
   }
 }
 
-
-export async function dbGetProfilesByUserAsync(userId: number): Promise<Profile[]> {
-  const profilesQuery = 'SELECT id, user_id, network, username, url FROM profiles WHERE user_id = $1;'
-  try {
-
-    const result = await pool.query(profilesQuery, [userId])
-    if (!result || !result.rowCount) {
-      return []
-    }
-
-    const profiles: Profile[] = result.rows.map((row) => ({
-      id: row['id'],
-      userId: row['user_id'],
-      network: row['network'],
-      username: row['username'],
-      url: row['url'],
-    }))
-
-    return profiles
-  }
-  catch (error) {
-    console.log('Error inesperado recuperando perfiles', error)
-    throw error
-  }
-}
-
 export async function dbUpdateUserProfileAsync(profile: Profile): Promise<Profile> {
   try {
 
@@ -222,33 +195,6 @@ export async function dbDeleteUserProfileAsync({ id, userId }: ProfileDelete) {
   }
   catch (error) {
     console.log('Error inesperado eliminando recurso de usuario', error)
-    throw error
-  }
-}
-
-export async function dbGetWorksByUserAsync(userId: number): Promise<Work[]> {
-  const profilesQuery = 'SELECT id, user_id, title, position, description, start_date, end_date FROM works WHERE user_id = $1;'
-  try {
-
-    const result = await pool.query(profilesQuery, [userId])
-    if (!result || !result.rowCount) {
-      return []
-    }
-
-    const works: Work[] = result.rows.map((row) => ({
-      id: row['id'],
-      userId: row['user_id'],
-      title: row['title'],
-      position: row['position'],
-      description: row['description'],
-      startDate: row['start_date'],
-      endDate: row['end_date'],
-    }))
-
-    return works
-  }
-  catch (error) {
-    console.log('Error inesperado recuperando puestos de trabajo', error)
     throw error
   }
 }

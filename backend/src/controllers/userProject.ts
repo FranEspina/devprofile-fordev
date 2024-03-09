@@ -112,7 +112,7 @@ export async function createUserProject(req: Request, res: Response) {
   }
 }
 
-export async function updateUserWork(req: Request, res: Response) {
+export async function updateUserProject(req: Request, res: Response) {
   try {
 
     const userId = Number(req.params.userId)
@@ -199,7 +199,7 @@ export async function updateUserWork(req: Request, res: Response) {
   }
 }
 
-export async function deleteUserWork(req: Request, res: Response) {
+export async function deleteUserProject(req: Request, res: Response) {
   try {
 
     const userId = Number(req.params.userId)

@@ -1,6 +1,6 @@
 import app from './app'
 import dotenv from 'dotenv'
-import { dropCreateAndSeedTables } from './services/db'
+import { dropCreateAndSeedTables } from './services/seed'
 
 dotenv.config()
 console.log(`Entorno: ${process.env.NODE_ENV}`)

@@ -10,7 +10,7 @@
     "build": "tsc",
     "start": "ts-node src/index.ts",
     "dev": "nodemon",
-    "db-migrate": "set DB_MIGRATE=true && nodemon"
+    "db-migrate": "set DB_MIGRATE=true && ts-node -r dotenv/config src/index.ts dotenv_config_path=./.env.development"
   },
   "author": "Fran Espina",
   "license": "ISC",

@@ -23,10 +23,7 @@ import { updateUserSection } from '@/services/apiService'
 import { useRefreshStore } from '@/store/refreshStore'
 import { type SelectSingleEventHandler } from 'react-day-picker'
 import { LoadIndicator } from '@/components/LoadIndicator'
-
-function updateObject<T>(obj: T, key: keyof T, value: unknown): T {
-  return { ...obj, [key]: value };
-}
+import MultipleSelector, { type Option } from '@/components/ui/multiple-selector';
 
 export function EditProjectDialog({ project }: { project: Project }) {
   const [loading, setLoading] = useState(false)
@@ -38,6 +35,8 @@ export function EditProjectDialog({ project }: { project: Project }) {
 
   const [projectState, setProjectState] = useState(project)
 
+  const [keywords, setKeywords] = useState<Option[]>([])
+  const [roles, setRoles] = useState<Option[]>([])
 
   useEffect(() => {
     setLoading(false)
@@ -48,6 +47,13 @@ export function EditProjectDialog({ project }: { project: Project }) {
       project.endDate = new Date(project.endDate)
     }
     setProjectState(project);
+
+    if (project.keywords) {
+      setKeywords(JSON.parse(project.keywords))
+    }
+    if (project.roles) {
+      setRoles(JSON.parse(project.roles))
+    }
 
   }, [isOpen])
 
@@ -82,17 +88,19 @@ export function EditProjectDialog({ project }: { project: Project }) {
       return
     }
 
-    let project: Project | undefined
+    let project: Project | undefined = structuredClone(projectState)
+    project.keywords = JSON.stringify(keywords)
+    project.roles = JSON.stringify(roles)
+
     try {
 
-      const validated = await validateSchemaAsync<Project>(ProjectSchema, projectState)
+      const validated = await validateSchemaAsync<Project>(ProjectSchema, project)
       if (!validated.success) {
         console.log(errors)
         setErrors(validated.errors)
         setLoading(false)
         return
       }
-      project = validated.data
 
       setErrors({})
 
@@ -202,24 +210,31 @@ export function EditProjectDialog({ project }: { project: Project }) {
             <Label htmlFor="highlights" className="text-right text-xs md:text-sm">
               Lo más destacable
             </Label>
-            <Input value={projectState.highlights} onChange={handleChange} id="highlights" placeholder="Lo más destacable, logros ..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Input value={projectState.highlights} onChange={handleChange} id="highlights" placeholder="Descripción de lo más destacable" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['highlights'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['highlights']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="keywords" className="text-right text-xs md:text-sm">
-              Palabras clave
+              Palabra(s) clave
             </Label>
-            <Input value={projectState.keywords} onChange={handleChange} id="keywords" placeholder="palabras claves relacionadas" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <div className="col-span-3 text-xs md:text-sm">
+              <MultipleSelector value={keywords} onChange={setKeywords}
+                creatable
+              />
+            </div>
             {errors['keywords'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['keywords']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="roles" className="text-right text-xs md:text-sm">
               Rol(es)
             </Label>
-            <Input value={projectState.roles} onChange={handleChange} id="roles" placeholder="rol(es) en esta empresa o proyecto" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <div className="col-span-3 text-xs md:text-sm">
+              <MultipleSelector value={roles} onChange={setRoles}
+                creatable
+              />
+            </div>
             {errors['roles'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['roles']}</p>}
           </div>
-
         </div>
         <DialogFooter className="flex flex-row items-center justify-end gap-2">
           {errors['generic'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['generic']}</p>}

@@ -34,17 +34,16 @@ export function CreateProjectDialog() {
   const { notifyError, notifySuccess } = useNotify()
   const [startDate, setStartDate] = useState<Date>()
   const [endDate, setEndDate] = useState<Date>()
+
   const [keywords, setKeywords] = useState<Option[]>([])
+  const [roles, setRoles] = useState<Option[]>([])
 
   const nameInputRef = useRef<HTMLInputElement>(null)
   const descriptioncInputRef = useRef<HTMLTextAreaElement>(null)
   const urlInputRef = useRef<HTMLInputElement>(null)
-  const rolesInputRef = useRef<HTMLInputElement>(null)
   const highlightsInputRef = useRef<HTMLInputElement>(null)
   const entityInputRef = useRef<HTMLInputElement>(null)
   const typeInputRef = useRef<HTMLInputElement>(null)
-
-  const OPTIONS: Option[] = []
 
   const { setProjectStamp } = useRefreshStore(state => state)
 
@@ -52,6 +51,15 @@ export function CreateProjectDialog() {
     setLoading(false)
     setErrors({})
   }, [])
+
+  useEffect(() => {
+    setLoading(false)
+    setErrors({})
+    setStartDate(undefined)
+    setEndDate(undefined)
+    setKeywords([])
+    setRoles([])
+  }, [isOpen])
 
   const handleSave = async () => {
     setLoading(true)
@@ -76,13 +84,11 @@ export function CreateProjectDialog() {
       startDate: startDate,
       endDate: endDate,
       highlights: highlightsInputRef.current?.value,
-      keywords: keywords.join(','),
-      roles: rolesInputRef.current?.value,
+      keywords: JSON.stringify(keywords),
+      roles: JSON.stringify(roles),
       entity: entityInputRef.current?.value,
       type: typeInputRef.current?.value,
     }
-
-    console.log(formData)
 
     try {
 
@@ -172,7 +178,6 @@ export function CreateProjectDialog() {
             </Label>
             <DatePicker date={endDate} onSelect={setEndDate} />
             {errors['endDate'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['endDate']}</p>}
-
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="description" className="text-right text-xs md:text-sm">
@@ -199,29 +204,31 @@ export function CreateProjectDialog() {
             <Label htmlFor="highlights" className="text-right text-xs md:text-sm">
               Lo más destacable
             </Label>
-            <Input ref={highlightsInputRef} id="highlights" placeholder="Lo más destacable, logros ..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Input ref={highlightsInputRef} id="highlights" placeholder="Descripción de lo más destacable" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['highlights'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['highlights']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="keywords" className="text-right text-xs md:text-sm">
-              Palabras clave
+              Palabra(s) clave
             </Label>
             <div className="col-span-3 text-xs md:text-sm">
               <MultipleSelector value={keywords} onChange={setKeywords}
                 creatable
               />
             </div>
-            {/* <Input ref={keywordsInputRef} id="keywords" placeholder="palabras claves relacionadas" className="col-span-3 text-xs md:text-sm" autoComplete="off" /> */}
             {errors['keywords'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['keywords']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="roles" className="text-right text-xs md:text-sm">
               Rol(es)
             </Label>
-            <Input ref={rolesInputRef} id="roles" placeholder="rol(es) en esta empresa o proyecto" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <div className="col-span-3 text-xs md:text-sm">
+              <MultipleSelector value={roles} onChange={setRoles}
+                creatable
+              />
+            </div>
             {errors['roles'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['roles']}</p>}
           </div>
-
         </div>
         <DialogFooter className="flex flex-row items-center gap-2">
           {errors['generic'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['generic']}</p>}

@@ -15,6 +15,7 @@ export const dropCreateAndSeedTables = async () => {
   if (process.env.DB_MIGRATE_DROP_TABLES === 'true') {
     console.log('- Configuración de Eliminación de tablas activada ');
     const dropTables = `
+      DROP TABLE IF EXISTS skills;
       DROP TABLE IF EXISTS projects;
       DROP TABLE IF EXISTS works;
       DROP TABLE IF EXISTS profiles;
@@ -179,4 +180,23 @@ export const dropCreateAndSeedTables = async () => {
       console.log(err);
     });
 
+  const skillsTable = `
+    CREATE TABLE IF NOT EXISTS
+      skills(
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER,
+        name VARCHAR(50) NOT NULL,
+        level VARCHAR(50) NOT NULL,
+        keywords TEXT,
+        FOREIGN KEY (user_id) REFERENCES users(id)
+      )`;
+
+  await pool.query(skillsTable)
+    .then(() => {
+      console.log('- tabla skills creada');
+    })
+    .catch((err) => {
+      console.log('Error inesperado creando tabla: skills')
+      console.log(err);
+    });
 };

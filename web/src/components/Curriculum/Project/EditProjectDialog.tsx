@@ -169,7 +169,7 @@ export function EditProjectDialog({ project }: { project: Project }) {
             <Label htmlFor="url" className="text-right text-xs md:text-sm">
               Url
             </Label>
-            <Input value={projectState.name} onChange={handleChange} id="url" placeholder="https://..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Input value={projectState.url} onChange={handleChange} id="url" placeholder="https://..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['url'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['url']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">

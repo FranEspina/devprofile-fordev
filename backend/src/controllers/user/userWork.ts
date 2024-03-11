@@ -1,5 +1,5 @@
 import { Request } from 'express'
-import { WorkSchema, WorkCreateSchema, WorkDeleteSchema } from '../schemas/workSchema'
+import { WorkSchema, WorkCreateSchema, WorkDeleteSchema } from '../../schemas/workSchema'
 
 import { UserSectionController } from './base/UserSectionBaseController'
 

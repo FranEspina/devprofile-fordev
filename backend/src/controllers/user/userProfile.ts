@@ -1,5 +1,5 @@
 import { Request } from 'express'
-import { ProfileSchema, ProfileCreateSchema, ProfileDeleteSchema } from '../schemas/profileSchema'
+import { ProfileSchema, ProfileCreateSchema, ProfileDeleteSchema } from '../../schemas/profileSchema'
 import { UserSectionController } from './base/UserSectionBaseController'
 
 function parseBody(req: Request) {

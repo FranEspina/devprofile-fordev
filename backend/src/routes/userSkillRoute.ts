@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { auth } from '../middlewares/auth'
-import { UserSkillController } from '../controllers/userSkill'
+import { UserSkillController } from '../controllers/user/userSkill'
 
 const router = Router()
 const controller = new UserSkillController()

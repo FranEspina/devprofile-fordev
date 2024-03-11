@@ -1,5 +1,5 @@
 import { UserSectionController } from './base/UserSectionBaseController'
-import { SkillCreateSchema, SkillDeleteSchema, SkillSchema } from '../schemas/skillSchema'
+import { SkillCreateSchema, SkillDeleteSchema, SkillSchema } from '../../schemas/skillSchema'
 import { Request } from 'express'
 
 function parseBody(req: Request) {

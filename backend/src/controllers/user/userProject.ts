@@ -1,5 +1,5 @@
 import { Request } from 'express'
-import { ProjectSchema, ProjectCreateSchema, ProjectDeleteSchema } from '../schemas/projectSchema'
+import { ProjectSchema, ProjectCreateSchema, ProjectDeleteSchema } from '../../schemas/projectSchema'
 import { UserSectionController } from './base/UserSectionBaseController'
 
 function parseBody(req: Request) {

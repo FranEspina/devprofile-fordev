@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
-import { dbGetUserSectionByUserAsync, dbCreateUserSectionAsync, dbUpdateUserSectionAsync, getUserByIdAsync, dbDeleteUserSectionAsync } from '../../services/db'
-import { validateSchemaAsync } from '../../services/validationService'
+import { dbGetUserSectionByUserAsync, dbCreateUserSectionAsync, dbUpdateUserSectionAsync, getUserByIdAsync, dbDeleteUserSectionAsync } from '../../../services/db'
+import { validateSchemaAsync } from '../../../services/validationService'
 import { Schema } from 'zod'
-import { UserDeleteSection } from '../../models/modelSchemas'
+import { UserDeleteSection } from '../../../models/modelSchemas'
 
 export class UserSectionController<T extends { id: number } & Record<string, unknown>>{
 

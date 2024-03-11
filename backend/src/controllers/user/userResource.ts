@@ -1,5 +1,5 @@
 import { Request } from 'express'
-import { DevResourceSchema, DevResourceCreateSchema, DevResourceDeleteSchema } from '../schemas/devResourceSchema';
+import { DevResourceSchema, DevResourceCreateSchema, DevResourceDeleteSchema } from '../../schemas/devResourceSchema';
 import { UserSectionController } from './base/UserSectionBaseController'
 
 function parseBody(req: Request) {

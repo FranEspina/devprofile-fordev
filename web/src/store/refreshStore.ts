@@ -6,7 +6,9 @@ interface refreshState {
   workStamp: number,
   setWorkStamp: (workStamp: number) => void,
   projectStamp: number,
-  setProjectStamp: (projectStamp: number) => void
+  setProjectStamp: (projectStamp: number) => void,
+  skillStamp: number,
+  setSkillStamp: (projectStamp: number) => void
 }
 
 export const useRefreshStore = create<refreshState>()(
@@ -18,6 +20,8 @@ export const useRefreshStore = create<refreshState>()(
       setWorkStamp: (workStamp: number) => set({ workStamp }),
       projectStamp: 0,
       setProjectStamp: (projectStamp: number) => set({ projectStamp }),
+      skillStamp: 0,
+      setSkillStamp: (skillStamp: number) => set({ skillStamp }),
     }
   }
 )

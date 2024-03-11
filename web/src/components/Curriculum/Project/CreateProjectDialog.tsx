@@ -212,7 +212,7 @@ export function CreateProjectDialog() {
               Palabra(s) clave
             </Label>
             <div className="col-span-3 text-xs md:text-sm">
-              <MultipleSelector value={keywords} onChange={setKeywords}
+              <MultipleSelector value={keywords} onChange={setKeywords} placeholder="escriba y pulse ENTER"
                 creatable
               />
             </div>
@@ -223,7 +223,7 @@ export function CreateProjectDialog() {
               Rol(es)
             </Label>
             <div className="col-span-3 text-xs md:text-sm">
-              <MultipleSelector value={roles} onChange={setRoles}
+              <MultipleSelector value={roles} onChange={setRoles} placeholder="escriba y pulse ENTER"
                 creatable
               />
             </div>

@@ -257,7 +257,6 @@ export async function dbCreateUserSectionAsync<T>(tablename: string, model: T): 
     let index = 1
 
     for (const fieldName in model) {
-
       fieldsClause.push(`${camelToSnakeCase(fieldName)}`)
       valuesClause.push(`$${index}${(model[fieldName] instanceof Date) ? '::timestamptz' : ''}`)
       queryParams.push(model[fieldName])
@@ -268,6 +267,9 @@ export async function dbCreateUserSectionAsync<T>(tablename: string, model: T): 
       INSERT INTO ${tablename}(${fieldsClause.join(', ')})
       VALUES (${valuesClause.join(', ')}) RETURNING id; `
     const result = await pool.query(queryInsert, queryParams)
+
+    console.log(queryInsert)
+    console.log(queryParams)
 
     return result.rows[0].id
 

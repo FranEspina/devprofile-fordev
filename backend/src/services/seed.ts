@@ -209,7 +209,7 @@ export const dropCreateAndSeedTables = async () => {
         label VARCHAR(250) NOT NULL,
         image VARCHAR(250) NOT NULL,
         email VARCHAR(100) NOT NULL, 
-        phone VARCHAR(15), 
+        phone VARCHAR(30), 
         url VARCHAR(250) NOT NULL,
         summary TEXT,
         FOREIGN KEY (user_id) REFERENCES users(id)

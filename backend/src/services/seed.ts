@@ -199,4 +199,44 @@ export const dropCreateAndSeedTables = async () => {
       console.log('Error inesperado creando tabla: skills')
       console.log(err);
     });
+
+  const basicsTable = `
+    CREATE TABLE IF NOT EXISTS
+      basics(
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER,
+        name VARCHAR(50) NOT NULL,
+        label VARCHAR(250) NOT NULL,
+        image VARCHAR(250) NOT NULL,
+        email VARCHAR(100) NOT NULL, 
+        phone VARCHAR(15), 
+        url VARCHAR(250) NOT NULL,
+        summary TEXT,
+        FOREIGN KEY (user_id) REFERENCES users(id)
+      );
+      
+      CREATE OR REPLACE FUNCTION basics_check_user_id() RETURNS TRIGGER AS $$
+      BEGIN
+        IF (SELECT COUNT(*) FROM basics WHERE user_id = NEW.user_id) > 0 THEN
+            RAISE EXCEPTION 'El usuario ya tiene datos básicos';
+        END IF;
+        RETURN NEW;
+      END;
+      $$ LANGUAGE plpgsql;
+
+      CREATE TRIGGER basics_user_id_trigger_I
+      BEFORE INSERT ON basics
+      FOR EACH ROW EXECUTE PROCEDURE basics_check_user_id();
+      `;
+
+  await pool.query(basicsTable)
+    .then(() => {
+      console.log('- tabla basics creada');
+    })
+    .catch((err) => {
+      console.log('Error inesperado creando tabla: basics')
+      console.log(err);
+    });
+
+
 };

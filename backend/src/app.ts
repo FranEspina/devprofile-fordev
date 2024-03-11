@@ -2,13 +2,12 @@ import express from 'express'
 import morgan from 'morgan'
 import cors from 'cors'
 import authRoute from './routes/authRoute'
+import userBasicRoute from './routes/userBasicRoute'
 import userResourceRoute from './routes/userResourceRoute'
 import userProfileRoute from './routes/userProfileRoute'
 import userWorkRoute from './routes/userWorkRoute'
 import userProjectRoute from './routes/userProjectRoute'
 import userSkillRoute from './routes/userSkillRoute'
-
-
 
 const app = express()
 
@@ -26,6 +25,7 @@ app.use(
 app.use(morgan('combined'))
 
 app.use('/auth', authRoute)
+app.use('/user', userBasicRoute)
 app.use('/user', userResourceRoute)
 app.use('/user', userProfileRoute)
 app.use('/user', userWorkRoute)

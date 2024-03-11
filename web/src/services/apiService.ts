@@ -83,38 +83,6 @@ const authHeader = (token: string): IAuthHeader => {
   }
 }
 
-export async function getUserProfiles(id: number, token: string) {
-  const endpoint = `${API_BASE_URL}/user/${id}/profile`
-  try {
-    const response = await axios.get(endpoint, authHeader(token))
-    const results: apiResponse<Profile[]> = response.data
-    if (results.success === true) {
-      return { success: true, message: 'Operación realizada con éxito', data: results.data }
-    }
-    return { success: false, message: results.message }
-  } catch (error) {
-    console.log(error)
-    if (axios.isAxiosError(error)) {
-      console.log('Error axios:', error.message);
-      if (error.response) {
-        const results: apiResponse<Profile[]> = error.response.data
-        if (results) {
-          return { success: false, message: 'Error inesperado recuperando recursos' }
-        }
-      }
-    } else if (error instanceof Error) {
-      console.log('Exception:', error.message);
-    } else if (typeof error === "string") {
-      console.log('Error:', error);
-    } else {
-      console.log('Unknow error:', error);
-    }
-
-    return { success: false, message: 'Error inesperado recuperando recursos' }
-
-  }
-}
-
 export async function getDevUserDevResources(id: number, token: string) {
   const endpoint = `${API_BASE_URL}/user/${id}/resource`
   try {
@@ -248,9 +216,11 @@ export async function createUserSection<T>(sectionName: string, userSection: T, 
 
 export async function getUserSection<T>(section: string, id: number, token: string) {
   const endpoint = `${API_BASE_URL}/user/${id}/${section}`
+  console.log(endpoint)
   try {
     const response = await axios.get(endpoint, authHeader(token))
     const results: apiResponse<T[]> = response.data
+    console.log(results)
     if (results.success === true) {
       return { success: true, message: 'Operación realizada con éxito', data: results.data }
     }

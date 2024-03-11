@@ -267,7 +267,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
       const Item = (
         <CommandItem
           value={inputValue}
-          className="cursor-pointer"
+          className="cursor-pointer "
           onMouseDown={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -282,7 +282,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
             setSelected(newOptions);
             onChange?.(newOptions);
           }}
-        >{`Create "${inputValue}"`}</CommandItem>
+        >{`Crear "${inputValue}"`}</CommandItem>
       );
 
       // For normal creatable
@@ -348,7 +348,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
       >
         <div
           className={cn(
-            'group rounded-md border border-input px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2',
+            'group rounded-md  focus-within:ring-2 focus-within:ring-offset-2 border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-800 dark:bg-slate-950 dark:ring-offset-slate-950 dark:placeholder:text-slate-400 dark:focus-visible:ring-slate-300',
             className,
           )}
         >

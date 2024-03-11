@@ -3,7 +3,7 @@ import type { Profile } from '@/Schemas/profileSchema'
 import { useProfileStore } from "@/store/profileStore"
 import { useNotify } from "@/hooks/useNotify"
 import { navigate } from "astro/virtual-modules/transitions-router.js"
-import { getUserProfiles, deleteUserSection, type UserSection } from '@/services/apiService'
+import { deleteUserSection, type UserSection, getUserSection } from '@/services/apiService'
 import { Button } from "@/components/ui/button"
 import { Edit, Moon, Trash } from 'lucide-react'
 import { useRefreshStore } from "@/store/refreshStore"
@@ -36,7 +36,7 @@ export function ProfileList() {
 
     setLoading(true)
 
-    getUserProfiles(user.id, token).then((apiResult) => {
+    getUserSection<Profile>("profile", user.id, token).then((apiResult) => {
       if (apiResult.success) {
         if (apiResult.data) {
           setProfiles(apiResult.data)

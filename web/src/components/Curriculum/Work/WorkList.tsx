@@ -36,9 +36,12 @@ export function WorkList() {
 
     setLoading(true)
 
+
+
     getUserSection<Work>("work", user.id, token).then((apiResult) => {
       if (apiResult.success) {
         if (apiResult.data) {
+          console.log(apiResult.data)
           setWorks(apiResult.data)
         }
         else {

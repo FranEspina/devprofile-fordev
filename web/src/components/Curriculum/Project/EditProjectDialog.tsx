@@ -46,6 +46,9 @@ export function EditProjectDialog({ project }: { project: Project }) {
     if (project.endDate) {
       project.endDate = new Date(project.endDate)
     }
+    else {
+      project.endDate = undefined
+    }
     setProjectState(project);
 
     if (project.keywords) {
@@ -57,7 +60,7 @@ export function EditProjectDialog({ project }: { project: Project }) {
 
   }, [isOpen])
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const newProject = { ...projectState, [event.target.id]: event.target.value }
     setProjectState(newProject);
   }

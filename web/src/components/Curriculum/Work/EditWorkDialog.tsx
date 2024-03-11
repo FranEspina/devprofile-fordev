@@ -42,6 +42,9 @@ export function EditWorkDialog({ work }: { work: Work }) {
     if (work.endDate) {
       work.endDate = new Date(work.endDate)
     }
+    else {
+      work.endDate = undefined
+    }
 
     setWorkState(work)
 

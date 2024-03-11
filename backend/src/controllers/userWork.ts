@@ -5,7 +5,7 @@ import { WorkSchema, WorkCreateSchema, WorkDeleteSchema } from '../schemas/workS
 import { UserDeleteSection, Work, WorkCreate, WorkDelete } from '../models/modelSchemas'
 import { Schema } from 'zod'
 
-const TABLENAME: string = 'projects'
+const TABLENAME: string = 'works'
 
 export async function getUserWorks(req: Request, res: Response) {
   try {

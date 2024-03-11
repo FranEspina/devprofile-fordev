@@ -1,11 +1,7 @@
 import { Pool } from 'pg'
 import { UserHashPassword, UserDTO, UserCreate } from '../models/user'
-import { DevResourceCreate, DevResourceDelete, DevResource } from '../models/modelSchemas'
-import { ProfileDelete, Profile } from '../models/modelSchemas'
 import { UserDeleteSection } from '../models/modelSchemas'
 import { camelToSnakeCase, snakeToCamelCase } from '../services/strings'
-//import { QueryResultRow } from 'pg'
-
 
 const pool = new Pool({
   user: process.env.POSTGRES_USER,
@@ -69,135 +65,6 @@ export async function createUserAsync({ email, firstName, lastName, hashPassword
   }
 }
 
-export async function dbGetResourcesByUserAsync(userId: number): Promise<DevResource[]> {
-  const resourcesQuery = 'SELECT id, title, description, type, url, keywords FROM resources WHERE user_id = $1;'
-  try {
-
-    const result = await pool.query(resourcesQuery, [userId])
-    if (!result || !result.rowCount) {
-      return []
-    }
-
-    const resources: DevResource[] = result.rows.map((row) => ({
-      id: row['id'],
-      userId: row['user_id'],
-      title: row['title'],
-      description: row['description'],
-      type: row['type'],
-      url: row['url'],
-      keywords: row['keywords']
-    }))
-
-    return resources
-  }
-  catch (error) {
-    console.log('Error inesperado recuperando recursos', error)
-    throw error
-  }
-}
-
-export async function dbCreateUserResourceAsync(resource: DevResourceCreate): Promise<DevResource> {
-  try {
-
-    const { userId, title, description, type, keywords, url } = resource
-
-    const queryParams = [userId, title, description, type, keywords, url]
-
-    const queryResources = `
-      INSERT INTO resources(user_id, title, description, type, keywords, url)
-      VALUES ($1, $2, $3, $4, $5, $6) RETURNING id; `
-    const result = await pool.query(queryResources, queryParams)
-
-    const resourceSaved: DevResource = {
-      id: result.rows[0].id,
-      ...resource
-    }
-
-    return resourceSaved
-  }
-  catch (error) {
-    console.log('Error inesperado creando recurso de usuario', error)
-    throw error
-  }
-}
-
-export async function dbUpdateUserResourceAsync(resource: DevResource): Promise<DevResource> {
-  try {
-
-    const { id, userId, title, description, type, keywords, url } = resource
-
-    const queryParams = [id, userId, title, description, type, keywords, url]
-
-    const queryResources = `
-      UPDATE resources 
-        SET title = $3, 
-            description = $4, 
-            type = $5, 
-            keywords = $6, 
-            url = $7 
-      WHERE id = $1 
-        AND user_id = $2;`
-
-    await pool.query<DevResource>(queryResources, queryParams)
-
-    return resource
-
-  }
-  catch (error) {
-    console.log('Error inesperado creando recurso de usuario', error)
-    throw error
-  }
-}
-
-export async function dbDeleteUserResourceAsync({ id, userId }: DevResourceDelete) {
-  try {
-    const queryParams = [id, userId]
-    const queryResources = 'DELETE FROM resources WHERE id = $1 AND user_id = $2;'
-    await pool.query(queryResources, queryParams)
-  }
-  catch (error) {
-    console.log('Error inesperado eliminando recurso de usuario', error)
-    throw error
-  }
-}
-
-export async function dbUpdateUserProfileAsync(profile: Profile): Promise<Profile> {
-  try {
-
-    const { id, userId, network, username, url } = profile
-
-    const queryParams = [id, userId, network, username, url]
-
-    const queryProfiles = `
-      UPDATE profiles 
-        SET network = $3, 
-            username = $4, 
-            url = $5 
-      WHERE id = $1 
-        AND user_id = $2;`
-
-    await pool.query<Profile>(queryProfiles, queryParams)
-
-    return profile
-
-  }
-  catch (error) {
-    console.log('Error inesperado creando perfil de usuario', error)
-    throw error
-  }
-}
-
-export async function dbDeleteUserProfileAsync({ id, userId }: ProfileDelete) {
-  try {
-    const queryParams = [id, userId]
-    const queryResources = 'DELETE FROM profiles WHERE id = $1 AND user_id = $2;'
-    await pool.query(queryResources, queryParams)
-  }
-  catch (error) {
-    console.log('Error inesperado eliminando recurso de usuario', error)
-    throw error
-  }
-}
 
 export async function dbDeleteUserSectionAsync(userSection: UserDeleteSection) {
   try {

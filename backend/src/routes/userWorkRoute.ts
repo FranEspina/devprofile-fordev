@@ -1,12 +1,14 @@
 import { Router } from 'express'
-import { getUserWorks, createUserWork, updateUserWork, deleteUserWork } from '../controllers/userWork'
+import { UserWorkController } from '../controllers/userWork'
 import { auth } from '../middlewares/auth'
 
 const router = Router()
 
-router.get('/:userId/work', auth, getUserWorks)
-router.post('/:userId/work', auth, createUserWork)
-router.put('/:userId/work/:id', auth, updateUserWork)
-router.delete('/:userId/work/:id', auth, deleteUserWork)
+const controller = new UserWorkController()
+
+router.get('/:userId/work', auth, controller.getUserSectionAsync.bind(controller))
+router.post('/:userId/work', auth, controller.createUserSection.bind(controller))
+router.put('/:userId/work/:id', auth, controller.updateUserSection.bind(controller))
+router.delete('/:userId/work/:id', auth, controller.deleteUserSection.bind(controller))
 
 export default router

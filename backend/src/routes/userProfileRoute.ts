@@ -1,12 +1,13 @@
 import { Router } from 'express'
-import { getUserProfiles, createUserProfile, updateUserProfile, deleteUserProfile } from '../controllers/userProfile'
+import { UserProfileController } from '../controllers/userProfile'
 import { auth } from '../middlewares/auth'
 
 const router = Router()
+const controller = new UserProfileController()
 
-router.get('/:userId/profile', auth, getUserProfiles)
-router.post('/:userId/profile', auth, createUserProfile)
-router.put('/:userId/profile/:id', auth, updateUserProfile)
-router.delete('/:userId/profile/:id', auth, deleteUserProfile)
+router.get('/:userId/profile', auth, controller.getUserSectionAsync.bind(controller))
+router.post('/:userId/profile', auth, controller.createUserSection.bind(controller))
+router.put('/:userId/profile/:id', auth, controller.updateUserSection.bind(controller))
+router.delete('/:userId/profile/:id', auth, controller.deleteUserSection.bind(controller))
 
 export default router

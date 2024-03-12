@@ -8,6 +8,8 @@ import userProfileRoute from './routes/userProfileRoute'
 import userWorkRoute from './routes/userWorkRoute'
 import userProjectRoute from './routes/userProjectRoute'
 import userSkillRoute from './routes/userSkillRoute'
+import userSectionRoute from './routes/userSectionRoute'
+
 
 const app = express()
 
@@ -25,6 +27,7 @@ app.use(
 app.use(morgan('combined'))
 
 app.use('/auth', authRoute)
+app.use('/user', userSectionRoute)
 app.use('/user', userBasicRoute)
 app.use('/user', userResourceRoute)
 app.use('/user', userProfileRoute)

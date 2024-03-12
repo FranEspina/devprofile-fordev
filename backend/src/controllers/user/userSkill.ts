@@ -1,4 +1,4 @@
-import { UserSectionController } from './base/UserSectionBaseController'
+import { UserSectionBaseController } from './base/UserSectionBaseController'
 import { SkillCreateSchema, SkillDeleteSchema, SkillSchema } from '../../schemas/skillSchema'
 import { Request } from 'express'
 
@@ -13,7 +13,7 @@ function parseBody(req: Request) {
   return formatBody
 }
 
-export class UserSkillController extends UserSectionController<{ id: number, userId: string }> {
+export class UserSkillController extends UserSectionBaseController<{ id: number, userId: string }> {
   constructor() {
     super(
       'skills',

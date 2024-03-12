@@ -1,6 +1,6 @@
 import { Request } from 'express'
 import { DevResourceSchema, DevResourceCreateSchema, DevResourceDeleteSchema } from '../../schemas/devResourceSchema';
-import { UserSectionController } from './base/UserSectionBaseController'
+import { UserSectionBaseController } from './base/UserSectionBaseController'
 
 function parseBody(req: Request) {
   const formatBody = {
@@ -15,7 +15,7 @@ function parseBody(req: Request) {
   return formatBody
 }
 
-export class UserResourceController extends UserSectionController<{ id: number, userId: string }> {
+export class UserResourceController extends UserSectionBaseController<{ id: number, userId: string }> {
   constructor() {
     super(
       'resources',

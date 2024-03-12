@@ -4,7 +4,7 @@ import { validateSchemaAsync } from '../../../services/validationService'
 import { Schema } from 'zod'
 import { UserDeleteSection } from '../../../models/modelSchemas'
 
-export class UserSectionController<T extends { id: number } & Record<string, unknown>>{
+export class UserSectionBaseController<T extends { id: number } & Record<string, unknown>>{
 
   constructor(
     private tableName: string,

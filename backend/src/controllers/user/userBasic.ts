@@ -1,4 +1,4 @@
-import { UserSectionController } from './base/UserSectionBaseController'
+import { UserSectionBaseController } from './base/UserSectionBaseController'
 import { BasicCreateSchema, BasicDeleteSchema, BasicSchema } from '../../schemas/basicSchema'
 import { Request } from 'express'
 
@@ -17,7 +17,7 @@ function parseBody(req: Request) {
   return formatBody
 }
 
-export class UserBasicController extends UserSectionController<{ id: number, userId: string }> {
+export class UserBasicController extends UserSectionBaseController<{ id: number, userId: string }> {
   constructor() {
     super(
       'basics',

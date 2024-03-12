@@ -1,6 +1,6 @@
 import { Request } from 'express'
 import { ProfileSchema, ProfileCreateSchema, ProfileDeleteSchema } from '../../schemas/profileSchema'
-import { UserSectionController } from './base/UserSectionBaseController'
+import { UserSectionBaseController } from './base/UserSectionBaseController'
 
 function parseBody(req: Request) {
   const formatBody = {
@@ -13,7 +13,7 @@ function parseBody(req: Request) {
   return formatBody
 }
 
-export class UserProfileController extends UserSectionController<{ id: number, userId: string }> {
+export class UserProfileController extends UserSectionBaseController<{ id: number, userId: string }> {
   constructor() {
     super(
       'profiles',

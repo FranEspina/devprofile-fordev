@@ -11,8 +11,14 @@ Web que permite a los usuario logarse y crear una cuenta de desarrollador donde 
 - Validación de esquemas zod con tipos genéricos (servicio de validación de esquemas)
 
 # Capturas
+## Gestión de usuarios
 ![Pantalla de inicio](./resources/home.png)
 ![Registro de usuarios](./resources/register.png)
-
+## Registro de CV por usuarios
+![CV](./resources/cv.png)
+## Formularios modales
+![Modales](./resources/modal.png)
+## Modo claro y responsive
+![Modo claro y responsive](./resources/light.png)
 # Créditos
 - [Motomangucode Font](https://www.fontspace.com/Motomang-font-f101909)  by Meyerfonts (Bryndan Meyerholt)

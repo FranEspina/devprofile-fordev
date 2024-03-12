@@ -8,6 +8,7 @@ import { ProfileList } from "@/components/Curriculum/Profile/ProfileList";
 import { WorkList } from '@/components/Curriculum/Work/WorkList'
 import { ProjectList } from '@/components/Curriculum/Project/ProjectList'
 import { SkillList } from '@/components/Curriculum/Skill/SkillList'
+import { BasicSection } from '@/components/Curriculum/Basic/BasicSection'
 
 
 import { useState } from "react";
@@ -19,6 +20,11 @@ export function CurriculumView() {
     <header>
       <h2 className="text-left text-sm md:text-base">Secciones del Curriculum</h2>
     </header>
+    < div className="mt-2 w-full flex flex-col gap-4" >
+      <div className="flex flex-col justify-start gap-1">
+        <BasicSection />
+      </div>
+    </div>
     < div className="mt-2 w-full flex flex-col md:grid md:grid-cols-2 gap-4" >
       <div className="flex flex-col justify-start gap-1">
         <CreateProfileDialog />

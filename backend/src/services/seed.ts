@@ -64,6 +64,26 @@ export const dropCreateAndSeedTables = async () => {
       console.log(err);
     });
 
+  const sectionsTable = `
+    CREATE TABLE IF NOT EXISTS
+      sections(
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER,
+        section_name VARCHAR(50) NOT NULL,
+        section_id INTEGER NOT NULL,
+        is_public BOOLEAN  DEFAULT TRUE NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id)
+      )`;
+
+  await pool.query(sectionsTable)
+    .then(() => {
+      console.log('- tabla configuración secciones creada');
+    })
+    .catch((err) => {
+      console.log('Error inesperado creando tabla: configuración secciones')
+      console.log(err);
+    });
+
   //Usuario por defecto en entorno de desarrollo  
   if (process.env.NODE_ENV === 'development') {
     const defaultUser = 'admin'
@@ -224,7 +244,7 @@ export const dropCreateAndSeedTables = async () => {
       END;
       $$ LANGUAGE plpgsql;
 
-      CREATE TRIGGER basics_user_id_trigger_I
+      CREATE OR REPLACE TRIGGER basics_user_id_trigger_I
       BEFORE INSERT ON basics
       FOR EACH ROW EXECUTE PROCEDURE basics_check_user_id();
       `;
@@ -238,5 +258,116 @@ export const dropCreateAndSeedTables = async () => {
       console.log(err);
     });
 
+  const triggerSections = `
+    CREATE OR REPLACE FUNCTION delete_public_works() RETURNS TRIGGER AS $$
+    BEGIN
+      DELETE FROM sections WHERE sections.section_name = 'works' AND sections.section_id = OLD.id;
+      RETURN NULL;
+    END;
+    $$ LANGUAGE plpgsql;
+
+    CREATE OR REPLACE FUNCTION insert_public_works() RETURNS TRIGGER AS $$
+    BEGIN
+      INSERT INTO sections(section_name, user_id, section_id, is_public)
+      VALUES('works', NEW.user_id, NEW.id, TRUE);
+      RETURN NULL;
+    END;
+    $$ LANGUAGE plpgsql;
+
+    CREATE OR REPLACE TRIGGER works_trigger_deleted
+    AFTER DELETE ON works
+    FOR EACH ROW
+    EXECUTE PROCEDURE delete_public_works();
+
+    CREATE OR REPLACE TRIGGER works_trigger_inserted
+    AFTER INSERT ON works
+    FOR EACH ROW
+    EXECUTE PROCEDURE insert_public_works();
+
+    CREATE OR REPLACE FUNCTION delete_public_profiles() RETURNS TRIGGER AS $$
+    BEGIN
+      DELETE FROM sections WHERE sections.section_name = 'profiles' AND sections.section_id = OLD.id;
+      RETURN NULL;
+    END;
+    $$ LANGUAGE plpgsql;
+
+    CREATE OR REPLACE FUNCTION insert_public_profiles() RETURNS TRIGGER AS $$
+    BEGIN
+      INSERT INTO sections(section_name, user_id, section_id, is_public)
+      VALUES('profiles', NEW.user_id, NEW.id, TRUE);
+      RAISE NOTICE 'Se ha insertado una fila en % con los valores: %', TG_TABLE_NAME, NEW;
+      RETURN NEW;
+    END;
+    $$ LANGUAGE plpgsql;
+
+    CREATE OR REPLACE TRIGGER profiles_trigger_deleted
+    AFTER DELETE ON profiles
+    FOR EACH ROW
+    EXECUTE PROCEDURE delete_public_profiles();
+
+    CREATE OR REPLACE TRIGGER profiles_trigger_inserted
+    AFTER INSERT ON profiles
+    FOR EACH ROW
+    EXECUTE PROCEDURE insert_public_profiles();
+
+    CREATE OR REPLACE FUNCTION delete_public_projects() RETURNS TRIGGER AS $$
+    BEGIN
+      DELETE FROM sections WHERE sections.section_name = 'projects' AND sections.section_id = OLD.id;
+      RETURN NULL;
+    END;
+    $$ LANGUAGE plpgsql;
+
+    CREATE OR REPLACE FUNCTION insert_public_projects() RETURNS TRIGGER AS $$
+    BEGIN
+      INSERT INTO sections(section_name, user_id, section_id, is_public)
+      VALUES('projects', NEW.user_id, NEW.id, TRUE);
+      RETURN NULL;
+    END;
+    $$ LANGUAGE plpgsql;
+
+    CREATE OR REPLACE TRIGGER projects_trigger_deleted
+    AFTER DELETE ON projects
+    FOR EACH ROW
+    EXECUTE PROCEDURE delete_public_projects();
+
+    CREATE OR REPLACE TRIGGER projects_trigger_inserted
+    AFTER INSERT ON projects
+    FOR EACH ROW
+    EXECUTE PROCEDURE insert_public_projects();
+
+    CREATE OR REPLACE FUNCTION delete_public_skills() RETURNS TRIGGER AS $$
+    BEGIN
+      DELETE FROM sections WHERE sections.section_name = 'skills' AND sections.section_id = OLD.id;
+      RETURN NULL;
+    END;
+    $$ LANGUAGE plpgsql;
+
+    CREATE OR REPLACE FUNCTION insert_public_skills() RETURNS TRIGGER AS $$
+    BEGIN
+      INSERT INTO sections(section_name, user_id, section_id, is_public)
+      VALUES('skills', NEW.user_id, NEW.id, TRUE);
+      RETURN NULL;
+    END;
+    $$ LANGUAGE plpgsql;
+
+    CREATE OR REPLACE TRIGGER skills_trigger_deleted
+    AFTER DELETE ON skills
+    FOR EACH ROW
+    EXECUTE PROCEDURE delete_public_skills();
+
+    CREATE OR REPLACE TRIGGER skills_trigger_inserted
+    AFTER INSERT ON skills
+    FOR EACH ROW
+    EXECUTE PROCEDURE insert_public_skills();
+      `;
+
+  await pool.query(triggerSections)
+    .then(() => {
+      console.log('- Triggers basics');
+    })
+    .catch((err) => {
+      console.log('Error inesperado creando Triggers: basics')
+      console.log(err);
+    });
 
 };

@@ -20,5 +20,18 @@ Web que permite a los usuario logarse y crear una cuenta de desarrollador donde 
 ![Modales](./resources/modal.png)
 ## Modo claro y responsive
 ![Modo claro y responsive](./resources/light.png)
+
+# TODO
+- [] Validaciones de tamaños máximos en zod
+- [] Poder decidir si tu cv se puede ver públicamente
+- [] Poder indicar que campos se ven públicamente y cuales son privados
+- [] Crear vista pública del cv
+- [] Incluir todas las secciones del cv
+- [] Permitir importar las secciones del cv según el esquema
+- [] Permitir exportar el cv a formato json segun el esquema 
+- [] Crear gestiones de aplicaciones asociadas al usuario para exponer una api_key
+- [] Integrar la api con las peticiones por api_key
+
 # Créditos
 - [Motomangucode Font](https://www.fontspace.com/Motomang-font-f101909)  by Meyerfonts (Bryndan Meyerholt)
+- Esquema del JSON de CV de [jsonresume.org](jsonresume.org)

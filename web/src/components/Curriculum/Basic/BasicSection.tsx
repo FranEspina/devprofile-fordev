@@ -114,7 +114,7 @@ export function BasicSection() {
           <div className="block flex-row self-start">
             <Button variant={"outline"} onClick={() => alertDelete(basics.id)}>
               <Trash className="h-3 w-3" />
-              <span className="sr-only">Eliminar perfil</span>
+              <span className="sr-only">Eliminar</span>
             </Button>
             <EditBasicDialog basic={basics} />
           </div>

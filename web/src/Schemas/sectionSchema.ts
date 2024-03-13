@@ -15,3 +15,13 @@ export const CreateSectionSchema = createSchema(SectionSchema)
 
 export type Section = z.infer<typeof SectionSchema>
 export type DeleteSection = z.infer<typeof DeleteSectionSchema>
+
+export type SectionData = {
+  id: number,
+  userId: number,
+  sectionName: string,
+  sectionFullName: string,
+  sectionId: number,
+  sectionDesc: string,
+  isPublic: boolean
+} 

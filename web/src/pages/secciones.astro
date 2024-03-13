@@ -5,11 +5,18 @@ import { SectionList } from "../components/PublicSection/SectionList";
 
 <Layout title="dev profile for dev ">
   <main
-    class="flex flex-col justify-center items-center content-center text-center max-w-[800px] mx-auto"
+    class="flex flex-col justify-center items-center content-center text-start max-w-[800px] mx-auto"
   >
     <h1 class="text-3xl md:text-5xl mb-6 mt-10 text-blue-500">
       Información pública
     </h1>
+    <h2 class="text-base md:text-lg my-5">
+      Seleccione las secciones que quieran que sean visibles en su perfil
+      público
+    </h2>
+    <p class="text-xs md:text-small self-start">
+      Los cambios se guardarán directamente tras marcar o desmarcar la opción
+    </p>
     <SectionList client:load />
   </main>
 </Layout>

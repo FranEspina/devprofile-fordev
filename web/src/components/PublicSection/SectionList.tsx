@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { PublicSectionCheckbox } from './PublicCheck'
 import { getUserSection } from '@/services/apiService'
-import { type Section } from '@/Schemas/sectionSchema'
+import { type SectionData } from '@/Schemas/sectionSchema'
 import { useState } from 'react'
 import { useProfileStore } from '@/store/profileStore'
 import { useNotify } from '@/hooks/useNotify'
@@ -11,7 +11,7 @@ import { set } from 'date-fns'
 
 export function SectionList() {
   const [loading, setLoading] = useState(false)
-  const [sections, setSections] = useState<Section[]>([])
+  const [sections, setSections] = useState<SectionData[]>([])
   const { user, token } = useProfileStore(state => state)
   const { notifySuccess, notifyError } = useNotify()
 
@@ -29,54 +29,43 @@ export function SectionList() {
     }
     setLoading(true)
 
-    console.log('antes')
-    setSections([
-      { id: 1, userId: 2, sectionName: 'profile', sectionId: 1, isPublic: true, desc: 'Instagram' },
-      { id: 2, userId: 2, sectionName: 'profile', sectionId: 2, isPublic: true, desc: 'LinkedIn' },
-      { id: 3, userId: 2, sectionName: 'work', sectionId: 3, isPublic: true, desc: 'Desarrollador .NET' },
-      { id: 4, userId: 2, sectionName: 'work', sectionId: 4, isPublic: true, desc: 'Jefe Proyecto Adecco' },
-      { id: 5, userId: 2, sectionName: 'project', sectionId: 5, isPublic: true, desc: 'Dev for Dev' },
-      { id: 6, userId: 2, sectionName: 'project', sectionId: 6, isPublic: true, desc: 'Selfdriving c#' },
-      { id: 7, userId: 2, sectionName: 'project', sectionId: 7, isPublic: true, desc: 'Portfolio WEB' },
-    ])
-    setLoading(false)
+    getUserSection<SectionData>('sectiondata', user.id, token)
+      .then(service => {
+        if (service.success) {
+          if (service.data) {
+            console.log(service.data)
+            setSections(service.data)
+          }
+        }
+        else {
 
-    console.log(sections)
+          notifyError('Error inesperado')
+        }
+      })
+      .catch(error => {
+        notifyError('Error inesperado')
+      })
+      .finally(
+        () => setLoading(false)
+      )
 
-    // getUserSection<Section>('section', user.id, token)
-    //   .then(service => {
-    //     if (service.success) {
-    //       if (service.data) {
-    //         console.log(service.data)
-    //         setSections(service.data)
-    //       }
-    //     }
-    //     else {
-
-    //       notifyError('Error inesperado')
-    //     }
-    //   })
-    //   .catch(error => {
-    //     notifyError('Error inesperado')
-    //   })
-    //   .finally(
-    //     () => setLoading(false)
-    //   )
   }, [user, token])
 
   return (
-    <section className="my-2">
-      <div className="w-full flex items-center justify-center">
+    <section className="my-2 w-full">
+      <div className="flex w-full items-center justify-center">
         <LoadIndicator loading={loading} />
       </div>
       {!loading && sections.length === 0 && <p>No existen datos que mostrar</p>}
-      {!loading && sections.length !== 0 && <ul>{sections.map(section =>
-        <li key={section.id} className="flex flex-row w-full gap-2 items-center">
-          <p className="flex-1 text-start text-xs md:text-sm">{section.sectionName}</p>
-          <p className="flex-1 text-start text-xs md:text-sm">{section.desc}</p>
-          <PublicSectionCheckbox section={section} />
-        </li>
-      )}</ul>}
+      {!loading && sections.length !== 0 &&
+        <ul>
+          {sections.map(section =>
+            <li key={section.id} className="flex flex-row gap-2 items-center justify-start my-2">
+              <PublicSectionCheckbox section={section} />
+              <p className="text-start text-xs md:text-sm">{section.sectionFullName} - {section.sectionDesc}</p>
+            </li>
+          )}
+        </ul>}
     </section>
   )
 }

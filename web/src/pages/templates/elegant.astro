@@ -1,13 +1,6 @@
 ---
-import { getUserSection } from "../../services/apiService";
-import type { Work } from "../../Schemas/workSchema";
-const response = await getUserSection<Work>(
-  "work",
-  2,
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzA5OTcyMjU1LCJleHAiOjE3MTEyNjgyNTV9.Uuk5v5mtizYtHVqPvn9YaX0cTOsCc_W5JmNdWxFrAJY",
-);
-const works = response.data;
-console.log(works);
+const { user } = Astro.locals;
+console.log(user);
 ---
 
 <head>
@@ -830,6 +823,15 @@ console.log(works);
     </div>
   </div>
 </body>
+
+<script>
+  import { getUserSection } from "../../services/apiService";
+  import type { Work } from "../../Schemas/workSchema";
+  import Cookies from "js-cookie";
+  const token = Cookies.get("token") || "";
+  const response = await getUserSection<Work>("work", 2, token);
+  const works = response.data;
+</script>
 
 <!-- <script is:inline src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"
   src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"

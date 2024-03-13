@@ -1,6 +1,7 @@
 import type { apiUserDto } from '@/types/apiTypes'
 import { create } from 'zustand'
 import { persist, devtools } from 'zustand/middleware'
+import Cookies from 'js-cookie';
 
 interface profileState {
   user: apiUserDto | undefined,
@@ -17,8 +18,14 @@ export const useProfileStore = create<profileState>()(
       token: 'not-loaded',
       user: undefined,
       theme: 'not-loaded',
-      setUser: (user: apiUserDto | undefined) => set({ user }),
-      setToken: (token: string) => set({ token }),
+      setUser: (user: apiUserDto | undefined) => {
+        set({ user })
+        Cookies.set('id', user?.id?.toString() || '', { secure: true });
+      },
+      setToken: (token: string) => {
+        set({ token })
+        Cookies.set('token', token, { secure: true });
+      },
       setThemeState: (theme: "theme-light" | "dark" | "system") => set({ theme })
     }
   }, {

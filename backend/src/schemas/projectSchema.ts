@@ -32,4 +32,8 @@ export const ProjectDeleteSchema = ProjectSchema.omit({
   type: true,
 })
 
+export const ProjectResumeSchema = ProjectSchema.omit({
+  id: true,
+  userId: true
+})
 

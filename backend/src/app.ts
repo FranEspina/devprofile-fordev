@@ -9,6 +9,8 @@ import userWorkRoute from './routes/userWorkRoute'
 import userProjectRoute from './routes/userProjectRoute'
 import userSkillRoute from './routes/userSkillRoute'
 import userSectionRoute from './routes/userSectionRoute'
+import userResumeRoute from './routes/userResumeRoute'
+
 
 
 const app = express()
@@ -34,5 +36,6 @@ app.use('/user', userProfileRoute)
 app.use('/user', userWorkRoute)
 app.use('/user', userProjectRoute)
 app.use('/user', userSkillRoute)
+app.use('/user', userResumeRoute)
 
 export default app

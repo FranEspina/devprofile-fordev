@@ -3,6 +3,9 @@ import { UserHashPassword, UserDTO, UserCreate } from '../models/user'
 import { UserDeleteSection, SectionData } from '../models/modelSchemas'
 import { camelToSnakeCase, snakeToCamelCase } from '../services/strings'
 
+import { WorkResume, ProjectResume, SkillResume, ProfileResume } from '../models/modelSchemas'
+
+
 const pool = new Pool({
   user: process.env.POSTGRES_USER,
   password: process.env.POSTGRES_PASSWORD,
@@ -237,6 +240,124 @@ export async function dbGetUserSectionDataAsync(userId: number): Promise<Section
       }
       sections.push(section)
     }
+    return sections
+  }
+  catch (error) {
+    console.log('Error inesperado recuperando secciones de usuario', error)
+    throw error
+  }
+}
+
+export async function dbGetUserResumeAsync(userId: number): Promise<{ [key: string]: unknown }> {
+
+  const resume: { [key: string]: unknown } = {}
+  resume['$schema'] = 'https://raw.githubusercontent.com/jsonresume/resume-schema/v1.0.0/schema.json'
+
+  try {
+
+    const work = await dbGetUserSectionResumeAsync<WorkResume>('works', userId)
+    if (work) {
+      resume['work'] = work
+    }
+
+    // const volunteer = await dbGetUserSectionResumeAsync<VolunteerResume>('volunteers', userId)
+    // if (volunteer) {
+    //   resume['volunteer'] = volunteer
+    // }
+
+    // const education = await dbGetUserSectionResumeAsync<EducationResume>('educations', userId)
+    // if (education) {
+    //   resume['education'] = education
+    // }
+
+    // const awards = await dbGetUserSectionResumeAsync<AwardResume>('awards', userId)
+    // if (awards) {
+    //   resume['awards'] = awards
+    // }
+
+    // const publications = await dbGetUserSectionResumeAsync<PublicationResume>('publications', userId)
+    // if (publications) {
+    //   resume['publications'] = publications
+    // }
+
+    // const certificates = await dbGetUserSectionResumeAsync<CertificateResume>('certificates', userId)
+    // if (certificates) {
+    //   resume['certificates'] = certificates
+    // }
+
+    const skills = await dbGetUserSectionResumeAsync<SkillResume>('skills', userId)
+    if (skills) {
+      resume['skills'] = skills
+    }
+
+    // const languages = await dbGetUserSectionResumeAsync<LanguageResume>('languages', userId)
+    // if (languages) {
+    //   resume['languages'] = languages
+    // }
+
+    // const interests = await dbGetUserSectionResumeAsync<InterestResume>('interests', userId)
+    // if (interests) {
+    //   resume['interests'] = interests
+    // }
+
+    // const references = await dbGetUserSectionResumeAsync<ReferenceResume>('references', userId)
+    // if (references) {
+    //   resume['references'] = references
+    // }
+
+    const projects = await dbGetUserSectionResumeAsync<ProjectResume>('projects', userId)
+    if (projects) {
+      resume['projects'] = projects
+    }
+
+    resume['meta'] = {
+      'version': 'v1.0.0',
+      'canonical': 'https://github.com/jsonresume/resume-schema/blob/v1.0.0/schema.json'
+    }
+
+    return resume
+  }
+  catch (error) {
+    console.log('Error inesperado recuperando secciones de usuario', error)
+    throw error
+  }
+}
+
+export async function dbGetUserSectionResumeAsync<T>(tablename: string, userId: number): Promise<T[]> {
+
+  const resume: { [key: string]: unknown } = {}
+
+  const query = `
+  SELECT ${tablename}.*
+  FROM ${tablename} 
+    inner join sections on (sections.section_name = '${tablename}' 
+                        and sections.section_id = ${tablename}.id
+                        and sections.user_id = $1 
+                        and sections.is_public = true)
+  WHERE sections.user_id = $1 
+  order by ${tablename}.id asc;
+`
+  try {
+    const sections: T[] = []
+    resume[tablename] = sections
+    const result = await pool.query(query, [userId])
+    if (result && result.rowCount) {
+      for (let indexRow = 0; indexRow < result.rows.length; indexRow++) {
+        const row = result.rows[indexRow]
+        let model: T = {} as T
+        for (let index = 0; index < result.fields.length; index++) {
+          const field = result.fields[index];
+          const name: string = field['name']
+          if (name !== 'id' && name !== 'user_id') {
+            const camelCaseName = snakeToCamelCase(name) as keyof T
+            model = updateObject<T>(model, camelCaseName, row[name])
+          }
+        }
+        sections.push(model)
+      }
+    }
+
+
     return sections
   }
   catch (error) {

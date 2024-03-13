@@ -26,3 +26,8 @@ export const BasicDeleteSchema = BasicSchema.omit({
   url: true,
   summary: true
 })
+
+export const BasicResumeSchema = BasicSchema.omit({
+  id: true,
+  userId: true
+})

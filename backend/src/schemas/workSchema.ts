@@ -21,3 +21,8 @@ export const WorkDeleteSchema = WorkSchema.omit({
   startDate: true,
   endDate: true,
 })
+
+export const WorkResumeSchema = WorkSchema.omit({
+  id: true,
+  userId: true
+})

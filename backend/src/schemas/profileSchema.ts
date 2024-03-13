@@ -17,3 +17,8 @@ export const ProfileDeleteSchema = ProfileSchema.omit({
   username: true,
   url: true,
 })
+
+export const ProfileResumeSchema = ProfileSchema.omit({
+  id: true,
+  userId: true
+})

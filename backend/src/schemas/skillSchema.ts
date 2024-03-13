@@ -17,3 +17,8 @@ export const SkillDeleteSchema = SkillSchema.omit({
   level: true,
   keywords: true
 })
+
+export const SkillResumeSchema = SkillSchema.omit({
+  id: true,
+  userId: true
+})

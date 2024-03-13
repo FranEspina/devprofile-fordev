@@ -1,6 +1,6 @@
 import { Pool } from 'pg'
 import { UserHashPassword, UserDTO, UserCreate } from '../models/user'
-import { UserDeleteSection } from '../models/modelSchemas'
+import { UserDeleteSection, SectionData } from '../models/modelSchemas'
 import { camelToSnakeCase, snakeToCamelCase } from '../services/strings'
 
 const pool = new Pool({
@@ -147,7 +147,6 @@ export async function dbCreateUserSectionAsync<T>(tablename: string, model: T): 
   }
 }
 
-
 function updateObject<T>(obj: T, key: keyof T, value: unknown): T {
   return { ...obj, [key]: value };
 }
@@ -181,6 +180,67 @@ export async function dbGetUserSectionByUserAsync<T extends { [key: string]: unk
   }
   catch (error) {
     console.log(`Error inesperado recuperando sección de usuario: '${tablename}'`, error)
+    throw error
+  }
+}
+
+export async function dbGetUserSectionDataAsync(userId: number): Promise<SectionData[]> {
+
+  let userSectionQuery = `
+  SELECT sections.id, sections.section_name, sections.section_id, sections.is_public,
+    CASE sections.section_name 
+      WHEN 'works' THEN works.title
+      WHEN 'profiles' THEN profiles.network
+      WHEN 'projects' THEN projects.name
+      WHEN 'skills' THEN skills.name
+      ELSE '#SECCIÓN DESCONOCIDA'
+    END section_desc, 
+    CASE sections.section_name
+      WHEN 'works' THEN 'Puesto'
+      WHEN 'profiles' THEN 'Perfil'
+      WHEN 'projects' THEN 'Proyecto'
+      WHEN 'skills' THEN 'Competencia'
+      ELSE '#SECCIÓN DESCONOCIDA'
+    END section_full_name
+ FROM sections 
+    left join works on (sections.section_name = 'works' and works.user_id = $1 and works.id = sections.section_id)
+    left join profiles on (sections.section_name = 'profiles' and profiles.user_id = $1 and profiles.id = sections.section_id)
+    left join projects on (sections.section_name = 'projects' and projects.user_id = $1 and projects.id = sections.section_id)
+    left join skills on (sections.section_name = 'skills' and skills.user_id = $1 and skills.id = sections.section_id)
+  WHERE sections.user_id = $1 order by sections.section_name asc, sections.section_id asc;
+`
+  try {
+    const sections: SectionData[] = []
+
+    console.log(userSectionQuery)
+
+    //TODO: Crear todos los modelos tanto de BBDD como de los DTO de la API
+    //No queremos tener dos clases, una para los controladores (camelCase) y otra para la bbdd (snake_case)
+    //const result = await pool.query<T>(userSectionQuery, [userId])
+    const result = await pool.query(userSectionQuery, [userId])
+    if (!result || !result.rowCount) {
+      return sections
+    }
+
+    console.log(result)
+
+    //TODO eliminar cuando existan los modelos
+    for (let indexRow = 0; indexRow < result.rows.length; indexRow++) {
+      const row = result.rows[indexRow]
+
+      let section: SectionData = {} as SectionData
+      for (let index = 0; index < result.fields.length; index++) {
+        const field = result.fields[index];
+        const name: string = field['name']
+        const camelCaseName = snakeToCamelCase(name) as keyof SectionData
+        section = updateObject<SectionData>(section, camelCaseName, row[name])
+      }
+      sections.push(section)
+    }
+    return sections
+  }
+  catch (error) {
+    console.log('Error inesperado recuperando secciones de usuario', error)
     throw error
   }
 }

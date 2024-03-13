@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { UserSectionController } from '../controllers/user/userSection'
+import { UserSectionController, getUserSectionDataAsync } from '../controllers/user/userSection'
 import { auth } from '../middlewares/auth'
 
 const router = Router()
@@ -10,5 +10,7 @@ router.get('/:userId/section', auth, controller.getUserSectionAsync.bind(control
 router.post('/:userId/section', auth, controller.createUserSection.bind(controller))
 router.put('/:userId/section/:id', auth, controller.updateUserSection.bind(controller))
 router.delete('/:userId/section/:id', auth, controller.deleteUserSection.bind(controller))
+
+router.get('/:userId/sectiondata', auth, getUserSectionDataAsync)
 
 export default router

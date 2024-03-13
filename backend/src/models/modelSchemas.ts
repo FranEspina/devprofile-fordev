@@ -25,3 +25,12 @@ export type UserDeleteSection = {
   id: number,
   userId: number
 }
+
+export type SectionData = {
+  id: number,
+  sectionName: string,
+  sectionFullName: string,
+  sectionId: number,
+  sectionDesc: string,
+  isPublic: boolean
+} 

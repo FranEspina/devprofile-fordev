@@ -4,7 +4,7 @@ import { ProfileSchema, ProfileCreateSchema, ProfileDeleteSchema, ProfileResumeS
 import { WorkSchema, WorkCreateSchema, WorkDeleteSchema, WorkResumeSchema } from '../schemas/workSchema'
 import { ProjectSchema, ProjectCreateSchema, ProjectDeleteSchema, ProjectResumeSchema } from '../schemas/projectSchema'
 import { SkillSchema, SkillCreateSchema, SkillDeleteSchema, SkillResumeSchema } from '../schemas/skillSchema'
-import { BasicResumeSchema } from '../schemas/basicSchema'
+import { BasicSchema, BasicResumeSchema } from '../schemas/basicSchema'
 
 
 export type DevResource = z.infer<typeof DevResourceSchema>;
@@ -31,6 +31,7 @@ export type SkillCreate = z.infer<typeof SkillCreateSchema>
 export type SkillDelete = z.infer<typeof SkillDeleteSchema>
 export type SkillResume = z.infer<typeof SkillResumeSchema>
 
+export type Basic = z.infer<typeof BasicSchema>
 export type BasicResume = z.infer<typeof BasicResumeSchema>
 
 export type UserDeleteSection = {

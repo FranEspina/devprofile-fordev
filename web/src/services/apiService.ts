@@ -312,3 +312,36 @@ export async function updateUserSection<T extends UserSection>(sectionName: stri
 
   }
 }
+
+export async function getUserResume(id: number, token: string) {
+  const endpoint = `${API_BASE_URL}/user/${id}/resume`
+  try {
+    const response = await axios.get(endpoint, authHeader(token))
+    const results: apiResponse<unknown> = response.data
+    console.log(results)
+    if (results.success === true) {
+      return { success: true, message: 'Operación realizada con éxito', data: results.data }
+    }
+    return { success: false, message: results.message }
+  } catch (error) {
+    console.log(error)
+    if (axios.isAxiosError(error)) {
+      console.log('Error axios:', error.message);
+      if (error.response) {
+        const results: apiResponse<T[]> = error.response.data
+        if (results) {
+          return { success: false, message: 'Error inesperado recuperando resumen' }
+        }
+      }
+    } else if (error instanceof Error) {
+      console.log('Exception:', error.message);
+    } else if (typeof error === "string") {
+      console.log('Error:', error);
+    } else {
+      console.log('Unknow error:', error);
+    }
+
+    return { success: false, message: 'Error inesperado recuperando resumen' }
+
+  }
+}

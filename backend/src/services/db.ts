@@ -186,7 +186,7 @@ export async function dbGetUserSectionByUserAsync<T extends { [key: string]: unk
 
 export async function dbGetUserSectionDataAsync(userId: number): Promise<SectionData[]> {
 
-  let userSectionQuery = `
+  const userSectionQuery = `
   SELECT sections.id, sections.user_id, sections.section_name, sections.section_id, sections.is_public,
     CASE sections.section_name 
       WHEN 'works' THEN works.title

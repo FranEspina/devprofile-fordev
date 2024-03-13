@@ -5,6 +5,8 @@ import type { SectionData, Section } from '@/Schemas/sectionSchema'
 import { updateUserSection } from '@/services/apiService'
 import { useNotify } from "@/hooks/useNotify";
 import { useProfileStore } from "@/store/profileStore";
+import { Checkbox } from "@/components/ui/checkbox"
+import { type CheckedState } from '@radix-ui/react-checkbox'
 
 export function PublicSectionCheckbox({ section }: { section: SectionData }) {
 
@@ -23,17 +25,23 @@ export function PublicSectionCheckbox({ section }: { section: SectionData }) {
     }
   }, [section])
 
-  const handleChange: React.ChangeEventHandler<HTMLInputElement> = useCallback(async (e) => {
+
+
+  const handleChangeCheck = useCallback(async (checked: CheckedState) => {
+    const isPublic = (checked === true) ? true : false
+
     setLoading(true)
-    setIsPublic(e.target.checked)
+    setIsPublic(isPublic)
 
     const sectionToUpdate: Section = {
       id: section.id,
       userId: section.userId,
       sectionId: section.sectionId,
       sectionName: section.sectionName,
-      isPublic: e.target.checked
+      isPublic: isPublic
     }
+
+    section.isPublic = isPublic
 
     try {
       var { success, message, data } = await updateUserSection<Section>('section', sectionToUpdate, token)
@@ -41,12 +49,14 @@ export function PublicSectionCheckbox({ section }: { section: SectionData }) {
         notifySuccess(message)
       }
       else {
-        setIsPublic(!e.target.checked)
+        setIsPublic(!isPublic)
+        section.isPublic = !isPublic
         notifyError('Error inesperado actualizando sección')
       }
     }
     catch (error) {
-      setIsPublic(!e.target.checked)
+      setIsPublic(!isPublic)
+      section.isPublic = !isPublic
       console.log(error)
       notifyError('Error inesperado actualizando sección')
     }
@@ -55,9 +65,10 @@ export function PublicSectionCheckbox({ section }: { section: SectionData }) {
     }
   }, [token])
 
+
   return <div className="flex flex-row gap-1 items-center justify-center">
     <div className="h-5 w-5">
-      <input disabled={loading} className={cn("hover:cursor-pointer", loading ? 'hidden' : '')} type="checkbox" checked={isPublic} onChange={handleChange} />
+      <Checkbox disabled={loading} className={cn("hover:cursor-pointer", loading ? 'hidden' : '')} checked={isPublic} onCheckedChange={handleChangeCheck} />
       <LoadIndicator loading={loading} />
     </div>
   </div>

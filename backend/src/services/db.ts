@@ -3,7 +3,7 @@ import { UserHashPassword, UserDTO, UserCreate } from '../models/user'
 import { UserDeleteSection, SectionData } from '../models/modelSchemas'
 import { camelToSnakeCase, snakeToCamelCase } from '../services/strings'
 
-import { WorkResume, ProjectResume, SkillResume, ProfileResume, Basic, BasicResume } from '../models/modelSchemas'
+import { WorkResume, ProjectResume, SkillResume, ProfileResume, Basic } from '../models/modelSchemas'
 
 
 const pool = new Pool({

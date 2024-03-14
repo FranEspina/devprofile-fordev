@@ -6,6 +6,17 @@ import { ProjectSchema, ProjectCreateSchema, ProjectDeleteSchema, ProjectResumeS
 import { SkillSchema, SkillCreateSchema, SkillDeleteSchema, SkillResumeSchema } from '../schemas/skillSchema'
 import { BasicSchema, BasicResumeSchema } from '../schemas/basicSchema'
 
+import { LocationResumeSchema } from '../schemas/locationSchema'
+import { VolunteerResumeSchema } from '../schemas/volunteerSchema'
+import { EducationResumeSchema } from '../schemas/educationSchema'
+import { AwardResumeSchema } from '../schemas/awardSchema'
+import { CertificateResumeSchema } from '../schemas/certificateSchema'
+import { PublicationResumeSchema } from '../schemas/publicationSchema'
+import { LanguageResumeSchema } from '../schemas/languageSchema'
+import { InterestResumeSchema } from '../schemas/interestSchema'
+import { ReferenceResumeSchema } from '../schemas/referenceSchema'
+
+
 
 export type DevResource = z.infer<typeof DevResourceSchema>;
 export type DevResourceCreate = z.infer<typeof DevResourceCreateSchema>
@@ -33,6 +44,17 @@ export type SkillResume = z.infer<typeof SkillResumeSchema>
 
 export type Basic = z.infer<typeof BasicSchema>
 export type BasicResume = z.infer<typeof BasicResumeSchema>
+
+
+export type LocationResume = z.infer<typeof LocationResumeSchema>
+export type VolunteerResume = z.infer<typeof VolunteerResumeSchema>
+export type EducationResume = z.infer<typeof EducationResumeSchema>
+export type AwardResume = z.infer<typeof AwardResumeSchema>
+export type CertificateResume = z.infer<typeof CertificateResumeSchema>
+export type PublicationResume = z.infer<typeof PublicationResumeSchema>
+export type LanguageResume = z.infer<typeof LanguageResumeSchema>
+export type InterestResume = z.infer<typeof InterestResumeSchema>
+export type ReferenceResume = z.infer<typeof ReferenceResumeSchema>
 
 export type UserDeleteSection = {
   tablename: string,

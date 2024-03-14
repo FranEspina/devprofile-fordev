@@ -19,6 +19,17 @@ export const dropCreateAndSeedTables = async () => {
       DROP TABLE IF EXISTS projects;
       DROP TABLE IF EXISTS works;
       DROP TABLE IF EXISTS profiles;
+      DROP TABLE IF EXISTS locations;
+      DROP TABLE IF EXISTS basics;
+      DROP TABLE IF EXISTS volunteers;
+      DROP TABLE IF EXISTS educations;
+      DROP TABLE IF EXISTS awards;
+      DROP TABLE IF EXISTS certificates;
+      DROP TABLE IF EXISTS publications;
+      DROP TABLE IF EXISTS skills;
+      DROP TABLE IF EXISTS languages;
+      DROP TABLE IF EXISTS interests;
+      DROP TABLE IF EXISTS references;
       DROP TABLE IF EXISTS resources;
       DROP TABLE IF EXISTS users;
     `
@@ -130,96 +141,6 @@ export const dropCreateAndSeedTables = async () => {
       console.log(err);
     });
 
-  const profilesTable = `
-    CREATE TABLE IF NOT EXISTS
-      profiles(
-        id SERIAL PRIMARY KEY,
-        user_id INTEGER,
-        network VARCHAR(50) NOT NULL,
-        username VARCHAR(50) NOT NULL,
-        url TEXT NOT NULL,
-        FOREIGN KEY (user_id) REFERENCES users(id)
-      )`;
-
-  await pool.query(profilesTable)
-    .then(() => {
-      console.log('- tabla perfiles creada');
-    })
-    .catch((err) => {
-      console.log('Error inesperado creando tabla: perfiles')
-      console.log(err);
-    });
-
-  const worksTable = `
-    CREATE TABLE IF NOT EXISTS
-      works(
-        id SERIAL PRIMARY KEY,
-        user_id INTEGER,
-        title VARCHAR(50) NOT NULL,
-        position VARCHAR(50) NOT NULL,
-        description TEXT NOT NULL,
-        start_date TIMESTAMPTZ NOT NULL,
-        end_date TIMESTAMPTZ,
-        highlights TEXT,
-        FOREIGN KEY (user_id) REFERENCES users(id)
-      )`;
-
-  await pool.query(worksTable)
-    .then(() => {
-      console.log('- tabla works creada');
-    })
-    .catch((err) => {
-      console.log('Error inesperado creando tabla: works')
-      console.log(err);
-    });
-
-  const projectsTable = `
-    CREATE TABLE IF NOT EXISTS
-      projects(
-        id SERIAL PRIMARY KEY,
-        user_id INTEGER,
-        name VARCHAR(50) NOT NULL,
-        description TEXT NOT NULL,
-        highlights TEXT,
-        keywords TEXT,
-        start_date TIMESTAMPTZ NOT NULL,
-        end_date TIMESTAMPTZ,
-        url VARCHAR(250) NOT NULL,
-        roles TEXT,
-        entity VARCHAR(250),
-        type VARCHAR(250),
-        FOREIGN KEY (user_id) REFERENCES users(id)
-      )`;
-
-  await pool.query(projectsTable)
-    .then(() => {
-      console.log('- tabla projects creada');
-    })
-    .catch((err) => {
-      console.log('Error inesperado creando tabla: projects')
-      console.log(err);
-    });
-
-  const skillsTable = `
-    CREATE TABLE IF NOT EXISTS
-      skills(
-        id SERIAL PRIMARY KEY,
-        user_id INTEGER,
-        name VARCHAR(50) NOT NULL,
-        level VARCHAR(50) NOT NULL,
-        keywords TEXT,
-        FOREIGN KEY (user_id) REFERENCES users(id)
-      )`;
-
-  await pool.query(skillsTable)
-    .then(() => {
-      console.log('- tabla skills creada');
-    })
-    .catch((err) => {
-      console.log('Error inesperado creando tabla: skills')
-      console.log(err);
-    });
-
   const basicsTable = `
     CREATE TABLE IF NOT EXISTS
       basics(
@@ -258,115 +179,207 @@ export const dropCreateAndSeedTables = async () => {
       console.log(err);
     });
 
-  const triggerSections = `
-    CREATE OR REPLACE FUNCTION delete_public_works() RETURNS TRIGGER AS $$
-    BEGIN
-      DELETE FROM sections WHERE sections.section_name = 'works' AND sections.section_id = OLD.id;
-      RETURN NULL;
-    END;
-    $$ LANGUAGE plpgsql;
+  const queryTables = `
+    CREATE TABLE IF NOT EXISTS
+      profiles(
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER,
+        network VARCHAR(50) NOT NULL,
+        username VARCHAR(50) NOT NULL,
+        url TEXT NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id)
+      );
 
-    CREATE OR REPLACE FUNCTION insert_public_works() RETURNS TRIGGER AS $$
-    BEGIN
-      INSERT INTO sections(section_name, user_id, section_id, is_public)
-      VALUES('works', NEW.user_id, NEW.id, TRUE);
-      RETURN NULL;
-    END;
-    $$ LANGUAGE plpgsql;
+    CREATE TABLE IF NOT EXISTS
+      locations(
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER,
+        address VARCHAR(250) NOT NULL,
+        postal_code VARCHAR(50) NOT NULL,
+        city VARCHAR(250) NOT NULL,
+        country_code VARCHAR(250) NOT NULL,
+        region VARCHAR(250) NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id)
+      );
 
-    CREATE OR REPLACE TRIGGER works_trigger_deleted
-    AFTER DELETE ON works
-    FOR EACH ROW
-    EXECUTE PROCEDURE delete_public_works();
+    CREATE TABLE IF NOT EXISTS
+      works(
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER,
+        title VARCHAR(50) NOT NULL,
+        position VARCHAR(50) NOT NULL,
+        description TEXT NOT NULL,
+        start_date TIMESTAMPTZ NOT NULL,
+        end_date TIMESTAMPTZ,
+        highlights TEXT,
+        FOREIGN KEY (user_id) REFERENCES users(id)
+      );
 
-    CREATE OR REPLACE TRIGGER works_trigger_inserted
-    AFTER INSERT ON works
-    FOR EACH ROW
-    EXECUTE PROCEDURE insert_public_works();
+    CREATE TABLE IF NOT EXISTS
+      projects(
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER,
+        name VARCHAR(50) NOT NULL,
+        description TEXT NOT NULL,
+        highlights TEXT,
+        keywords TEXT,
+        start_date TIMESTAMPTZ NOT NULL,
+        end_date TIMESTAMPTZ,
+        url VARCHAR(250) NOT NULL,
+        roles TEXT,
+        entity VARCHAR(250),
+        type VARCHAR(250),
+        FOREIGN KEY (user_id) REFERENCES users(id)
+      );
 
-    CREATE OR REPLACE FUNCTION delete_public_profiles() RETURNS TRIGGER AS $$
-    BEGIN
-      DELETE FROM sections WHERE sections.section_name = 'profiles' AND sections.section_id = OLD.id;
-      RETURN NULL;
-    END;
-    $$ LANGUAGE plpgsql;
+    CREATE TABLE IF NOT EXISTS
+      skills(
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER,
+        name VARCHAR(50) NOT NULL,
+        level VARCHAR(50) NOT NULL,
+        keywords TEXT,
+        FOREIGN KEY (user_id) REFERENCES users(id)
+      );
 
-    CREATE OR REPLACE FUNCTION insert_public_profiles() RETURNS TRIGGER AS $$
-    BEGIN
-      INSERT INTO sections(section_name, user_id, section_id, is_public)
-      VALUES('profiles', NEW.user_id, NEW.id, TRUE);
-      RAISE NOTICE 'Se ha insertado una fila en % con los valores: %', TG_TABLE_NAME, NEW;
-      RETURN NEW;
-    END;
-    $$ LANGUAGE plpgsql;
+    CREATE TABLE IF NOT EXISTS
+      volunteers(
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER,
+        organization VARCHAR(250) NOT NULL,
+        position TEXT NOT NULL,
+        url VARCHAR(250),
+        start_date TIMESTAMPTZ NOT NULL,
+        end_date TIMESTAMPTZ,
+        summary TEXT,
+        highlights TEXT,
+        FOREIGN KEY (user_id) REFERENCES users(id)
+      );
 
-    CREATE OR REPLACE TRIGGER profiles_trigger_deleted
-    AFTER DELETE ON profiles
-    FOR EACH ROW
-    EXECUTE PROCEDURE delete_public_profiles();
+    CREATE TABLE IF NOT EXISTS
+      educations(
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER,
+        institution VARCHAR(250) NOT NULL,
+        url VARCHAR(250),
+        area VARCHAR(250) NOT NULL,
+        study_type VARCHAR(250) NOT NULL,
+        start_date TIMESTAMPTZ NOT NULL,
+        end_date TIMESTAMPTZ,
+        score VARCHAR(250),
+        courses TEXT,
+        FOREIGN KEY (user_id) REFERENCES users(id)
+      );
 
-    CREATE OR REPLACE TRIGGER profiles_trigger_inserted
-    AFTER INSERT ON profiles
-    FOR EACH ROW
-    EXECUTE PROCEDURE insert_public_profiles();
+    CREATE TABLE IF NOT EXISTS
+      awards(
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER,
+        title VARCHAR(250) NOT NULL,
+        date TIMESTAMPTZ NOT NULL,
+        awarder VARCHAR(250),
+        summary TEXT,
+        FOREIGN KEY (user_id) REFERENCES users(id)
+      );
 
-    CREATE OR REPLACE FUNCTION delete_public_projects() RETURNS TRIGGER AS $$
-    BEGIN
-      DELETE FROM sections WHERE sections.section_name = 'projects' AND sections.section_id = OLD.id;
-      RETURN NULL;
-    END;
-    $$ LANGUAGE plpgsql;
+    CREATE TABLE IF NOT EXISTS
+      certificates(
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER,
+        name VARCHAR(250) NOT NULL,
+        date TIMESTAMPTZ NOT NULL,
+        url VARCHAR(250),
+        issuer VARCHAR(250) NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id)
+      );
 
-    CREATE OR REPLACE FUNCTION insert_public_projects() RETURNS TRIGGER AS $$
-    BEGIN
-      INSERT INTO sections(section_name, user_id, section_id, is_public)
-      VALUES('projects', NEW.user_id, NEW.id, TRUE);
-      RETURN NULL;
-    END;
-    $$ LANGUAGE plpgsql;
+    CREATE TABLE IF NOT EXISTS
+      publications(
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER,
+        name VARCHAR(250) NOT NULL,
+        publisher VARCHAR(250) NOT NULL,
+        release_date TIMESTAMPTZ NOT NULL,
+        url VARCHAR(250),
+        summary TEXT,
+        FOREIGN KEY (user_id) REFERENCES users(id)
+      );
 
-    CREATE OR REPLACE TRIGGER projects_trigger_deleted
-    AFTER DELETE ON projects
-    FOR EACH ROW
-    EXECUTE PROCEDURE delete_public_projects();
+    CREATE TABLE IF NOT EXISTS
+      languages(
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER,
+        language VARCHAR(250) NOT NULL,
+        fluency VARCHAR(250) NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id)
+      );
 
-    CREATE OR REPLACE TRIGGER projects_trigger_inserted
-    AFTER INSERT ON projects
-    FOR EACH ROW
-    EXECUTE PROCEDURE insert_public_projects();
+    CREATE TABLE IF NOT EXISTS
+      interests(
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER,
+        name VARCHAR(250) NOT NULL,
+        keywords TEXT,
+        FOREIGN KEY (user_id) REFERENCES users(id)
+      );
 
-    CREATE OR REPLACE FUNCTION delete_public_skills() RETURNS TRIGGER AS $$
-    BEGIN
-      DELETE FROM sections WHERE sections.section_name = 'skills' AND sections.section_id = OLD.id;
-      RETURN NULL;
-    END;
-    $$ LANGUAGE plpgsql;
+    CREATE TABLE IF NOT EXISTS
+      user_references(
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER,
+        name VARCHAR(250) NOT NULL,
+        reference TEXT NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id)
+      );
 
-    CREATE OR REPLACE FUNCTION insert_public_skills() RETURNS TRIGGER AS $$
-    BEGIN
-      INSERT INTO sections(section_name, user_id, section_id, is_public)
-      VALUES('skills', NEW.user_id, NEW.id, TRUE);
-      RETURN NULL;
-    END;
-    $$ LANGUAGE plpgsql;
-
-    CREATE OR REPLACE TRIGGER skills_trigger_deleted
-    AFTER DELETE ON skills
-    FOR EACH ROW
-    EXECUTE PROCEDURE delete_public_skills();
-
-    CREATE OR REPLACE TRIGGER skills_trigger_inserted
-    AFTER INSERT ON skills
-    FOR EACH ROW
-    EXECUTE PROCEDURE insert_public_skills();
       `;
 
-  await pool.query(triggerSections)
+  await pool.query(queryTables)
     .then(() => {
-      console.log('- Triggers basics');
+      console.log('- tablas de usuarios creadas');
     })
     .catch((err) => {
-      console.log('Error inesperado creando Triggers: basics')
+      console.log('Error inesperado creando tablas de usuarios')
+      console.log(err);
+    });
+
+  //La tabla 'references' se llama 'user_references' porque 'references' es una palabra protegida 
+  const tableNames = ['works', 'profiles', 'locations', 'projects', 'skills', 'volunteers', 'educations', 'awards', 'certificates', 'publications', 'languages', 'interests', 'user_references']
+  const triggers = tableNames.map(table => (
+    `
+    CREATE OR REPLACE FUNCTION delete_public_${table}() RETURNS TRIGGER AS $$
+    BEGIN
+      DELETE FROM sections WHERE sections.section_name = '${table}' AND sections.section_id = OLD.id;
+      RETURN NULL;
+    END;
+    $$ LANGUAGE plpgsql;
+
+    CREATE OR REPLACE FUNCTION insert_public_${table}() RETURNS TRIGGER AS $$
+    BEGIN
+      INSERT INTO sections(section_name, user_id, section_id, is_public)
+      VALUES('${table}', NEW.user_id, NEW.id, TRUE);
+      RETURN NULL;
+    END;
+    $$ LANGUAGE plpgsql;
+
+    CREATE OR REPLACE TRIGGER ${table}_trigger_deleted
+    AFTER DELETE ON ${table}
+    FOR EACH ROW
+    EXECUTE PROCEDURE delete_public_${table}();
+
+    CREATE OR REPLACE TRIGGER ${table}_trigger_inserted
+    AFTER INSERT ON ${table}
+    FOR EACH ROW
+    EXECUTE PROCEDURE insert_public_${table}();
+    `
+  ))
+
+  await pool.query(triggers.join(''))
+    .then(() => {
+      console.log('- Creación de Triggers');
+    })
+    .catch((err) => {
+      console.log('Error inesperado creando Triggers')
       console.log(err);
     });
 

@@ -3,7 +3,7 @@ import { UserHashPassword, UserDTO, UserCreate } from '../models/user'
 import { UserDeleteSection, SectionData } from '../models/modelSchemas'
 import { camelToSnakeCase, snakeToCamelCase } from '../services/strings'
 
-import { WorkResume, ProjectResume, SkillResume, ProfileResume, Basic } from '../models/modelSchemas'
+import { WorkResume, ProjectResume, SkillResume, ProfileResume, Basic, LocationResume, VolunteerResume, EducationResume, AwardResume, CertificateResume, PublicationResume, LanguageResume, InterestResume, ReferenceResume } from '../models/modelSchemas'
 
 
 const pool = new Pool({
@@ -265,6 +265,12 @@ export async function dbGetUserResumeAsync(userId: number): Promise<{ [key: stri
           basicResume['profiles'] = profile
         }
       }
+      const location = await dbGetUserSectionResumeAsync<LocationResume>('locations', userId)
+      if (location) {
+        if (location && location.length !== 0) {
+          basicResume['location'] = location[0]
+        }
+      }
       resume['basic'] = basicResume
     }
 
@@ -273,50 +279,50 @@ export async function dbGetUserResumeAsync(userId: number): Promise<{ [key: stri
       resume['work'] = work
     }
 
-    // const volunteer = await dbGetUserSectionResumeAsync<VolunteerResume>('volunteers', userId)
-    // if (volunteer && volunteer.length !== 0) {
-    //   resume['volunteer'] = volunteer
-    // }
+    const volunteer = await dbGetUserSectionResumeAsync<VolunteerResume>('volunteers', userId)
+    if (volunteer && volunteer.length !== 0) {
+      resume['volunteer'] = volunteer
+    }
 
-    // const education = await dbGetUserSectionResumeAsync<EducationResume>('educations', userId)
-    // if (education && education.length !== 0) {
-    //   resume['education'] = education
-    // }
+    const education = await dbGetUserSectionResumeAsync<EducationResume>('educations', userId)
+    if (education && education.length !== 0) {
+      resume['education'] = education
+    }
 
-    // const awards = await dbGetUserSectionResumeAsync<AwardResume>('awards', userId)
-    // if (awards && awards.length !== 0) {
-    //   resume['awards'] = awards
-    // }
+    const awards = await dbGetUserSectionResumeAsync<AwardResume>('awards', userId)
+    if (awards && awards.length !== 0) {
+      resume['awards'] = awards
+    }
 
-    // const publications = await dbGetUserSectionResumeAsync<PublicationResume>('publications', userId)
-    // if (publications && publications.length !== 0) {
-    //   resume['publications'] = publications
-    // }
+    const publications = await dbGetUserSectionResumeAsync<PublicationResume>('publications', userId)
+    if (publications && publications.length !== 0) {
+      resume['publications'] = publications
+    }
 
-    // const certificates = await dbGetUserSectionResumeAsync<CertificateResume>('certificates', userId)
-    // if (certificates && certificates.length !== 0) {
-    //   resume['certificates'] = certificates
-    // }
+    const certificates = await dbGetUserSectionResumeAsync<CertificateResume>('certificates', userId)
+    if (certificates && certificates.length !== 0) {
+      resume['certificates'] = certificates
+    }
 
     const skills = await dbGetUserSectionResumeAsync<SkillResume>('skills', userId)
     if (skills && work.length !== 0) {
       resume['skills'] = skills
     }
 
-    // const languages = await dbGetUserSectionResumeAsync<LanguageResume>('languages', userId)
-    // if (languages && languages.length !== 0) {
-    //   resume['languages'] = languages
-    // }
+    const languages = await dbGetUserSectionResumeAsync<LanguageResume>('languages', userId)
+    if (languages && languages.length !== 0) {
+      resume['languages'] = languages
+    }
 
-    // const interests = await dbGetUserSectionResumeAsync<InterestResume>('interests', userId)
-    // if (interests && interests.length !== 0) {
-    //   resume['interests'] = interests
-    // }
+    const interests = await dbGetUserSectionResumeAsync<InterestResume>('interests', userId)
+    if (interests && interests.length !== 0) {
+      resume['interests'] = interests
+    }
 
-    // const references = await dbGetUserSectionResumeAsync<ReferenceResume>('references', userId)
-    // if (references && references.length !== 0) {
-    //   resume['references'] = references
-    // }
+    const references = await dbGetUserSectionResumeAsync<ReferenceResume>('user_references', userId)
+    if (references && references.length !== 0) {
+      resume['references'] = references
+    }
 
     const projects = await dbGetUserSectionResumeAsync<ProjectResume>('projects', userId)
     if (projects && projects.length !== 0) {

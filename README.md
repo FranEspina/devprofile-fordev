@@ -22,17 +22,20 @@ Web que permite a los usuario logarse y crear una cuenta de desarrollador donde 
 ![Modo claro y responsive](./resources/light.png)
 
 # TODO
-- [] Validaciones de tamaños máximos en zod
-- [] Poder decidir si tu cv se puede ver públicamente
-- [] Poder indicar que campos se ven públicamente y cuales son privados
-- [] Poder order dentro de las secciones
-- [] Crear vista pública del cv
-- [] Incluir todas las secciones del cv
-- [] Permitir importar las secciones del cv según el esquema
-- [] Permitir exportar el cv a formato json segun el esquema 
-- [] Crear gestiones de aplicaciones asociadas al usuario para exponer una api_key
-- [] Integrar la api con las peticiones por api_key
-
+- [ ] Validaciones de tamaños máximos en zod
+- [ ] Poder decidir si tu cv se puede ver públicamente
+- [ ] Poder indicar que campos se ven públicamente y cuales son privados
+- [ ] Poder order dentro de las secciones
+- [ ] Crear vista pública del cv
+- [ ] Incluir todas las secciones del cv
+- [ ] Permitir importar las secciones del cv según el esquema
+- [ ] Permitir exportar el cv a formato json segun el esquema 
+- [ ] Crear gestiones de aplicaciones asociadas al usuario para exponer una api_key
+- [ ] Integrar la api con las peticiones por api_key
+- [ ] Verificar el token contra el api del backend en la autorización
+- [ ] Unificar las cookies y el localStorage del token e id de usuario
+- [ ] Que la api devuelva el tiempo de expiración del token y ver si merece la pena tener refreshtoken
+      
 # Créditos
 - [Motomangucode Font](https://www.fontspace.com/Motomang-font-f101909)  by Meyerfonts (Bryndan Meyerholt)
 - Esquema del JSON de CV de [jsonresume.org](https://jsonresume.org)

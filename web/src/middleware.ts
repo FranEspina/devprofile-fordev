@@ -38,11 +38,6 @@ const verifyAuth = async (token?: string) => {
 export const onRequest = defineMiddleware(async (context, next) => {
   // Ignore auth validation for public routes
 
-
-  if (PUBLIC_ROUTES.includes(context.url.pathname)) {
-    return next();
-  }
-
   context.locals.user = {
     id: '',
     token: ''
@@ -58,11 +53,15 @@ export const onRequest = defineMiddleware(async (context, next) => {
     userId = context.cookies.get(ID).value
   }
 
+  if (PUBLIC_ROUTES.includes(context.url.pathname)) {
+    context.locals.user.token = token;
+    context.locals.user.id = userId;
+    return next();
+  }
   const validationResult = await verifyAuth(token);
 
   switch (validationResult.status) {
     case "authorized":
-      console.log(context.locals)
       context.locals.user.token = token;
       context.locals.user.id = userId;
       return next();

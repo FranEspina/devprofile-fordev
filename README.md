@@ -34,6 +34,7 @@ Web que permite a los usuario logarse y crear una cuenta de desarrollador donde 
 - [ ] Integrar la api con las peticiones por api_key
 - [ ] Verificar el token contra el api del backend en la autorización
 - [ ] Unificar las cookies y el localStorage del token e id de usuario
+- [ ] Que la api devuelva el tiempo de expiración del token y ver si merece la pena tener refreshtoken
       
 # Créditos
 - [Motomangucode Font](https://www.fontspace.com/Motomang-font-f101909)  by Meyerfonts (Bryndan Meyerholt)

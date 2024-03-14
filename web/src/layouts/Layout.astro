@@ -8,6 +8,7 @@ import "@/styles/globals.css";
 interface Props {
   title: string;
 }
+const year = new Date(Date.now()).getFullYear();
 
 const { title } = Astro.props;
 ---
@@ -44,4 +45,11 @@ const { title } = Astro.props;
       theme="dark"
     />
   </body>
+  <footer>
+    <p
+      class="mt-20 border-t-2 border-dashed py-5 text-end text-xs max-w-[800px] mx-auto"
+    >
+      @Copyright {year} - Creado por Fran Espina 👌
+    </p>
+  </footer>
 </html>

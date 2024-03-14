@@ -3,6 +3,7 @@ import { create } from 'zustand'
 import { persist, devtools } from 'zustand/middleware'
 import Cookies from 'js-cookie';
 
+
 interface profileState {
   user: apiUserDto | undefined,
   token: string,
@@ -20,11 +21,11 @@ export const useProfileStore = create<profileState>()(
       theme: 'not-loaded',
       setUser: (user: apiUserDto | undefined) => {
         set({ user })
-        Cookies.set('id', user?.id?.toString() || '', { secure: true });
+        Cookies.set('id', user?.id?.toString() || '', { secure: true, expires: 7 });
       },
       setToken: (token: string) => {
         set({ token })
-        Cookies.set('token', token, { secure: true });
+        Cookies.set('token', token, { secure: true, expires: 7 });
       },
       setThemeState: (theme: "theme-light" | "dark" | "system") => set({ theme })
     }

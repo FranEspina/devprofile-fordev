@@ -1,20 +1,22 @@
-import { CreateProfileDialog } from "@/components/Curriculum/Profile/CreateProfileDialog";
-import { CreateWorkDialog } from "@/components/Curriculum/Work/CreateWorkDialog";
-import { CreateProjectDialog } from "@/components/Curriculum/Project/CreateProjectDialog";
-import { CreateSkillDialog } from "@/components/Curriculum/Skill/CreateSkillDialog";
-import { LocationDialog } from "@/components/Curriculum/Location/LocationDialog";
-
-
-import { ProfileList } from "@/components/Curriculum/Profile/ProfileList";
-import { WorkList } from '@/components/Curriculum/Work/WorkList'
-import { ProjectList } from '@/components/Curriculum/Project/ProjectList'
-import { SkillList } from '@/components/Curriculum/Skill/SkillList'
 import { BasicSection } from '@/components/Curriculum/Basic/BasicSection'
+
+import { CreateProfileDialog } from "@/components/Curriculum/Profile/CreateProfileDialog";
+import { ProfileList } from "@/components/Curriculum/Profile/ProfileList";
+
+import { CreateWorkDialog } from "@/components/Curriculum/Work/CreateWorkDialog";
+import { WorkList } from '@/components/Curriculum/Work/WorkList'
+
+import { CreateProjectDialog } from "@/components/Curriculum/Project/CreateProjectDialog";
+import { ProjectList } from '@/components/Curriculum/Project/ProjectList'
+
+import { CreateSkillDialog } from "@/components/Curriculum/Skill/CreateSkillDialog";
+import { SkillList } from '@/components/Curriculum/Skill/SkillList'
+
+import { LocationDialog } from "@/components/Curriculum/Location/LocationDialog";
 import { LocationList } from '@/components/Curriculum/Location/LocationList'
 
-
-
-import { useState } from "react";
+import { ReferenceDialog } from "@/components/Curriculum/Reference/ReferenceDialog";
+import { ReferenceList } from '@/components/Curriculum/Reference/ReferenceList'
 
 export function CurriculumView() {
 
@@ -48,6 +50,10 @@ export function CurriculumView() {
       <div className="flex flex-col justify-start gap-1">
         <CreateSkillDialog />
         <SkillList />
+      </div>
+      <div className="flex flex-col justify-start gap-1">
+        <ReferenceDialog editMode={false} />
+        <ReferenceList />
       </div>
     </div>
   </section>

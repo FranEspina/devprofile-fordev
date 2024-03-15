@@ -189,33 +189,44 @@ export async function dbGetUserSectionByUserAsync<T extends { [key: string]: unk
 
 export async function dbGetUserSectionDataAsync(userId: number): Promise<SectionData[]> {
 
+  const fields = [
+    { section: 'works', table: 'works', field: 'title', description: 'Puesto' },
+    { section: 'profiles', table: 'profiles', field: 'network', description: 'Perfil' },
+    { section: 'projects', table: 'projects', field: 'name', description: 'Proyecto' },
+    { section: 'skills', table: 'skills', field: 'name', description: 'Competencia' },
+    { section: 'locations', table: 'locations', field: 'address', description: 'Dirección' },
+    { section: 'volunteers', table: 'volunteers', field: 'organization', description: 'Voluntariado' },
+    { section: 'educations', table: 'educations', field: 'institution', description: 'Estudio' },
+    { section: 'awards', table: 'awards', field: 'title', description: 'Logro' },
+    { section: 'certificates', table: 'certificates', field: 'name', description: 'Certificado' },
+    { section: 'publications', table: 'publications', field: 'name', description: 'Publicación' },
+    { section: 'languages', table: 'languages', field: 'language', description: 'Idioma' },
+    { section: 'interests', table: 'interests', field: 'name', description: 'Interés' },
+    { section: 'references', table: 'user_references', field: 'name', description: 'Referencia' },
+
+  ]
+
+  const casesField = fields.map(f => `WHEN '${f.section}' THEN ${f.table}.${f.field}`).join('\r\n')
+  const casesDescription = fields.map(f => `WHEN '${f.section}' THEN '${f.description}'`).join('\r\n')
+  const leftJoins = fields.map(f => `left join ${f.table} on (sections.section_name = '${f.section}' and ${f.table}.user_id = $1 and ${f.table}.id = sections.section_id)`).join('\r\n')
+
+  //TODO: pasar a un array las secciones y realizar con un bucle forEach
   const userSectionQuery = `
-  SELECT sections.id, sections.user_id, sections.section_name, sections.section_id, sections.is_public,
-    CASE sections.section_name 
-      WHEN 'works' THEN works.title
-      WHEN 'profiles' THEN profiles.network
-      WHEN 'projects' THEN projects.name
-      WHEN 'skills' THEN skills.name
-      ELSE '#SECCIÓN DESCONOCIDA'
-    END section_desc, 
-    CASE sections.section_name
-      WHEN 'works' THEN 'Puesto'
-      WHEN 'profiles' THEN 'Perfil'
-      WHEN 'projects' THEN 'Proyecto'
-      WHEN 'skills' THEN 'Competencia'
-      ELSE '#SECCIÓN DESCONOCIDA'
-    END section_full_name
- FROM sections 
-    left join works on (sections.section_name = 'works' and works.user_id = $1 and works.id = sections.section_id)
-    left join profiles on (sections.section_name = 'profiles' and profiles.user_id = $1 and profiles.id = sections.section_id)
-    left join projects on (sections.section_name = 'projects' and projects.user_id = $1 and projects.id = sections.section_id)
-    left join skills on (sections.section_name = 'skills' and skills.user_id = $1 and skills.id = sections.section_id)
-  WHERE sections.user_id = $1 order by sections.section_name asc, sections.section_id asc;
-`
+    SELECT sections.id, sections.user_id, sections.section_name, sections.section_id, sections.is_public,
+      CASE sections.section_name 
+        ${casesField}
+        ELSE '#SECCIÓN DESCONOCIDA'
+      END section_desc, 
+      CASE sections.section_name
+        ${casesDescription}
+        ELSE '#SECCIÓN DESCONOCIDA'
+      END section_full_name
+    FROM sections 
+      ${leftJoins}
+    WHERE sections.user_id = $1 order by sections.section_name asc, sections.section_id asc;
+  `
   try {
     const sections: SectionData[] = []
-
-    console.log(userSectionQuery)
 
     //TODO: Crear todos los modelos tanto de BBDD como de los DTO de la API
     //No queremos tener dos clases, una para los controladores (camelCase) y otra para la bbdd (snake_case)
@@ -224,9 +235,6 @@ export async function dbGetUserSectionDataAsync(userId: number): Promise<Section
     if (!result || !result.rowCount) {
       return sections
     }
-
-    console.log(result)
-
     //TODO eliminar cuando existan los modelos
     for (let indexRow = 0; indexRow < result.rows.length; indexRow++) {
       const row = result.rows[indexRow]

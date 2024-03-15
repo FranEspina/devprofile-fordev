@@ -105,7 +105,7 @@ export function LocationList() {
           <p className="flex-1 text-start text-xs md:text-sm">{loc.address}</p>
           <Button variant={"outline"} onClick={() => alertDelete(loc.id)}>
             <Trash className="h-3 w-3" />
-            <span className="sr-only">Eliminar perfil</span>
+            <span className="sr-only">Eliminar direción</span>
           </Button>
           <LocationDialog editMode={true} initialState={loc} />
         </li>

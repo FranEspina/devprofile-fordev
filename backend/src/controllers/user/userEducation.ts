@@ -12,8 +12,8 @@ function parseBody(req: Request) {
     url: req.body.url,
     area: req.body.area,
     studyType: req.body.studyType,
-    startDate: req.body.startDate,
-    endDate: req.body.endDate,
+    startDate: new Date(req.body.startDate),
+    endDate: (req.body.endDate) ? new Date(req.body.endDate) : undefined,
     score: req.body.score,
     courses: req.body.courses,
   }

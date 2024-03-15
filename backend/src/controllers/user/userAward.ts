@@ -9,7 +9,7 @@ function parseBody(req: Request) {
     id: req.body.id,
     userId: req.body.userId,
     title: req.body.title,
-    date: req.body.date,
+    date: new Date(req.body.date),
     awarder: req.body.awarder,
     summary: req.body.summary,
   }

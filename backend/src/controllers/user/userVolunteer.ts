@@ -11,8 +11,8 @@ function parseBody(req: Request) {
     organization: req.body.organization,
     position: req.body.position,
     url: req.body.url,
-    startDate: req.body.startDate,
-    endDate: req.body.endDate,
+    startDate: new Date(req.body.startDate),
+    endDate: (req.body.endDate) ? new Date(req.body.endDate) : undefined,
     summary: req.body.summary,
     highlights: req.body.highlights,
   }

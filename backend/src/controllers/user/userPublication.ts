@@ -10,7 +10,7 @@ function parseBody(req: Request) {
     userId: req.body.userId,
     name: req.body.name,
     publisher: req.body.publisher,
-    releaseDate: req.body.releaseDate,
+    releaseDate: new Date(req.body.releaseDate),
     url: req.body.url,
     summary: req.body.summary,
   }

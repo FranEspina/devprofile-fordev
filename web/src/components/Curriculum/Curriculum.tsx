@@ -24,6 +24,9 @@ import { InterestList } from '@/components/Curriculum/Interest/InterestList'
 import { LanguageDialog } from "@/components/Curriculum/Language/LanguageDialog";
 import { LanguageList } from '@/components/Curriculum/Language/LanguageList'
 
+import { PublicationDialog } from "@/components/Curriculum/Publication/PublicationDialog";
+import { PublicationList } from '@/components/Curriculum/Publication/PublicationList'
+
 export function CurriculumView() {
 
 
@@ -68,6 +71,10 @@ export function CurriculumView() {
       <div className="flex flex-col justify-start gap-1">
         <LanguageDialog editMode={false} />
         <LanguageList />
+      </div>
+      <div className="flex flex-col justify-start gap-1">
+        <PublicationDialog editMode={false} />
+        <PublicationList />
       </div>
     </div>
   </section>

@@ -1,8 +1,7 @@
-import axios, { AxiosError } from 'axios'
+import axios from 'axios'
 import type { apiRegisterType, apiResultType, apiLoginType, apiResponse, apiUserDto, apiDevResourceDto, IAuthHeader } from '@/types/apiTypes.ts'
 import type { ResourceRow } from '@/Schemas/resourceSchema'
-import type { ProfileCreate, ProfileDelete, Profile } from '@/Schemas/profileSchema'
-import type { WorkCreate, WorkDelete, Work } from '@/Schemas/workSchema'
+import type { ProfileCreate, ProfileDelete } from '@/Schemas/profileSchema'
 
 
 //const API_BASE_URL = 'https://devprofile-fordev-dev-knsf.1.ie-1.fl0.io'
@@ -258,7 +257,7 @@ export async function deleteUserSection<T extends UserSection>(sectionName: stri
 
   const endpoint = `${API_BASE_URL}/user/${userSection.userId}/${sectionName}/${userSection.id}`
   try {
-    const response = await axios.delete(endpoint, authHeader(token))
+    await axios.delete(endpoint, authHeader(token))
     return { success: true, message: 'Sección eliminada correctamente', data: userSection }
   } catch (error) {
     console.log(error)
@@ -314,7 +313,7 @@ export async function updateUserSection<T extends UserSection>(sectionName: stri
   }
 }
 
-export async function getUserResume(id: number) {
+export async function getUserResume<T>(id: number) {
   const endpoint = `${API_BASE_URL}/user/${id}/resume`
   try {
     const response = await axios.get(endpoint)

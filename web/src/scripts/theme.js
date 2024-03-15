@@ -28,6 +28,6 @@ const setDarkMode = () => {
   }
 }
 
-document.addEventListener('astro:before-swap', ev => {
+document.addEventListener('astro:before-swap', () => {
   setDarkMode();
 });

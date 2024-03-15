@@ -7,7 +7,6 @@ import { useProfileStore } from '@/store/profileStore'
 import { useNotify } from '@/hooks/useNotify'
 import { navigate } from 'astro/virtual-modules/transitions-router.js'
 import { LoadIndicator } from '@/components/LoadIndicator'
-import { set } from 'date-fns'
 
 export function SectionList() {
   const [loading, setLoading] = useState(false)
@@ -43,6 +42,7 @@ export function SectionList() {
         }
       })
       .catch(error => {
+        console.log(error)
         notifyError('Error inesperado')
       })
       .finally(

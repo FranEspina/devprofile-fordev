@@ -1,5 +1,5 @@
 import { LoadIndicator } from "../LoadIndicator";
-import { Children, useEffect, useState, type ReactComponentElement, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { cn } from '@/lib/utils'
 import type { SectionData, Section } from '@/Schemas/sectionSchema'
 import { updateUserSection } from '@/services/apiService'
@@ -44,7 +44,7 @@ export function PublicSectionCheckbox({ section }: { section: SectionData }) {
     section.isPublic = isPublic
 
     try {
-      var { success, message, data } = await updateUserSection<Section>('section', sectionToUpdate, token)
+      var { success, message } = await updateUserSection<Section>('section', sectionToUpdate, token)
       if (success) {
         notifySuccess(message)
       }

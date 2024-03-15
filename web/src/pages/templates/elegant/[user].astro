@@ -1,16 +1,39 @@
 ---
 import { getUserResume } from "../../../services/apiService";
+import { type Work } from "../../../Schemas/workSchema";
+import { type Basic } from "../../../Schemas/basicSchema";
+import { type Skill } from "../../../Schemas/skillSchema";
+import { type Education } from "../../../Schemas/educationSchema";
+import { type Award } from "../../../Schemas/awardSchema";
+import { type Interest } from "../../../Schemas/interestSchema";
+import { type Reference } from "../../../Schemas/referenceSchema";
+
+interface resultData {
+  work: Work[];
+  basic: Basic[];
+  skills: Skill[];
+  education: Education[];
+  awards: Award[];
+  interests: Interest[];
+  references: Reference[];
+}
 
 const { user } = Astro.params;
 
-const result = await getUserResume(Number(user));
+const result = await getUserResume<resultData>(Number(user));
 if (!result || !result.data) {
   return Astro.redirect("/");
 }
 
-const { work, basic, skills, education, awards, interests, references } =
-  result.data;
-console.log(work);
+const {
+  work,
+  basic,
+  skills,
+  education,
+  awards,
+  interests,
+  references,
+}: resultData = result.data;
 
 const formatDate = (dateString: string) => {
   if (!dateString) return "";
@@ -193,49 +216,50 @@ const diffDate = (from: string, to: string) => {
                 <h4 class="title text-uppercase">Experiencia profesional</h4>
                 <ul class="list-unstyled clear-margin">
                   {
-                    work.map((w) => (
-                      <li class="card card-nested clearfix">
-                        <div class="content">
-                          <p class="clear-margin relative">
-                            <>
-                              <i
-                                class="icon-circle current-event"
-                                rel="tooltip"
-                                title="Currently Working"
-                                data-placement="left"
-                              />
-                              <strong>{w.title}</strong>
-                            </>
-                            ,&nbsp;{w.position}
-                          </p>
-                          <p class="text-muted">
-                            <small>
+                    work &&
+                      work.map((w) => (
+                        <li class="card card-nested clearfix">
+                          <div class="content">
+                            <p class="clear-margin relative">
                               <>
-                                <span class="space-right">
-                                  {formatDate(w.startDate)} -
-                                  {formatDate(w.endDate)}
-                                </span>
-                                <span>
-                                  <i class="icon-clock mr-5" />
-                                  {diffDate(w.startDate, w.endDate)}
-                                </span>
+                                <i
+                                  class="icon-circle current-event"
+                                  rel="tooltip"
+                                  title="Currently Working"
+                                  data-placement="left"
+                                />
+                                <strong>{w.name}</strong>
                               </>
-                            </small>
-                          </p>
-                          <div class="mop-wrapper space-bottom">
-                            <p>{w.description}</p>
+                              ,&nbsp;{w.position}
+                            </p>
+                            <p class="text-muted">
+                              <small>
+                                <>
+                                  <span class="space-right">
+                                    {formatDate(w.startDate)} -
+                                    {formatDate(w.endDate)}
+                                  </span>
+                                  <span>
+                                    <i class="icon-clock mr-5" />
+                                    {diffDate(w.startDate, w.endDate)}
+                                  </span>
+                                </>
+                              </small>
+                            </p>
+                            <div class="mop-wrapper space-bottom">
+                              <p>{w.description}</p>
+                            </div>
+                            <ul>
+                              {w.highlights &&
+                                JSON.parse(w.highlights).map((h) => (
+                                  <li class="mop-wrapper">
+                                    <p>{h.label}</p>
+                                  </li>
+                                ))}
+                            </ul>
                           </div>
-                          <ul>
-                            {w.highlights &&
-                              w.highlights.maps((h) => (
-                                <li class="mop-wrapper">
-                                  <p>{h}</p>
-                                </li>
-                              ))}
-                          </ul>
-                        </div>
-                      </li>
-                    ))
+                        </li>
+                      ))
                   }
                 </ul>
               </div>

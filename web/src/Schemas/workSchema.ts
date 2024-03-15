@@ -2,17 +2,19 @@ import { z } from 'astro/zod'
 
 export const WorkBaseSchema = z.object(
   {
-    id: z.number().positive().min(1),
-    userId: z.number().positive().min(1),
-    title: z.string({ required_error: 'Es obligatorio informar título' }).min(1, 'Título obligatorio'),
-    position: z.string({ required_error: 'Es obligatorio informar puesto' }).min(1, 'Puesto obligatorio'),
-    description: z.string({ required_error: 'Es obligatorio informar descripción' }).min(1, 'Descripción obligatoria'),
-    startDate: z.date({ required_error: 'Es obligatorio informar fecha desde' }),
+    id: z.number({ required_error: 'Identificador del perfil obligatorio' }),
+    userId: z.number({ required_error: 'Identificador del usuario obligatorio' }),
+    name: z.string({ required_error: 'Nombre obligatorio' }).min(1, 'Nombre obligatorio'),
+    location: z.string({ required_error: 'Lugar obligatorio' }).min(1, 'Lugar obligatorio'),
+    description: z.string({ required_error: 'Descripción obligatoria' }).min(1, 'Descripción obligatoria'),
+    position: z.string({ required_error: 'Posición obligatoria' }).min(1, 'Posición obligatoria'),
+    url: z.string().url({ message: 'url inválida' }).optional(),
+    startDate: z.date({ required_error: 'Fecha desde obligatoria' }),
     endDate: z.date().optional(),
-    highlights: z.array(z.string()).optional()
+    summary: z.string().optional(),
+    highlights: z.string().optional(),
   }
 )
-
 
 export const WorkSchema = WorkBaseSchema
   .refine(p => (!p.endDate || (p.endDate && p.endDate > p.startDate)),
@@ -30,11 +32,15 @@ export const WorkCreateSchema = WorkBaseSchema.omit({
   })
 
 export const WorkDeleteSchema = WorkBaseSchema.omit({
-  title: true,
-  position: true,
+  name: true,
+  location: true,
   description: true,
+  position: true,
+  url: true,
   startDate: true,
   endDate: true,
+  summary: true,
+  highlights: true,
 })
 
 export type Work = z.infer<typeof WorkSchema>

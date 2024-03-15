@@ -23,6 +23,7 @@ import { updateUserSection } from '@/services/apiService'
 import { useRefreshStore } from '@/store/refreshStore'
 import { type SelectSingleEventHandler } from 'react-day-picker'
 import { LoadIndicator } from '@/components/LoadIndicator'
+import MultipleSelector, { type Option } from '@/components/ui/multiple-selector';
 
 export function EditWorkDialog({ work }: { work: Work }) {
   const [loading, setLoading] = useState(false)
@@ -32,6 +33,7 @@ export function EditWorkDialog({ work }: { work: Work }) {
   const { notifyError, notifySuccess } = useNotify()
   const { setWorkStamp } = useRefreshStore(state => state)
   const [workState, setWorkState] = useState(work)
+  const [highlights, setHighlights] = useState<Option[]>([])
 
   useEffect(() => {
     setLoading(false)
@@ -45,26 +47,17 @@ export function EditWorkDialog({ work }: { work: Work }) {
     else {
       work.endDate = undefined
     }
+    if (work.highlights) {
+      setHighlights(JSON.parse(work.highlights))
+    }
 
     setWorkState(work)
 
   }, [isOpen])
 
-  const handleChangeTitle = (event: ChangeEvent<HTMLInputElement>) => {
-    const newWork = structuredClone(workState)
-    newWork.title = event.target.value
-    setWorkState(newWork);
-  }
 
-  const handleChangePosition = (event: ChangeEvent<HTMLInputElement>) => {
-    const newWork = structuredClone(workState)
-    newWork.position = event.target.value
-    setWorkState(newWork);
-  }
-
-  const handleChangeDescription = (event: ChangeEvent<HTMLInputElement>) => {
-    const newWork = structuredClone(workState)
-    newWork.description = event.target.value
+  const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const newWork = { ...workState, [event.target.id]: event.target.value }
     setWorkState(newWork);
   }
 
@@ -94,17 +87,19 @@ export function EditWorkDialog({ work }: { work: Work }) {
       return
     }
 
-    let work: Work | undefined
+    let work: Work | undefined = structuredClone(workState)
+    work.highlights = JSON.stringify(highlights)
+    console.log(work)
+
     try {
 
-      const validated = await validateSchemaAsync<Work>(WorkSchema, workState)
+      const validated = await validateSchemaAsync<Work>(WorkSchema, work)
       if (!validated.success) {
         console.log(errors)
         setErrors(validated.errors)
         setLoading(false)
         return
       }
-      work = validated.data
 
       setErrors({})
 
@@ -116,12 +111,11 @@ export function EditWorkDialog({ work }: { work: Work }) {
     }
 
     try {
-      var { success, message, data } = await updateUserSection<Work>("work", workState, token)
-      console.log(success)
-      console.log(message)
+      var { success, message, data } = await updateUserSection<Work>("work", work, token)
       if (success) {
         notifySuccess(message)
         setErrors({})
+        setHighlights([])
         setWorkStamp(Date.now())
         setIsOpen(false)
         return
@@ -160,18 +154,39 @@ export function EditWorkDialog({ work }: { work: Work }) {
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="title" className="text-right text-xs md:text-sm">
-              Título
+            <Label htmlFor="name" className="text-right text-xs md:text-sm">
+              Nombre
             </Label>
-            <Input value={workState.title} onChange={handleChangeTitle} id="title" placeholder="Título del puesto" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
-            {errors['title'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['title']}</p>}
+            <Input value={workState.name} onChange={handleChange} id="name" placeholder="Nombre de la posición" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            {errors['name'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['name']}</p>}
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="location" className="text-right text-xs md:text-sm">
+              Lugar
+            </Label>
+            <Input value={workState.location} onChange={handleChange} id="name" placeholder="Lugar de la posición" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            {errors['location'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['location']}</p>}
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="description" className="text-right text-xs md:text-sm">
+              Descripción
+            </Label>
+            <Textarea id="description" placeholder="Descripción del puesto de trabajo" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            {errors['description'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['description']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="position" className="text-right text-xs md:text-sm">
               Puesto
             </Label>
-            <Input value={workState.position} onChange={handleChangePosition} id="position" placeholder="posición / puesto" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Input value={workState.position} onChange={handleChange} id="position" placeholder="posición / puesto" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['position'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['position']}</p>}
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="url" className="text-right text-xs md:text-sm">
+              Url
+            </Label>
+            <Input value={workState.url} onChange={handleChange} id="url" placeholder="https://..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            {errors['url'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['url']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-right text-xs md:text-sm">
@@ -190,11 +205,22 @@ export function EditWorkDialog({ work }: { work: Work }) {
 
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="description" className="text-right text-xs md:text-sm">
-              Descripción
+            <Label htmlFor="summary" className="text-right text-xs md:text-sm">
+              Resumen
             </Label>
-            <Textarea id="description" placeholder="Descripción del puesto de trabajo" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
-            {errors['description'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['description']}</p>}
+            <Textarea value={workState.summary} onChange={handleChange} id="summary" placeholder="Resumen" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            {errors['summary'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['summary']}</p>}
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="highlights" className="text-right text-xs md:text-sm">
+              Destacado(s)
+            </Label>
+            <div className="col-span-3 text-xs md:text-sm">
+              <MultipleSelector value={highlights} onChange={setHighlights} placeholder="escriba y pulse ENTER"
+                creatable
+              />
+            </div>
+            {errors['highlights'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['highlights']}</p>}
           </div>
         </div>
         <DialogFooter className="flex flex-row items-center justify-end gap-2">

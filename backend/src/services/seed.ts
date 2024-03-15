@@ -206,11 +206,14 @@ export const dropCreateAndSeedTables = async () => {
       works(
         id SERIAL PRIMARY KEY,
         user_id INTEGER,
-        title VARCHAR(50) NOT NULL,
-        position VARCHAR(50) NOT NULL,
+        name VARCHAR(100) NOT NULL,
+        location VARCHAR(100) NOT NULL,
         description TEXT NOT NULL,
+        position VARCHAR(150) NOT NULL,
+        url VARCHAR(150) NOT NULL,
         start_date TIMESTAMPTZ NOT NULL,
         end_date TIMESTAMPTZ,
+        summary TEXT,
         highlights TEXT,
         FOREIGN KEY (user_id) REFERENCES users(id)
       );

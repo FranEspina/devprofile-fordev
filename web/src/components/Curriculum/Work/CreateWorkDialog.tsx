@@ -22,6 +22,7 @@ import { validateSchemaAsync } from '@/lib/validations'
 import { createUserSection } from '@/services/apiService'
 import { useRefreshStore } from '@/store/refreshStore'
 import { LoadIndicator } from '@/components/LoadIndicator'
+import MultipleSelector, { type Option } from '@/components/ui/multiple-selector';
 
 export function CreateWorkDialog() {
   const [loading, setLoading] = useState(false)
@@ -31,15 +32,22 @@ export function CreateWorkDialog() {
   const { notifyError, notifySuccess } = useNotify()
   const [startDate, setStartDate] = useState<Date>()
   const [endDate, setEndDate] = useState<Date>()
-  const titleInputRef = useRef<HTMLInputElement>(null)
+  const [highlights, setHighlights] = useState<Option[]>([])
+
+  const nameInputRef = useRef<HTMLInputElement>(null)
   const positionInputRef = useRef<HTMLInputElement>(null)
+  const locationInputRef = useRef<HTMLInputElement>(null)
+  const urlInputRef = useRef<HTMLInputElement>(null)
+  const summaryInputRef = useRef<HTMLTextAreaElement>(null)
   const descInputRef = useRef<HTMLTextAreaElement>(null)
+
   const { setWorkStamp } = useRefreshStore(state => state)
 
   useEffect(() => {
     setLoading(false)
     setErrors({})
-  }, [])
+    setHighlights([])
+  }, [isOpen])
 
   const handleSave = async () => {
     setLoading(true)
@@ -58,12 +66,15 @@ export function CreateWorkDialog() {
 
     const formData = {
       userId: user?.id,
-      title: titleInputRef.current?.value,
+      name: nameInputRef.current?.value,
       description: descInputRef.current?.value,
       position: positionInputRef.current?.value,
+      url: urlInputRef.current?.value,
+      location: locationInputRef.current?.value,
       startDate: startDate,
       endDate: endDate,
-      highlights: []
+      summary: summaryInputRef.current?.value,
+      highlights: JSON.stringify(highlights),
     }
 
     try {
@@ -127,11 +138,25 @@ export function CreateWorkDialog() {
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="title" className="text-right text-xs md:text-sm">
-              Título
+            <Label htmlFor="name" className="text-right text-xs md:text-sm">
+              Nombre
             </Label>
-            <Input ref={titleInputRef} id="title" placeholder="Título del puesto" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
-            {errors['title'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['title']}</p>}
+            <Input ref={nameInputRef} id="name" placeholder="Nombre del puesto" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            {errors['name'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['name']}</p>}
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="location" className="text-right text-xs md:text-sm">
+              Lugar
+            </Label>
+            <Input ref={locationInputRef} id="location" placeholder="Lugar del puesto de trabajo" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            {errors['location'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['location']}</p>}
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="description" className="text-right text-xs md:text-sm">
+              Descripción
+            </Label>
+            <Textarea ref={descInputRef} id="description" placeholder="Descripción del puesto de trabajo" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            {errors['description'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['description']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="position" className="text-right text-xs md:text-sm">
@@ -141,12 +166,18 @@ export function CreateWorkDialog() {
             {errors['position'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['position']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="url" className="text-right text-xs md:text-sm">
+              Url
+            </Label>
+            <Input ref={urlInputRef} id="url" placeholder="https://..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            {errors['url'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['url']}</p>}
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-right text-xs md:text-sm">
               Desde
             </Label>
             <DatePicker date={startDate} onSelect={setStartDate} />
             {errors['startDate'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['startDate']}</p>}
-
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-right text-xs md:text-sm">
@@ -154,14 +185,24 @@ export function CreateWorkDialog() {
             </Label>
             <DatePicker date={endDate} onSelect={setEndDate} />
             {errors['endDate'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['endDate']}</p>}
-
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="description" className="text-right text-xs md:text-sm">
-              Descripción
+            <Label htmlFor="summary" className="text-right text-xs md:text-sm">
+              Resumen
             </Label>
-            <Textarea ref={descInputRef} id="description" placeholder="Descripción del puesto de trabajo" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
-            {errors['description'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['description']}</p>}
+            <Textarea ref={summaryInputRef} id="summary" placeholder="Resumen" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            {errors['summary'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['summary']}</p>}
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="highlights" className="text-right text-xs md:text-sm">
+              Destacado(s)
+            </Label>
+            <div className="col-span-3 text-xs md:text-sm">
+              <MultipleSelector value={highlights} onChange={setHighlights} placeholder="escriba y pulse ENTER"
+                creatable
+              />
+            </div>
+            {errors['highlights'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['highlights']}</p>}
           </div>
         </div>
         <DialogFooter className="flex flex-row items-center gap-2 justify-end">

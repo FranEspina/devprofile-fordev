@@ -190,7 +190,7 @@ export async function dbGetUserSectionByUserAsync<T extends { [key: string]: unk
 export async function dbGetUserSectionDataAsync(userId: number): Promise<SectionData[]> {
 
   const fields = [
-    { section: 'works', table: 'works', field: 'title', description: 'Puesto' },
+    { section: 'works', table: 'works', field: 'name', description: 'Puesto' },
     { section: 'profiles', table: 'profiles', field: 'network', description: 'Perfil' },
     { section: 'projects', table: 'projects', field: 'name', description: 'Proyecto' },
     { section: 'skills', table: 'skills', field: 'name', description: 'Competencia' },

@@ -3,11 +3,15 @@ import { z } from 'zod'
 export const WorkSchema = z.object({
   id: z.number({ required_error: 'Identificador del perfil obligatorio' }),
   userId: z.number({ required_error: 'Identificador del usuario obligatorio' }),
-  title: z.string({ required_error: 'Título obligatorio' }).min(1, 'Título obligatorio'),
-  position: z.string({ required_error: 'Posición obligatoria' }).min(1, 'Posición obligatoria'),
+  name: z.string({ required_error: 'Nombre obligatorio' }).min(1, 'Nombre obligatorio'),
+  location: z.string({ required_error: 'Lugar obligatorio' }).min(1, 'Lugar obligatorio'),
   description: z.string({ required_error: 'Descripción obligatoria' }).min(1, 'Descripción obligatoria'),
+  position: z.string({ required_error: 'Posición obligatoria' }).min(1, 'Posición obligatoria'),
+  url: z.string().url({ message: 'url inválida' }).optional(),
   startDate: z.date({ required_error: 'Fecha desde obligatoria' }),
-  endDate: z.date().optional()
+  endDate: z.date().optional(),
+  summary: z.string().optional(),
+  highlights: z.string().optional(),
 })
 
 export const WorkCreateSchema = WorkSchema.omit({
@@ -15,11 +19,15 @@ export const WorkCreateSchema = WorkSchema.omit({
 })
 
 export const WorkDeleteSchema = WorkSchema.omit({
-  title: true,
-  position: true,
+  name: true,
+  location: true,
   description: true,
+  position: true,
+  url: true,
   startDate: true,
   endDate: true,
+  summary: true,
+  highlights: true,
 })
 
 export const WorkResumeSchema = WorkSchema.omit({

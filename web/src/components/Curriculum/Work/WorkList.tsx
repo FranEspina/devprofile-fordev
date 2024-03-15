@@ -41,7 +41,6 @@ export function WorkList() {
     getUserSection<Work>("work", user.id, token).then((apiResult) => {
       if (apiResult.success) {
         if (apiResult.data) {
-          console.log(apiResult.data)
           setWorks(apiResult.data)
         }
         else {
@@ -107,7 +106,7 @@ export function WorkList() {
       </div>
       {!loading && <ul>{works.map(w =>
         <li key={w.id} className="flex flex-row w-full gap-2 items-center">
-          <p className="flex-1 text-start text-xs md:text-sm">{w.title}</p>
+          <p className="flex-1 text-start text-xs md:text-sm">{w.name}</p>
           <Button variant={"outline"} onClick={() => alertDelete(w.id)}>
             <Trash className="h-3 w-3" />
             <span className="sr-only">Eliminar perfil</span>

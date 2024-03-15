@@ -163,7 +163,7 @@ export function LocationDialog({ editMode = false, initialState = undefined }: L
       </DialogTrigger>
       <DialogContent className="max-w-[75%]" onInteractOutside={(e) => { e.preventDefault() }}>
         <DialogHeader>
-          <DialogTitle>Dirección</DialogTitle>
+          <DialogTitle>{(editMode === true) ? 'Editar' : 'Añadir'} Dirección</DialogTitle>
           <DialogDescription>
             Rellena la información y guarda cambios cuando finalices.
           </DialogDescription>
@@ -205,7 +205,7 @@ export function LocationDialog({ editMode = false, initialState = undefined }: L
             {errors['region'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['region']}</p>}
           </div>
         </div>
-        <DialogFooter className="flex flex-row items-center gap-2">
+        <DialogFooter className="flex flex-row items-center gap-2 justify-end">
           {errors['generic'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['generic']}</p>}
           <LoadIndicator loading={loading} />
           <Button className="text-xs md:text-sm" variant="outline" type="submit" onClick={handleSave} disabled={loading}>{(editMode === true) ? 'Guardar' : 'Crear'}</Button>

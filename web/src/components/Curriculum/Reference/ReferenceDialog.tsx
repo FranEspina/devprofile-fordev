@@ -164,7 +164,7 @@ export function ReferenceDialog({ editMode = false, initialState = undefined }: 
       </DialogTrigger>
       <DialogContent className="max-w-[75%]" onInteractOutside={(e) => { e.preventDefault() }}>
         <DialogHeader>
-          <DialogTitle>Referencia</DialogTitle>
+          <DialogTitle>{(editMode === true) ? 'Editar' : 'Añadir'} Referencia</DialogTitle>
           <DialogDescription>
             Rellena la información y guarda cambios cuando finalices.
           </DialogDescription>

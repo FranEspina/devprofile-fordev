@@ -5,7 +5,8 @@ import type { ProfileCreate, ProfileDelete, Profile } from '@/Schemas/profileSch
 import type { WorkCreate, WorkDelete, Work } from '@/Schemas/workSchema'
 
 
-const API_BASE_URL = 'https://devprofile-fordev-dev-knsf.1.ie-1.fl0.io'
+//const API_BASE_URL = 'https://devprofile-fordev-dev-knsf.1.ie-1.fl0.io'
+const API_BASE_URL = 'http://localhost:3000'
 
 export async function register(user: apiRegisterType): Promise<apiResultType<apiUserDto>> {
 

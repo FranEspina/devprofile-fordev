@@ -33,14 +33,7 @@ export function LocationDialog({ editMode = false, initialState = undefined }: L
   const { user, token } = useProfileStore(state => state)
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
   const { notifyError, notifySuccess } = useNotify()
-  const [locationState, setLocationState] = useState<Location>({
-    id: -1,
-    address: '',
-    city: '',
-    countryCode: '',
-    postalCode: '',
-    userId: -1
-  })
+  const [locationState, setLocationState] = useState<Location>({} as Location)
 
   const { setLocationStamp } = useRefreshStore(state => state)
 
@@ -48,6 +41,13 @@ export function LocationDialog({ editMode = false, initialState = undefined }: L
     setLoading(false)
     setErrors({})
   }, [])
+
+  useEffect(() => {
+    console.log(user)
+    const userId = (user) ? user.id : -1
+    const newLocation = { ...locationState, userId }
+    setLocationState(newLocation);
+  }, [user])
 
   useEffect(() => {
     if (editMode === true) {
@@ -66,6 +66,9 @@ export function LocationDialog({ editMode = false, initialState = undefined }: L
       } else {
         throw new Error("El estado inicial es necesario en modo edición del componente")
       }
+    }
+    else {
+      setLocationState({ userId: user?.id } as Location)
     }
   }, [isOpen])
 
@@ -79,8 +82,8 @@ export function LocationDialog({ editMode = false, initialState = undefined }: L
     setLocationState(newLocation);
   }
 
-  async function createAsync(formData: unknown) {
-    const validated = await validateSchemaAsync<LocationCreate>(LocationCreateSchema, formData)
+  async function createAsync(model: unknown) {
+    const validated = await validateSchemaAsync<LocationCreate>(LocationCreateSchema, model)
     if (!validated.success || !validated.data) {
       setErrors(validated.errors)
       return false
@@ -94,8 +97,8 @@ export function LocationDialog({ editMode = false, initialState = undefined }: L
     return success
   }
 
-  async function editAsync(formData: unknown) {
-    const validated = await validateSchemaAsync<Location>(LocationSchema, formData)
+  async function editAsync(model: unknown) {
+    const validated = await validateSchemaAsync<Location>(LocationSchema, model)
     if (!validated.success || !validated.data) {
       setErrors(validated.errors)
       return false

@@ -144,7 +144,7 @@ export function CreateSkillDialog() {
             {errors['url'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['url']}</p>}
           </div>
         </div>
-        <DialogFooter className="flex flex-row items-center gap-2">
+        <DialogFooter className="flex flex-row items-center gap-2 justify-end">
           {errors['generic'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['generic']}</p>}
           <LoadIndicator loading={loading} />
           <Button className="text-xs md:text-sm" variant="outline" onClick={handleCreate} disabled={loading}>Crear</Button>

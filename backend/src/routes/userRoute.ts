@@ -50,6 +50,8 @@ controllers.forEach(c => {
 });
 
 router.get('/:userId/sectiondata', auth, getUserSectionDataAsync)
-router.get('/:userId/resume', auth, getUserResumeAsync)
+
+//El perfil público de un usuario no requiere auth
+router.get('/:userId/resume', getUserResumeAsync)
 
 export default router

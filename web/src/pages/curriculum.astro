@@ -1,6 +1,12 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { CurriculumView } from "../components/Curriculum/Curriculum";
+import { ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
+const { user } = Astro.locals;
 ---
 
 <Layout title="dev profile for dev ">
@@ -8,6 +14,39 @@ import { CurriculumView } from "../components/Curriculum/Curriculum";
     class="flex flex-col justify-center items-center content-center text-center max-w-[800px] mx-auto"
   >
     <h1 class="text-3xl md:text-5xl mb-6 mt-10 text-blue-500">CV</h1>
+    <section
+      class="flex flex-col justify-start content-start items-start w-full my-4"
+    >
+      <body>
+        <ul class="flex flex-row gap-2">
+          <li>
+            <a
+              href="/secciones/"
+              class={cn(
+                buttonVariants({ variant: "outline" }),
+                "text-xs md:text-sm",
+              )}
+              >Editar secciones públicas <ArrowRight
+                className="ml-2 text-blue-500"
+              /></a
+            >
+          </li>
+          <li>
+            <a
+              href=`/templates/elegant/${user.id}`
+              target="_blank"
+              class={cn(
+                buttonVariants({ variant: "outline" }),
+                "text-xs md:text-sm",
+              )}
+              >Ver versión pública <ArrowRight
+                className="ml-2 text-blue-500"
+              /></a
+            >
+          </li>
+        </ul>
+      </body>
+    </section>
     <CurriculumView client:load />
   </main>
 </Layout>

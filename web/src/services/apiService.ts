@@ -319,7 +319,6 @@ export async function getUserResume(id: number) {
   try {
     const response = await axios.get(endpoint)
     const results: apiResponse<unknown> = response.data
-    console.log(results)
     if (results.success === true) {
       return { success: true, message: 'Operación realizada con éxito', data: results.data }
     }

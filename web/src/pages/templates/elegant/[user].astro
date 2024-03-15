@@ -4,12 +4,48 @@ import { getUserResume } from "../../../services/apiService";
 const { user } = Astro.params;
 
 const result = await getUserResume(Number(user));
-console.log(result);
 if (!result || !result.data) {
   return Astro.redirect("/");
 }
+
 const { work, basic, skills, education, awards, interests, references } =
   result.data;
+console.log(work);
+
+const formatDate = (dateString: string) => {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  const options = { year: "numeric", month: "short" };
+  const fechaFormateada = date
+    .toLocaleDateString("en-us", options)
+    .toUpperCase();
+  return fechaFormateada;
+};
+
+const diffDate = (from: string, to: string) => {
+  if (!from) return "";
+  if (!to) return "Actualmente";
+  const fromDate = new Date(from);
+  const toDate = new Date(to);
+
+  const diferenciaEnMilisegundos = Math.abs(toDate - fromDate);
+  const diferenciaEnAnios = Math.floor(
+    diferenciaEnMilisegundos / (365 * 24 * 60 * 60 * 1000),
+  );
+  const diferenciaEnMeses = Math.floor(
+    (diferenciaEnMilisegundos % (365 * 24 * 60 * 60 * 1000)) /
+      (30 * 24 * 60 * 60 * 1000),
+  );
+
+  let diferencia = "";
+  if (diferenciaEnAnios > 0) {
+    diferencia = `${diferenciaEnAnios} ${diferenciaEnAnios === 1 ? "año" : "años"} `;
+  }
+  if (diferenciaEnMeses > 0) {
+    diferencia += `${diferenciaEnMeses} ${diferenciaEnMeses === 1 ? "mes" : "meses"} `;
+  }
+  return diferencia;
+};
 ---
 
 <head>
@@ -69,7 +105,6 @@ const { work, basic, skills, education, awards, interests, references } =
             <div class="profile-pic">
               <img
                 class="media-object img-circle center-block"
-                data-src="holder.js/100x100"
                 alt={basic.name}
                 src={basic.image}
                 itemprop="image"
@@ -177,11 +212,12 @@ const { work, basic, skills, education, awards, interests, references } =
                             <small>
                               <>
                                 <span class="space-right">
-                                  {w.startDate} - {w.endDate}
+                                  {formatDate(w.startDate)} -
+                                  {formatDate(w.endDate)}
                                 </span>
                                 <span>
-                                  <i class="icon-clock mr-5" />1 year 10 months
-                                  PENDIENTE
+                                  <i class="icon-clock mr-5" />
+                                  {diffDate(w.startDate, w.endDate)}
                                 </span>
                               </>
                             </small>
@@ -363,15 +399,6 @@ const { work, basic, skills, education, awards, interests, references } =
     </div>
   </div>
 </body>
-
-<script>
-  import { getUserSection } from "../../services/apiService";
-  import type { Work } from "../../Schemas/workSchema";
-  import Cookies from "js-cookie";
-  const token = Cookies.get("token") || "";
-  const response = await getUserSection<Work>("work", 2, token);
-  const works = response.data;
-</script>
 
 <script
   is:inline
@@ -1172,6 +1199,7 @@ const { work, basic, skills, education, awards, interests, references } =
   .profile-pic img {
     width: 100px;
     height: 100px;
+    object-fit: cover;
   }
 
   @media (max-width: 992px) {

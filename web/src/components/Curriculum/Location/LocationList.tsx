@@ -100,14 +100,14 @@ export function LocationList() {
       <div className="w-full flex items-center justify-center">
         <LoadIndicator loading={loading} />
       </div>
-      {!loading && <ul>{locations.map(loc =>
-        <li key={loc.id} className="flex flex-row w-full gap-2 items-center">
-          <p className="flex-1 text-start text-xs md:text-sm">{loc.address}</p>
-          <Button variant={"outline"} onClick={() => alertDelete(loc.id)}>
+      {!loading && <ul>{locations.map(model =>
+        <li key={model.id} className="flex flex-row w-full gap-2 items-center">
+          <p className="flex-1 text-start text-xs md:text-sm">{model.address}</p>
+          <Button variant={"outline"} onClick={() => alertDelete(model.id)}>
             <Trash className="h-3 w-3" />
             <span className="sr-only">Eliminar direción</span>
           </Button>
-          <LocationDialog editMode={true} initialState={loc} />
+          <LocationDialog editMode={true} initialState={model} />
         </li>
       )}</ul>}
       <AlertDialogPrompt open={isOpenAlert} setOpen={setIsOpenAlert} onActionClick={deleteRef.current} />

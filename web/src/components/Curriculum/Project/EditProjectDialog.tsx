@@ -73,7 +73,6 @@ export function EditProjectDialog({ project }: { project: Project }) {
 
   const handleSelectEnd: SelectSingleEventHandler = (day, selectedDay, activeModifiers, e) => {
     const newProject = structuredClone(projectState)
-    console.log(day)
     newProject.endDate = day
     setProjectState(newProject);
   }

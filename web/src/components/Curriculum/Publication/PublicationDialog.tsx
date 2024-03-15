@@ -99,10 +99,7 @@ export function PublicationDialog({ editMode = false, initialState = undefined }
       setErrors(validated.errors)
       return false
     }
-    const publication: Publication = structuredClone(publicationState)
-    console.log(validated.data)
-    console.log(publication)
-    const { success } = await createUserSection<PublicationCreate>("publication", publication, user?.id || 0, token)
+    const { success } = await createUserSection<PublicationCreate>("publication", validated.data, user?.id || 0, token)
     if (!success) {
       const errors: { [key: string]: string } = {}
       errors['generic'] = 'Error inesperado guardando cambios'

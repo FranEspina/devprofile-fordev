@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from "react"
-import type { Publication } from '@/Schemas/publicationSchema'
+import type { Volunteer } from '@/Schemas/volunteerSchema'
 import { useProfileStore } from "@/store/profileStore"
 import { useNotify } from "@/hooks/useNotify"
 import { navigate } from "astro/virtual-modules/transitions-router.js"
@@ -7,17 +7,17 @@ import { getUserSection, deleteUserSection, type UserSection } from '@/services/
 import { Button } from "@/components/ui/button"
 import { Edit, Moon, Trash } from 'lucide-react'
 import { useRefreshStore } from "@/store/refreshStore"
-import { PublicationDialog } from '@/components/Curriculum/Publication/PublicationDialog'
+import { VolunteerDialog } from '@/components/Curriculum/Volunteer/VolunteerDialog'
 import { LoadIndicator } from "@/components/LoadIndicator"
 import { AlertDialogPrompt } from '@/components/AlertDialogPrompt'
 
-export function PublicationList() {
+export function VolunteerList() {
 
-  const [publications, setPublications] = useState<Publication[]>([])
+  const [volunteers, setVolunteers] = useState<Volunteer[]>([])
   const { user, token } = useProfileStore(state => state)
   const [loading, setLoading] = useState(false)
   const { notifyError, notifySuccess } = useNotify()
-  const { publicationStamp, setPublicationStamp } = useRefreshStore(state => state)
+  const { volunteerStamp, setVolunteerStamp } = useRefreshStore(state => state)
   const [isOpenAlert, setIsOpenAlert] = useState(false)
   const deleteRef = useRef(() => undefined);
 
@@ -36,33 +36,33 @@ export function PublicationList() {
 
     setLoading(true)
 
-    getUserSection<Publication>("publication", user.id, token).then((apiResult) => {
+    getUserSection<Volunteer>("volunteer", user.id, token).then((apiResult) => {
       if (apiResult.success) {
         if (apiResult.data) {
-          setPublications(apiResult.data)
+          setVolunteers(apiResult.data)
         }
         else {
-          setPublications([])
+          setVolunteers([])
         }
       }
     }).catch((error) => {
       console.log(error)
-      notifyError('Error inesperado obteniendo publicaciones')
+      notifyError('Error inesperado obteniendo voluntariados')
     })
       .finally(() => setLoading(false))
 
-  }, [token, user, publicationStamp])
+  }, [token, user, volunteerStamp])
 
 
   const alertDelete = (id: number) => {
     console.log('dentro')
     deleteRef.current = () => {
-      handleDeletePublication(id)
+      handleDeleteVolunteer(id)
     };
     setIsOpenAlert(true)
   }
 
-  const handleDeletePublication = (id: number) => {
+  const handleDeleteVolunteer = (id: number) => {
     if (token === 'not-loaded') {
       return
     }
@@ -81,16 +81,16 @@ export function PublicationList() {
       userId: user.id
     }
 
-    deleteUserSection<UserSection>("publication", userSection, token).then((apiResult) => {
+    deleteUserSection<UserSection>("volunteer", userSection, token).then((apiResult) => {
       if (apiResult.success) {
-        setPublicationStamp(Date.now())
+        setVolunteerStamp(Date.now())
       }
       else {
         notifyError(apiResult.message)
       }
     }).catch((error) => {
       console.log(error)
-      notifyError('Error inesperado obteniendo publicaciones')
+      notifyError('Error inesperado obteniendo voluntariados')
     })
       .finally(() => setLoading(false))
   }
@@ -100,14 +100,14 @@ export function PublicationList() {
       <div className="w-full flex items-center justify-center">
         <LoadIndicator loading={loading} />
       </div>
-      {!loading && <ul>{publications.map(model =>
+      {!loading && <ul>{volunteers.map(model =>
         <li key={model.id} className="flex flex-row w-full gap-2 items-center">
-          <p className="flex-1 text-start text-xs md:text-sm">{model.name}</p>
+          <p className="flex-1 text-start text-xs md:text-sm">{model.organization}</p>
           <Button variant={"outline"} onClick={() => alertDelete(model.id)}>
             <Trash className="h-3 w-3" />
-            <span className="sr-only">Eliminar publicación</span>
+            <span className="sr-only">Eliminar voluntariado</span>
           </Button>
-          <PublicationDialog editMode={true} initialState={model} />
+          <VolunteerDialog editMode={true} initialState={model} />
         </li>
       )}</ul>}
       <AlertDialogPrompt open={isOpenAlert} setOpen={setIsOpenAlert} onActionClick={deleteRef.current} />

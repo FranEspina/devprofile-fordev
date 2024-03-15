@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label"
 import { Plus, Edit } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useProfileStore } from '@/store/profileStore'
-import { type PublicationCreate, PublicationSchema, PublicationCreateSchema, type Publication } from '@/Schemas/publicationSchema'
+import { type AwardCreate, AwardSchema, AwardCreateSchema, type Award } from '@/Schemas/awardSchema'
 import { navigate } from "astro/virtual-modules/transitions-router.js"
 import { useNotify } from '@/hooks/useNotify'
 import { validateSchemaAsync } from '@/lib/validations'
@@ -25,20 +25,20 @@ import { Textarea } from "@/components/ui/textarea"
 import { DatePicker } from '@/components/ui/DatePicker'
 import { type SelectSingleEventHandler } from 'react-day-picker'
 
-interface PublicationDialogProps {
+interface AwardDialogProps {
   editMode: boolean,
-  initialState?: Publication
+  initialState?: Award
 }
 
-export function PublicationDialog({ editMode = false, initialState = undefined }: PublicationDialogProps) {
+export function AwardDialog({ editMode = false, initialState = undefined }: AwardDialogProps) {
   const [loading, setLoading] = useState(false)
   const [isOpen, setIsOpen] = useState<boolean>()
   const { user, token } = useProfileStore(state => state)
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
   const { notifyError, notifySuccess } = useNotify()
-  const [publicationState, setPublicationState] = useState<Publication>({} as Publication)
+  const [awardState, setAwardState] = useState<Award>({} as Award)
 
-  const { setPublicationStamp } = useRefreshStore(state => state)
+  const { setAwardStamp } = useRefreshStore(state => state)
 
   useEffect(() => {
     setLoading(false)
@@ -48,14 +48,14 @@ export function PublicationDialog({ editMode = false, initialState = undefined }
   useEffect(() => {
     console.log(user)
     const userId = (user) ? user.id : -1
-    const newPublication = { ...publicationState, userId }
-    setPublicationState(newPublication);
+    const newAward = { ...awardState, userId }
+    setAwardState(newAward);
   }, [user])
 
   useEffect(() => {
     if (editMode === true) {
       if (initialState) {
-        setPublicationState(initialState)
+        setAwardState(initialState)
       } else {
         throw new Error("El estado inicial es necesario en modo edición del componente")
       }
@@ -65,14 +65,14 @@ export function PublicationDialog({ editMode = false, initialState = undefined }
   useEffect(() => {
     if (editMode === true) {
       if (initialState) {
-        initialState.releaseDate = new Date(initialState.releaseDate)
-        setPublicationState(initialState)
+        initialState.date = new Date(initialState.date)
+        setAwardState(initialState)
       } else {
         throw new Error("El estado inicial es necesario en modo edición del componente")
       }
     }
     else {
-      setPublicationState({ userId: user?.id } as Publication)
+      setAwardState({ userId: user?.id } as Award)
     }
   }, [isOpen])
 
@@ -82,24 +82,24 @@ export function PublicationDialog({ editMode = false, initialState = undefined }
   }, [isOpen])
 
   const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const newPublication = { ...publicationState, [event.target.id]: event.target.value }
-    setPublicationState(newPublication);
+    const newAward = { ...awardState, [event.target.id]: event.target.value }
+    setAwardState(newAward);
   }
 
   const handleSelectDate: SelectSingleEventHandler = (day, selectedDay, activeModifiers, e) => {
-    const newPublication = structuredClone(publicationState)
-    newPublication.releaseDate = selectedDay
-    console.log(newPublication)
-    setPublicationState(newPublication);
+    const newAward = structuredClone(awardState)
+    newAward.date = selectedDay
+    console.log(newAward)
+    setAwardState(newAward);
   }
 
   async function createAsync(model: unknown) {
-    const validated = await validateSchemaAsync<PublicationCreate>(PublicationCreateSchema, model)
+    const validated = await validateSchemaAsync<AwardCreate>(AwardCreateSchema, model)
     if (!validated.success || !validated.data) {
       setErrors(validated.errors)
       return false
     }
-    const { success } = await createUserSection<PublicationCreate>("publication", validated.data, user?.id || 0, token)
+    const { success } = await createUserSection<AwardCreate>("award", validated.data, user?.id || 0, token)
     if (!success) {
       const errors: { [key: string]: string } = {}
       errors['generic'] = 'Error inesperado guardando cambios'
@@ -109,12 +109,12 @@ export function PublicationDialog({ editMode = false, initialState = undefined }
   }
 
   async function editAsync(model: unknown) {
-    const validated = await validateSchemaAsync<Publication>(PublicationSchema, model)
+    const validated = await validateSchemaAsync<Award>(AwardSchema, model)
     if (!validated.success || !validated.data) {
       setErrors(validated.errors)
       return false
     }
-    const { success } = await updateUserSection<Publication>("publication", validated.data, token)
+    const { success } = await updateUserSection<Award>("award", validated.data, token)
     if (!success) {
       const errors: { [key: string]: string } = {}
       errors['generic'] = 'Error inesperado guardando cambios'
@@ -138,13 +138,13 @@ export function PublicationDialog({ editMode = false, initialState = undefined }
 
     try {
       const success = (editMode === true)
-        ? await editAsync(publicationState)
-        : await createAsync(publicationState)
+        ? await editAsync(awardState)
+        : await createAsync(awardState)
 
       if (success) {
         notifySuccess('Datos actualizados correctamente')
         setErrors({})
-        setPublicationStamp(Date.now())
+        setAwardStamp(Date.now())
         setIsOpen(false)
         return
       }
@@ -168,51 +168,44 @@ export function PublicationDialog({ editMode = false, initialState = undefined }
             <span className="sr-only">Editar</span>
           </Button>
           : <Button className="text-xs md:text-sm" variant="outline">
-            <Plus className="mr-1 text-blue-500" />Publicación
+            <Plus className="mr-1 text-blue-500" />Logro
           </Button>
         }
       </DialogTrigger>
       <DialogContent className="max-w-[75%]" onInteractOutside={(e) => { e.preventDefault() }}>
         <DialogHeader>
-          <DialogTitle>{(editMode === true) ? 'Editar' : 'Añadir'} Publicación</DialogTitle>
+          <DialogTitle>{(editMode === true) ? 'Editar' : 'Añadir'} Logro</DialogTitle>
           <DialogDescription>
             Rellena la información y guarda cambios cuando finalices.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right text-xs md:text-sm">
-              Nombre
+            <Label htmlFor="title" className="text-right text-xs md:text-sm">
+              Logro
             </Label>
-            <Input id="name" value={publicationState.name} onChange={handleChange} placeholder="Nombre publicación" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
-            {errors['name'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['name']}</p>}
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="publisher" className="text-right text-xs md:text-sm">
-              Editorial
-            </Label>
-            <Input id="publisher" value={publicationState.publisher} onChange={handleChange} placeholder="Nombre editorial" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
-            {errors['publisher'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['publisher']}</p>}
+            <Input id="title" value={awardState.title} onChange={handleChange} placeholder="Logro" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            {errors['title'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['title']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-right text-xs md:text-sm">
               Fecha
             </Label>
-            <DatePicker date={publicationState.releaseDate} onSelect={handleSelectDate} />
-            {errors['releaseDate'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['releaseDate']}</p>}
+            <DatePicker date={awardState.date} onSelect={handleSelectDate} />
+            {errors['date'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['date']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="url" className="text-right text-xs md:text-sm">
-              Url
+            <Label htmlFor="awarder" className="text-right text-xs md:text-sm">
+              Entidad
             </Label>
-            <Input id="url" value={publicationState.url} onChange={handleChange} placeholder="https://..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
-            {errors['url'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['url']}</p>}
+            <Input id="awarder" value={awardState.awarder} onChange={handleChange} placeholder="Entidad relacionada" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            {errors['awarder'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['awarder']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="summary" className="text-right text-xs md:text-sm">
               Resumen
             </Label>
-            <Textarea id="summary" value={publicationState.summary} onChange={handleChange} placeholder="Resumen de la publicación" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Textarea id="summary" value={awardState.summary} onChange={handleChange} placeholder="Resumen de la logro" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['summary'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['summary']}</p>}
           </div>
         </div>

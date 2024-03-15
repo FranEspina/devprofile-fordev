@@ -27,6 +27,18 @@ import { LanguageList } from '@/components/Curriculum/Language/LanguageList'
 import { PublicationDialog } from "@/components/Curriculum/Publication/PublicationDialog";
 import { PublicationList } from '@/components/Curriculum/Publication/PublicationList'
 
+import { CertificateDialog } from "@/components/Curriculum/Certificate/CertificateDialog";
+import { CertificateList } from '@/components/Curriculum/Certificate/CertificateList'
+
+import { AwardDialog } from '@/components/Curriculum/Award/AwardDialog'
+import { AwardList } from '@/components/Curriculum/Award/AwardList'
+
+import { EducationDialog } from '@/components/Curriculum/Education/EducationDialog'
+import { EducationList } from '@/components/Curriculum/Education/EducationList'
+
+import { VolunteerDialog } from '@/components/Curriculum/Volunteer/VolunteerDialog'
+import { VolunteerList } from '@/components/Curriculum/Volunteer/VolunteerList'
+
 export function CurriculumView() {
 
 
@@ -38,12 +50,13 @@ export function CurriculumView() {
       <div className="flex flex-col justify-start gap-1">
         <BasicSection />
       </div>
-    </div>
-    < div className="mt-2 w-full flex flex-col md:grid md:grid-cols-2 gap-4" >
       <div className="flex flex-col justify-start gap-1">
         <LocationDialog editMode={false} />
         <LocationList />
       </div>
+    </div>
+    < div className="mt-2 w-full flex flex-col md:grid md:grid-cols-2 gap-4" >
+
       <div className="flex flex-col justify-start gap-1">
         <CreateProfileDialog />
         <ProfileList />
@@ -75,6 +88,22 @@ export function CurriculumView() {
       <div className="flex flex-col justify-start gap-1">
         <PublicationDialog editMode={false} />
         <PublicationList />
+      </div>
+      <div className="flex flex-col justify-start gap-1">
+        <CertificateDialog editMode={false} />
+        <CertificateList />
+      </div>
+      <div className="flex flex-col justify-start gap-1">
+        <AwardDialog editMode={false} />
+        <AwardList />
+      </div>
+      <div className="flex flex-col justify-start gap-1">
+        <EducationDialog editMode={false} />
+        <EducationList />
+      </div>
+      <div className="flex flex-col justify-start gap-1">
+        <VolunteerDialog editMode={false} />
+        <VolunteerList />
       </div>
     </div>
   </section>

@@ -102,7 +102,7 @@ export function LocationList() {
       </div>
       {!loading && <ul>{locations.map(model =>
         <li key={model.id} className="flex flex-row w-full gap-2 items-center">
-          <p className="flex-1 text-start text-xs md:text-sm">{model.address}</p>
+          <p className="flex-1 text-start text-xs md:text-sm">{model.address}, {model.postalCode}, {model.city}</p>
           <Button variant={"outline"} onClick={() => alertDelete(model.id)}>
             <Trash className="h-3 w-3" />
             <span className="sr-only">Eliminar direción</span>

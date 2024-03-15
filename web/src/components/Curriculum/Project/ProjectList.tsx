@@ -105,7 +105,7 @@ export function ProjectList() {
           <p className="flex-1 text-start text-xs md:text-sm">{w.name}</p>
           <Button variant={"outline"} onClick={() => alertDelete(w.id)}>
             <Trash className="h-3 w-3" />
-            <span className="sr-only">Eliminar perfil</span>
+            <span className="sr-only">Eliminar proyecto</span>
           </Button>
           <EditProjectDialog project={w} />
         </li>

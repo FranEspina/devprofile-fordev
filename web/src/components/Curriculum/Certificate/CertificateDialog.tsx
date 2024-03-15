@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label"
 import { Plus, Edit } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useProfileStore } from '@/store/profileStore'
-import { type PublicationCreate, PublicationSchema, PublicationCreateSchema, type Publication } from '@/Schemas/publicationSchema'
+import { type CertificateCreate, CertificateSchema, CertificateCreateSchema, type Certificate } from '@/Schemas/certificateSchema'
 import { navigate } from "astro/virtual-modules/transitions-router.js"
 import { useNotify } from '@/hooks/useNotify'
 import { validateSchemaAsync } from '@/lib/validations'
@@ -25,20 +25,20 @@ import { Textarea } from "@/components/ui/textarea"
 import { DatePicker } from '@/components/ui/DatePicker'
 import { type SelectSingleEventHandler } from 'react-day-picker'
 
-interface PublicationDialogProps {
+interface CertificateDialogProps {
   editMode: boolean,
-  initialState?: Publication
+  initialState?: Certificate
 }
 
-export function PublicationDialog({ editMode = false, initialState = undefined }: PublicationDialogProps) {
+export function CertificateDialog({ editMode = false, initialState = undefined }: CertificateDialogProps) {
   const [loading, setLoading] = useState(false)
   const [isOpen, setIsOpen] = useState<boolean>()
   const { user, token } = useProfileStore(state => state)
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
   const { notifyError, notifySuccess } = useNotify()
-  const [publicationState, setPublicationState] = useState<Publication>({} as Publication)
+  const [certificateState, setCertificateState] = useState<Certificate>({} as Certificate)
 
-  const { setPublicationStamp } = useRefreshStore(state => state)
+  const { setCertificateStamp } = useRefreshStore(state => state)
 
   useEffect(() => {
     setLoading(false)
@@ -48,14 +48,14 @@ export function PublicationDialog({ editMode = false, initialState = undefined }
   useEffect(() => {
     console.log(user)
     const userId = (user) ? user.id : -1
-    const newPublication = { ...publicationState, userId }
-    setPublicationState(newPublication);
+    const newCertificate = { ...certificateState, userId }
+    setCertificateState(newCertificate);
   }, [user])
 
   useEffect(() => {
     if (editMode === true) {
       if (initialState) {
-        setPublicationState(initialState)
+        setCertificateState(initialState)
       } else {
         throw new Error("El estado inicial es necesario en modo edición del componente")
       }
@@ -65,14 +65,14 @@ export function PublicationDialog({ editMode = false, initialState = undefined }
   useEffect(() => {
     if (editMode === true) {
       if (initialState) {
-        initialState.releaseDate = new Date(initialState.releaseDate)
-        setPublicationState(initialState)
+        initialState.date = new Date(initialState.date)
+        setCertificateState(initialState)
       } else {
         throw new Error("El estado inicial es necesario en modo edición del componente")
       }
     }
     else {
-      setPublicationState({ userId: user?.id } as Publication)
+      setCertificateState({ userId: user?.id } as Certificate)
     }
   }, [isOpen])
 
@@ -82,24 +82,24 @@ export function PublicationDialog({ editMode = false, initialState = undefined }
   }, [isOpen])
 
   const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const newPublication = { ...publicationState, [event.target.id]: event.target.value }
-    setPublicationState(newPublication);
+    const newCertificate = { ...certificateState, [event.target.id]: event.target.value }
+    setCertificateState(newCertificate);
   }
 
   const handleSelectDate: SelectSingleEventHandler = (day, selectedDay, activeModifiers, e) => {
-    const newPublication = structuredClone(publicationState)
-    newPublication.releaseDate = selectedDay
-    console.log(newPublication)
-    setPublicationState(newPublication);
+    const newCertificate = structuredClone(certificateState)
+    newCertificate.date = selectedDay
+    console.log(newCertificate)
+    setCertificateState(newCertificate);
   }
 
   async function createAsync(model: unknown) {
-    const validated = await validateSchemaAsync<PublicationCreate>(PublicationCreateSchema, model)
+    const validated = await validateSchemaAsync<CertificateCreate>(CertificateCreateSchema, model)
     if (!validated.success || !validated.data) {
       setErrors(validated.errors)
       return false
     }
-    const { success } = await createUserSection<PublicationCreate>("publication", validated.data, user?.id || 0, token)
+    const { success } = await createUserSection<CertificateCreate>("certificate", validated.data, user?.id || 0, token)
     if (!success) {
       const errors: { [key: string]: string } = {}
       errors['generic'] = 'Error inesperado guardando cambios'
@@ -109,12 +109,12 @@ export function PublicationDialog({ editMode = false, initialState = undefined }
   }
 
   async function editAsync(model: unknown) {
-    const validated = await validateSchemaAsync<Publication>(PublicationSchema, model)
+    const validated = await validateSchemaAsync<Certificate>(CertificateSchema, model)
     if (!validated.success || !validated.data) {
       setErrors(validated.errors)
       return false
     }
-    const { success } = await updateUserSection<Publication>("publication", validated.data, token)
+    const { success } = await updateUserSection<Certificate>("certificate", validated.data, token)
     if (!success) {
       const errors: { [key: string]: string } = {}
       errors['generic'] = 'Error inesperado guardando cambios'
@@ -138,13 +138,13 @@ export function PublicationDialog({ editMode = false, initialState = undefined }
 
     try {
       const success = (editMode === true)
-        ? await editAsync(publicationState)
-        : await createAsync(publicationState)
+        ? await editAsync(certificateState)
+        : await createAsync(certificateState)
 
       if (success) {
         notifySuccess('Datos actualizados correctamente')
         setErrors({})
-        setPublicationStamp(Date.now())
+        setCertificateStamp(Date.now())
         setIsOpen(false)
         return
       }
@@ -168,13 +168,13 @@ export function PublicationDialog({ editMode = false, initialState = undefined }
             <span className="sr-only">Editar</span>
           </Button>
           : <Button className="text-xs md:text-sm" variant="outline">
-            <Plus className="mr-1 text-blue-500" />Publicación
+            <Plus className="mr-1 text-blue-500" />Certificado
           </Button>
         }
       </DialogTrigger>
       <DialogContent className="max-w-[75%]" onInteractOutside={(e) => { e.preventDefault() }}>
         <DialogHeader>
-          <DialogTitle>{(editMode === true) ? 'Editar' : 'Añadir'} Publicación</DialogTitle>
+          <DialogTitle>{(editMode === true) ? 'Editar' : 'Añadir'} Certificado</DialogTitle>
           <DialogDescription>
             Rellena la información y guarda cambios cuando finalices.
           </DialogDescription>
@@ -184,36 +184,29 @@ export function PublicationDialog({ editMode = false, initialState = undefined }
             <Label htmlFor="name" className="text-right text-xs md:text-sm">
               Nombre
             </Label>
-            <Input id="name" value={publicationState.name} onChange={handleChange} placeholder="Nombre publicación" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Input id="name" value={certificateState.name} onChange={handleChange} placeholder="Nombre certificado" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['name'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['name']}</p>}
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="publisher" className="text-right text-xs md:text-sm">
-              Editorial
-            </Label>
-            <Input id="publisher" value={publicationState.publisher} onChange={handleChange} placeholder="Nombre editorial" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
-            {errors['publisher'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['publisher']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-right text-xs md:text-sm">
               Fecha
             </Label>
-            <DatePicker date={publicationState.releaseDate} onSelect={handleSelectDate} />
-            {errors['releaseDate'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['releaseDate']}</p>}
+            <DatePicker date={certificateState.date} onSelect={handleSelectDate} />
+            {errors['date'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['date']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="url" className="text-right text-xs md:text-sm">
               Url
             </Label>
-            <Input id="url" value={publicationState.url} onChange={handleChange} placeholder="https://..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Input id="url" value={certificateState.url} onChange={handleChange} placeholder="https://..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['url'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['url']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="summary" className="text-right text-xs md:text-sm">
-              Resumen
+            <Label htmlFor="issuer" className="text-right text-xs md:text-sm">
+              Entidad
             </Label>
-            <Textarea id="summary" value={publicationState.summary} onChange={handleChange} placeholder="Resumen de la publicación" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
-            {errors['summary'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['summary']}</p>}
+            <Input id="issuer" value={certificateState.issuer} onChange={handleChange} placeholder="Entidad certificadora" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            {errors['issuer'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['issuer']}</p>}
           </div>
         </div>
         <DialogFooter className="flex flex-row items-center gap-2 justify-end">

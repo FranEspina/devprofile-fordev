@@ -314,10 +314,10 @@ export async function updateUserSection<T extends UserSection>(sectionName: stri
   }
 }
 
-export async function getUserResume(id: number, token: string) {
+export async function getUserResume(id: number) {
   const endpoint = `${API_BASE_URL}/user/${id}/resume`
   try {
-    const response = await axios.get(endpoint, authHeader(token))
+    const response = await axios.get(endpoint)
     const results: apiResponse<unknown> = response.data
     console.log(results)
     if (results.success === true) {

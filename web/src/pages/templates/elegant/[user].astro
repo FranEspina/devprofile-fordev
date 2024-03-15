@@ -1,29 +1,32 @@
 ---
-import { getUserResume } from "../../services/apiService";
+import { getUserResume } from "../../../services/apiService";
 
-const { user } = Astro.locals;
-const { id, token } = user;
-const result = await getUserResume(Number(id), token);
-const { work, basic, projects, skills } = result.data;
+const { user } = Astro.params;
 
-console.log(work);
-console.log(basic);
-console.log(projects);
-console.log(skills);
+const result = await getUserResume(Number(user));
+console.log(result);
+if (!result || !result.data) {
+  return Astro.redirect("/");
+}
+const { work, basic, skills, education, awards, interests, references } =
+  result.data;
 ---
 
 <head>
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Thomas Davis</title>
+  <title>{basic.name}</title>
   <link
     rel="stylesheet"
     href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
   />
 </head>
 
-<body itemscope="itemscope" itemtype="http://schema.org/Person">
+<body
+  itemscope="itemscope"
+  itemtype="https://raw.githubusercontent.com/jsonresume/resume-schema/v1.0.0/schema.json"
+>
   <div class="container-fluid">
     <div class="row main clearfix">
       <a class="js-floating-nav-trigger floating-nav-trigger" href="#"
@@ -32,30 +35,30 @@ console.log(skills);
       <nav class="floating-nav js-floating-nav">
         <ul class="list-unstyled">
           <li>
-            <a href="#about"><i class="mr-10 icon-board"></i>About</a>
+            <a href="#about"><i class="mr-10 icon-board"></i>Sobre mí</a>
           </li>
           <li>
             <a href="#work-experience"
-              ><i class="mr-10 icon-office"></i>Work Experience</a
+              ><i class="mr-10 icon-office"></i>Experiencia profesional</a
             >
           </li>
           <li>
-            <a href="#skills"><i class="mr-10 icon-tools"></i>Skills</a>
+            <a href="#skills"><i class="mr-10 icon-tools"></i>Competencias</a>
           </li>
           <li>
             <a href="#education"
-              ><i class="mr-10 icon-graduation-cap"></i>Education</a
+              ><i class="mr-10 icon-graduation-cap"></i>Estudios</a
             >
           </li>
           <li>
-            <a href="#awards"><i class="mr-10 icon-trophy"></i>Awards</a>
+            <a href="#awards"><i class="mr-10 icon-trophy"></i>Logros</a>
           </li>
           <li>
-            <a href="#interests"><i class="mr-10 icon-heart"></i>Interests</a>
+            <a href="#interests"><i class="mr-10 icon-heart"></i>Intereses</a>
           </li>
           <li>
             <a href="#references"
-              ><i class="mr-10 icon-thumbs-up"></i>References</a
+              ><i class="mr-10 icon-thumbs-up"></i>Referencias</a
             >
           </li>
         </ul>
@@ -81,7 +84,11 @@ console.log(skills);
           <div class="contact-details clearfix">
             <div class="detail">
               <span class="icon"><i class="icon fs-lg icon-location"></i></span
-              ><span class="info">Melbourne, AU PENDIENTE</span>
+              ><span class="info"
+                >{basic.location.address}, {basic.location.postalCode}, {
+                  basic.location.countryCode
+                }</span
+              >
             </div>
             <div class="detail">
               <span class="icon"><i class="icon fs-lg icon-mail"></i></span
@@ -103,17 +110,18 @@ console.log(skills);
           <hr />
           <div class="social-links text-center">
             <div>
-              <a
-                class="fs-2x social-link link-twitter icon-twitter"
-                href="https://twitter.com/ajaxdavis"
-                target="_blank"
-                data-toggle="tooltip"
-                title="Thomas Davis on twitter"></a><a
-                class="fs-2x social-link link-github icon-github"
-                href="https://github.com/thomasdavis"
-                target="_blank"
-                data-toggle="tooltip"
-                title="Thomas Davis on github"></a>
+              {
+                basic.profiles &&
+                  basic.profiles.map((p) => (
+                    <a
+                      class={`fs-2x social-link link-${p.network.toLowerCase()} icon-${p.network.toLowerCase()}`}
+                      href={p.url}
+                      target="_blank"
+                      data-toggle="tooltip"
+                      title={`${basic.name} on ${p.network}`}
+                    />
+                  ))
+              }
             </div>
           </div>
         </div>
@@ -231,25 +239,36 @@ console.log(skills);
             <div class="detail" id="education">
               <div class="icon">
                 <i class="fs-lg icon-graduation-cap"></i><span
-                  class="mobile-title">Education</span
+                  class="mobile-title">Estudios</span
                 >
               </div>
               <div class="info">
-                <h4 class="title text-uppercase">Education</h4>
+                <h4 class="title text-uppercase">Estudios</h4>
                 <div class="content">
                   <ul class="list-unstyled clear-margin">
-                    <li class="card card-nested">
-                      <div class="content">
-                        <p class="clear-margin relative">
-                          <strong
-                            >Software Engineering (incomplete), Bachelors,&nbsp;</strong
-                          >The University of Queensland
-                        </p>
-                        <p class="text-muted clear-margin">
-                          <small>Feb, 2008 - Dec, 2009</small>
-                        </p><i></i>
-                      </div>
-                    </li>
+                    {
+                      education &&
+                        education.map((e) => (
+                          <li class="card card-nested">
+                            <div class="content">
+                              <p class="clear-margin relative">
+                                <strong>
+                                  {e.studyType}, {e.area},&nbsp;
+                                </strong>
+                                {e.institution}
+                              </p>
+                              <>
+                                <p class="text-muted clear-margin">
+                                  <small>
+                                    {e.startDate} - {e.endDate}
+                                  </small>
+                                </p>
+                                <i />
+                              </>
+                            </div>
+                          </li>
+                        ))
+                    }
                   </ul>
                 </div>
               </div>
@@ -257,25 +276,32 @@ console.log(skills);
             <div class="detail" id="awards">
               <div class="icon">
                 <i class="fs-lg icon-trophy"></i><span class="mobile-title"
-                  >Awards</span
+                  >Logros</span
                 >
               </div>
               <div class="info">
-                <h4 class="title text-uppercase">Awards</h4>
+                <h4 class="title text-uppercase">Premios / Logros</h4>
                 <div class="content">
                   <ul class="list-unstyled clear-margin">
-                    <li class="card card-nested">
-                      <div class="content">
-                        <p class="clear-margin" itemprop="award">
-                          <strong>Defender of the Internet </strong>,&nbsp;Fight
-                          For The Future
-                        </p>
-                        <p class="text-muted">
-                          <small>Awarded on: </small>
-                        </p>
-                        <div class="mop-wrapper"></div>
-                      </div>
-                    </li>
+                    {
+                      awards &&
+                        awards.map((a) => (
+                          <li class="card card-nested">
+                            <div class="content">
+                              <p class="clear-margin" itemprop="award">
+                                <strong>{a.title}</strong>
+                                ,&nbsp;{a.awarder}
+                              </p>
+                              <p class="text-muted">
+                                <small>Awarded on: {a.date}</small>
+                                <br />
+                                {a.summary}
+                              </p>
+                              <div class="mop-wrapper" />
+                            </div>
+                          </li>
+                        ))
+                    }
                   </ul>
                 </div>
               </div>
@@ -283,25 +309,23 @@ console.log(skills);
             <div class="detail" id="interests">
               <div class="icon">
                 <i class="fs-lg icon-heart"></i><span class="mobile-title"
-                  >Interests</span
+                  >Intereses / aficiones</span
                 >
               </div>
               <div class="info">
-                <h4 class="title text-uppercase">Interests</h4>
+                <h4 class="title text-uppercase">Intereses / Aficiones</h4>
                 <div class="content">
                   <ul class="list-unstyled clear-margin">
-                    <li class="card card-nested">
-                      <p><strong>Gardening</strong></p>
-                    </li>
-                    <li class="card card-nested">
-                      <p><strong>Music / Jamming</strong></p>
-                    </li>
-                    <li class="card card-nested">
-                      <p><strong>Reading / Writing</strong></p>
-                    </li>
-                    <li class="card card-nested">
-                      <p><strong>Open Source</strong></p>
-                    </li>
+                    {
+                      interests &&
+                        interests.map((i) => (
+                          <li class="card card-nested">
+                            <p>
+                              <strong>{i.name}</strong>
+                            </p>
+                          </li>
+                        ))
+                    }
                   </ul>
                 </div>
               </div>
@@ -309,86 +333,26 @@ console.log(skills);
             <div class="detail" id="references">
               <div class="icon">
                 <i class="fs-lg icon-thumbs-up"></i><span class="mobile-title"
-                  >References</span
+                  >Referencias</span
                 >
               </div>
               <div class="info">
-                <h4 class="title text-uppercase">References</h4>
+                <h4 class="title text-uppercase">Referencias</h4>
                 <div class="content">
                   <ul class="list-unstyled clear-margin">
-                    <li class="card card-nested">
-                      Joey Flores, Co-founder and CEO of Earbits, Inc.<blockquote
-                        class="quote"
-                      >
-                        <div class="mop-wrapper">
-                          <p>
-                            Thomas was hired as a lead developer and, upon the
-                            leaving of our co-founder took over as CTO of
-                            Earbits. Thomas is, hands down, one of those A
-                            Players you hear of companies dying to hire. He is
-                            incredibly smart, not just at code but about
-                            everything from classical music to Chinese language
-                            and culture. Thomas is great to work with and, as a
-                            well established contributor to open source projects
-                            and several successful ventures, commands the
-                            respect of engineers at all levels. I would suggest
-                            doing anything you can to have him on your team.
-                          </p>
-                        </div>
-                      </blockquote>
-                    </li>
-                    <li class="card card-nested">
-                      Yotam Rosenbaum, SVP of Operations, Earbits, Inc.<blockquote
-                        class="quote"
-                      >
-                        <div class="mop-wrapper">
-                          <p>
-                            I've had the great pleasure of working with Thomas
-                            for the past three years at Earbits, and on a few
-                            side projects. Two years ago our CTO left on a
-                            moment's notice, Thomas saved our company by quickly
-                            stepping up to fill this role. He has been with our
-                            company through thick and thin and made serious
-                            personal sacrifices in order to help the company
-                            during tough times. He is a phenomenal hacker and a
-                            true team player. Highly recommended!
-                          </p>
-                        </div>
-                      </blockquote>
-                    </li>
-                    <li class="card card-nested">
-                      Ryan Kirkman, Senior Software Engineer at Nerdwallet<blockquote
-                        class="quote"
-                      >
-                        <div class="mop-wrapper">
-                          <p>
-                            Thomas is an extremely talented engineer with a very
-                            broad range of skills and experience. From being a
-                            thought leader in the front-end community via
-                            backbonetutorials.com and cdnjs.com, to designing
-                            and implementing the API for cdnjs.com, working with
-                            Thomas has been fantastic learning experience.
-                            Thomas is truly a full stack develop, and his work
-                            output is incredible. If there is any opportunity to
-                            work with Thomas, I take it. He is the definition of
-                            an A player.
-                          </p>
-                        </div>
-                      </blockquote>
-                    </li>
-                    <li class="card card-nested">
-                      Greg Davis<blockquote class="quote">
-                        <div class="mop-wrapper">
-                          <p>
-                            On Thomas Davis... Hire this guy. Do not be fooled.
-                            Incredibly capable and fast. Plays well with others.
-                            Unbelievable at front-end work end programming but
-                            that is just the start. Visionary. Hire him before I
-                            do.
-                          </p>
-                        </div>
-                      </blockquote>
-                    </li>
+                    {
+                      references &&
+                        references.map((r) => (
+                          <li class="card card-nested">
+                            {r.name}
+                            <blockquote class="quote">
+                              <div class="mop-wrapper">
+                                <p>{r.reference}</p>
+                              </div>
+                            </blockquote>
+                          </li>
+                        ))
+                    }
                   </ul>
                 </div>
               </div>

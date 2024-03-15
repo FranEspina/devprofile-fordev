@@ -5,9 +5,6 @@ import { Logout } from "@/components/Logout";
 import { SignInModal } from "@/components/SignInModal";
 import "../styles/globals.css";
 import { ModeToggle } from "@/components/ModeToggle";
-function onLogout() {
-  console.log("hola");
-}
 ---
 
 <section
@@ -36,9 +33,6 @@ function onLogout() {
       </ItemListNav>
       <ItemListNav hoverStyled={true} authRequired={true} client:load>
         <a class="uppercase" href="/recursos/">Recursos</a>
-      </ItemListNav>
-      <ItemListNav hoverStyled={true} authRequired={true} client:load>
-        <a class="uppercase roun" href="/templates/elegant/">público</a>
       </ItemListNav>
     </ul>
   </div>

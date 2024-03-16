@@ -307,7 +307,7 @@ export async function dbGetUserSectionDataAsync(userId: number): Promise<Section
   }
 }
 
-export async function dbGetUserBasicResumeAsync(userId: number, includeIds: boolean): Promise<{ [key: string]: unknown }> {
+export async function dbGetUserBasicResumeAsync(userId: number, includeIds: boolean): Promise<{ [key: string]: unknown }[]> {
 
   const resume: { [key: string]: unknown } = {}
 
@@ -340,7 +340,7 @@ export async function dbGetUserBasicResumeAsync(userId: number, includeIds: bool
       resume['basic'] = basicResume
     }
 
-    return resume
+    return [resume]
   }
   catch (error) {
     console.log('Error inesperado recuperando datos básicos de usuario', error)

@@ -1,29 +1,28 @@
 ---
 import { getUserResumeSection } from "../../../services/apiService";
-import { Basic } from "../../../Schemas/basicSchema";
-import { apiResultType } from "../../../types/apiTypes";
+import { type BasicResume } from "../../../Schemas/basicSchema";
+import { type apiResultType } from "../../../types/apiTypes";
 
 const { title } = Astro.props;
 
 const { user } = Astro.params;
 
-const result: apiResultType<Basic[]> = await getUserResumeSection<Basic>(
-  "basic",
-  Number(user),
-);
+const result: apiResultType<BasicResume[]> =
+  await getUserResumeSection<BasicResume>("basic", Number(user));
 if (!result || !result.data) {
   return Astro.redirect("/");
 }
-const basics = result.data[0] || ({} as Basic);
+const { basic } = result.data[0];
+const { profiles, location } = basic;
 ---
 
 <!doctype html>
 <html lang="es">
   <head>
-    <!-- <meta charset="UTF-8" />
-    <title>{title}</title>
-    <meta name="description" content={summary} />
-    <meta name="viewport" content="width=device-width" />
+    <meta charset="UTF-8" />
+    <title>{basic.name}</title>
+    <meta name="description" content={basic.summary} />
+    <!-- <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preload" as="image" href={image} />
 
@@ -43,7 +42,8 @@ const basics = result.data[0] || ({} as Basic);
   <body>
     <main>
       <section>
-        <h1>{basics.name}</h1>
+        <h1 class="text-lg">{basic.name}</h1>
+        <p>Hola</p>
       </section>
     </main>
   </body>

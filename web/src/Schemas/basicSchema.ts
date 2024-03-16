@@ -31,3 +31,33 @@ export const BasicDeleteSchema = BasicSchema.omit({
 export type Basic = z.infer<typeof BasicSchema>
 export type BasicCreate = z.infer<typeof BasicCreateSchema>
 export type BasicDelete = z.infer<typeof BasicDeleteSchema>
+
+export type BasicResume = {
+  basic: {
+    id: number,
+    userId: number,
+    name: string,
+    label: string,
+    image: string,
+    email: string,
+    phone: string,
+    url: string,
+    summary: string,
+    profiles: [{
+      id: number,
+      userId: number,
+      network: string,
+      username: string,
+      url: string,
+    }],
+    location: {
+      id: number,
+      userId: number,
+      address: string,
+      postalCode: string,
+      city: string,
+      countryCode: string,
+      region: string,
+    }
+  }
+}

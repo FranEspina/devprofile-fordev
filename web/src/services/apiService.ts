@@ -216,11 +216,9 @@ export async function createUserSection<T>(sectionName: string, userSection: T, 
 
 export async function getUserResumeSection<T>(section: string, id: number): Promise<apiResultType<T[]>> {
   const endpoint = `${API_BASE_URL}/user/${id}/resume/${section}`
-  console.log(endpoint)
   try {
     const response = await axios.get(endpoint)
     const results: apiResponse<T[]> = response.data
-    console.log(results)
     if (results.success === true) {
       return { success: true, message: 'Operación realizada con éxito', data: results.data }
     }

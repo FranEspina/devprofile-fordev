@@ -23,11 +23,14 @@ Web que permite a los usuario logarse y crear una cuenta de desarrollador donde 
 
 # TODO
 - [ ] Validaciones de tamaños máximos en zod
+- [ ] Validaciones de fecha inicio y fin pendientes en algunos esquemas
+- [ ] FIX: al eliminar el último elemento de una sección lo borra en bd pero sigue en pantalla
 - [ ] Poder decidir si tu cv se puede ver públicamente
 - [ ] Poder indicar que campos se ven públicamente y cuales son privados
 - [ ] Poder order dentro de las secciones
-- [ ] Crear vista pública del cv
-- [ ] Incluir todas las secciones del cv
+- [x] Crear vista pública del cv
+- [x] Incluir todas las secciones del cv
+- [ ] Poder seleccionar la plantilla pública del cv (varios templates)
 - [ ] Permitir importar las secciones del cv según el esquema
 - [ ] Permitir exportar el cv a formato json segun el esquema 
 - [ ] Crear gestiones de aplicaciones asociadas al usuario para exponer una api_key

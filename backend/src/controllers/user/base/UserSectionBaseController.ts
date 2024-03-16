@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { dbGetUserSectionByUserAsync, dbCreateUserSectionAsync, dbUpdateUserSectionAsync, getUserByIdAsync, dbDeleteUserSectionAsync } from '../../../services/db'
+import { dbGetUserSectionByUserAsync, dbCreateUserSectionAsync, dbUpdateUserSectionAsync, getUserByIdAsync, dbDeleteUserSectionAsync, dbGetUserResumeSectionByUserAsync } from '../../../services/db'
 import { validateSchemaAsync } from '../../../services/validationService'
 import { Schema } from 'zod'
 import { UserDeleteSection } from '../../../models/modelSchemas'
@@ -35,6 +35,32 @@ export class UserSectionBaseController<T extends { id: number } & Record<string,
         status: 500,
         success: true,
         code: `UNEXPECTED_ERROR_GET_USER_${this.tableName.toUpperCase()}`,
+        message: `Error inesperado recuperando ${this.tableDesc}`,
+        data: null,
+      })
+    }
+  }
+
+  async getUserResumeSectionAsync(req: Request, res: Response) {
+    try {
+      const userId = Number(req.params.userId)
+
+      const rows = await dbGetUserResumeSectionByUserAsync<T>(this.tableName, userId)
+
+      return res.status((rows.length === 0) ? 404 : 200).json({
+        status: (rows.length === 0) ? 404 : 200,
+        success: true,
+        code: (rows.length === 0) ? `NOT_FOUND_GET_USER_RESUME_${this.tableName.toUpperCase()}` : 'OK',
+        message: (rows.length === 0) ? 'No existen datos' : 'Operación realizada correctamente',
+        data: rows,
+      })
+
+    } catch (error) {
+      console.log(error)
+      return res.status(500).json({
+        status: 500,
+        success: true,
+        code: `UNEXPECTED_ERROR_GET_USER_RESUME_${this.tableName.toUpperCase()}`,
         message: `Error inesperado recuperando ${this.tableDesc}`,
         data: null,
       })

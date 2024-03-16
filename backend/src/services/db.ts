@@ -15,6 +15,22 @@ const pool = new Pool({
   ssl: process.env.POSTGRES_SSL === 'true'
 });
 
+const SECTION_FIELDS = [
+  { section: 'works', table: 'works', field: 'name', description: 'Puesto' },
+  { section: 'profiles', table: 'profiles', field: 'network', description: 'Perfil' },
+  { section: 'projects', table: 'projects', field: 'name', description: 'Proyecto' },
+  { section: 'skills', table: 'skills', field: 'name', description: 'Competencia' },
+  { section: 'locations', table: 'locations', field: 'address', description: 'Dirección' },
+  { section: 'volunteers', table: 'volunteers', field: 'organization', description: 'Voluntariado' },
+  { section: 'educations', table: 'educations', field: 'institution', description: 'Estudio' },
+  { section: 'awards', table: 'awards', field: 'title', description: 'Logro' },
+  { section: 'certificates', table: 'certificates', field: 'name', description: 'Certificado' },
+  { section: 'publications', table: 'publications', field: 'name', description: 'Publicación' },
+  { section: 'languages', table: 'languages', field: 'language', description: 'Idioma' },
+  { section: 'interests', table: 'interests', field: 'name', description: 'Interés' },
+  { section: 'references', table: 'user_references', field: 'name', description: 'Referencia' },
+]
+
 export const getUserByEmailAsync = async (email: string): Promise<UserHashPassword | null> => {
 
   try {
@@ -187,28 +203,61 @@ export async function dbGetUserSectionByUserAsync<T extends { [key: string]: unk
   }
 }
 
+export async function dbGetUserResumeSectionByUserAsync<T extends { [key: string]: unknown }>(tablename: string, userId: number): Promise<T[]> {
+
+  const sectionFields = SECTION_FIELDS.find(s => s.table === tablename)
+  if (!sectionFields) {
+    return []
+  }
+
+  //TODO: pasar a un array las secciones y realizar con un bucle forEach
+  const userSectionQuery = `
+    SELECT ${sectionFields.table}.*
+    FROM ${sectionFields.table} 
+      inner join sections  
+        on (sections.user_id = $1  
+          and sections.section_name = $2
+          and sections.section_id = ${sectionFields.table}.id)
+    WHERE ${sectionFields.table}.user_id = $1
+    order by ${sectionFields.table}.id asc;
+  `
+  try {
+
+    //TODO: Crear todos los modelos tanto de BBDD como de los DTO de la API
+    //No queremos tener dos clases, una para los controladores (camelCase) y otra para la bbdd (snake_case)
+    //const result = await pool.query<T>(userSectionQuery, [userId])
+    const result = await pool.query(userSectionQuery, [userId, tablename])
+    if (!result || !result.rowCount) {
+      return []
+    }
+
+    //TODO eliminar cuando existan los modelos
+    const sections: T[] = []
+    for (let indexRow = 0; indexRow < result.rows.length; indexRow++) {
+      const row = result.rows[indexRow]
+      let section: T = {} as T
+
+      for (let index = 0; index < result.fields.length; index++) {
+        const field = result.fields[index];
+        const name: string = field['name']
+        section = updateObject(section, snakeToCamelCase(name), row[name])
+      }
+      sections.push(section)
+    }
+    return sections
+  }
+  catch (error) {
+    console.log(`Error inesperado recuperando sección públic de usuario: '${tablename}'`, error)
+    throw error
+  }
+}
+
 export async function dbGetUserSectionDataAsync(userId: number): Promise<SectionData[]> {
 
-  const fields = [
-    { section: 'works', table: 'works', field: 'name', description: 'Puesto' },
-    { section: 'profiles', table: 'profiles', field: 'network', description: 'Perfil' },
-    { section: 'projects', table: 'projects', field: 'name', description: 'Proyecto' },
-    { section: 'skills', table: 'skills', field: 'name', description: 'Competencia' },
-    { section: 'locations', table: 'locations', field: 'address', description: 'Dirección' },
-    { section: 'volunteers', table: 'volunteers', field: 'organization', description: 'Voluntariado' },
-    { section: 'educations', table: 'educations', field: 'institution', description: 'Estudio' },
-    { section: 'awards', table: 'awards', field: 'title', description: 'Logro' },
-    { section: 'certificates', table: 'certificates', field: 'name', description: 'Certificado' },
-    { section: 'publications', table: 'publications', field: 'name', description: 'Publicación' },
-    { section: 'languages', table: 'languages', field: 'language', description: 'Idioma' },
-    { section: 'interests', table: 'interests', field: 'name', description: 'Interés' },
-    { section: 'references', table: 'user_references', field: 'name', description: 'Referencia' },
 
-  ]
-
-  const casesField = fields.map(f => `WHEN '${f.section}' THEN ${f.table}.${f.field}`).join('\r\n')
-  const casesDescription = fields.map(f => `WHEN '${f.section}' THEN '${f.description}'`).join('\r\n')
-  const leftJoins = fields.map(f => `left join ${f.table} on (sections.section_name = '${f.section}' and ${f.table}.user_id = $1 and ${f.table}.id = sections.section_id)`).join('\r\n')
+  const casesField = SECTION_FIELDS.map(f => `WHEN '${f.section}' THEN ${f.table}.${f.field}`).join('\r\n')
+  const casesDescription = SECTION_FIELDS.map(f => `WHEN '${f.section}' THEN '${f.description}'`).join('\r\n')
+  const leftJoins = SECTION_FIELDS.map(f => `left join ${f.table} on (sections.section_name = '${f.section}' and ${f.table}.user_id = $1 and ${f.table}.id = sections.section_id)`).join('\r\n')
 
   //TODO: pasar a un array las secciones y realizar con un bucle forEach
   const userSectionQuery = `

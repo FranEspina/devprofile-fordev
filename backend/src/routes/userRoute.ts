@@ -23,30 +23,36 @@ import { auth } from '../middlewares/auth'
 const router = Router()
 
 const controllers = [
-  { route: 'work', controller: new UserWorkController() },
-  { route: 'skill', controller: new UserSkillController() },
-  { route: 'project', controller: new UserProjectController() },
-  { route: 'profile', controller: new UserProfileController() },
-  { route: 'basic', controller: new UserBasicController() },
-  { route: 'section', controller: new UserSectionController() },
-  { route: 'resource', controller: new UserResourceController() },
-  { route: 'location', controller: new UserLocationController() },
-  { route: 'volunteer', controller: new UserVolunteerController() },
-  { route: 'education', controller: new UserEducationController() },
-  { route: 'award', controller: new UserAwardController() },
-  { route: 'certificate', controller: new UserCertificateController() },
-  { route: 'publication', controller: new UserPublicationController() },
-  { route: 'language', controller: new UserLanguageController() },
-  { route: 'interest', controller: new UserInterestController() },
-  { route: 'reference', controller: new UserReferenceController() },
+  { route: 'work', controller: new UserWorkController(), resume: true },
+  { route: 'skill', controller: new UserSkillController(), resume: true },
+  { route: 'project', controller: new UserProjectController(), resume: true },
+  { route: 'profile', controller: new UserProfileController(), resume: true },
+  { route: 'basic', controller: new UserBasicController(), resume: true },
+  { route: 'section', controller: new UserSectionController(), resume: false },
+  { route: 'resource', controller: new UserResourceController(), resume: true },
+  { route: 'location', controller: new UserLocationController(), resume: true },
+  { route: 'volunteer', controller: new UserVolunteerController(), resume: true },
+  { route: 'education', controller: new UserEducationController(), resume: true },
+  { route: 'award', controller: new UserAwardController(), resume: true },
+  { route: 'certificate', controller: new UserCertificateController(), resume: true },
+  { route: 'publication', controller: new UserPublicationController(), resume: true },
+  { route: 'language', controller: new UserLanguageController(), resume: true },
+  { route: 'interest', controller: new UserInterestController(), resume: true },
+  { route: 'reference', controller: new UserReferenceController(), resume: true },
 ]
 
 controllers.forEach(c => {
-  const { route, controller } = c
+  const { route, controller, resume } = c
   router.get(`/:userId/${route}`, auth, controller.getUserSectionAsync.bind(controller))
   router.post(`/:userId/${route}`, auth, controller.createUserSection.bind(controller))
   router.put(`/:userId/${route}/:id`, auth, controller.updateUserSection.bind(controller))
   router.delete(`/:userId/${route}/:id`, auth, controller.deleteUserSection.bind(controller))
+
+  if (resume) {
+    //El perfil público de un usuario no requiere auth
+    router.get(`/:userId/resume/${route}`, controller.getUserResumeSectionAsync.bind(controller))
+  }
+
 });
 
 router.get('/:userId/sectiondata', auth, getUserSectionDataAsync)

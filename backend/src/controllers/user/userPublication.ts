@@ -25,6 +25,7 @@ export class UserPublicationController extends UserSectionBaseController<{ id: n
       PublicationCreateSchema,
       PublicationSchema,
       DeleteSectionSchema,
+      true,
       parseBody
     )
   }

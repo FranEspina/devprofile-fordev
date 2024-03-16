@@ -23,6 +23,7 @@ export class UserResourceController extends UserSectionBaseController<{ id: numb
       DevResourceCreateSchema,
       DevResourceSchema,
       DevResourceDeleteSchema,
+      true,
       parseBody
     )
   }

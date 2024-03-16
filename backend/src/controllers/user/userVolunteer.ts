@@ -27,6 +27,7 @@ export class UserVolunteerController extends UserSectionBaseController<{ id: num
       VolunteerCreateSchema,
       VolunteerSchema,
       DeleteSectionSchema,
+      true,
       parseBody
     )
   }

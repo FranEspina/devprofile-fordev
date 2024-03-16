@@ -28,6 +28,7 @@ export class UserProjectController extends UserSectionBaseController<{ id: numbe
       ProjectCreateSchema,
       ProjectSchema,
       ProjectDeleteSchema,
+      true,
       parseBody
     )
   }

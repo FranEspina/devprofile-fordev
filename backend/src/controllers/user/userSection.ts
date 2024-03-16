@@ -22,6 +22,7 @@ export class UserSectionController extends UserSectionBaseController<{ id: numbe
       CreateSectionSchema,
       SectionSchema,
       DeleteSectionSchema,
+      false,
       parseBody
     )
   }

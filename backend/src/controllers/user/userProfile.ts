@@ -21,6 +21,7 @@ export class UserProfileController extends UserSectionBaseController<{ id: numbe
       ProfileCreateSchema,
       ProfileSchema,
       ProfileDeleteSchema,
+      true,
       parseBody
     )
   }

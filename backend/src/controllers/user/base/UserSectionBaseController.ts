@@ -12,6 +12,7 @@ export class UserSectionBaseController<T extends { id: number } & Record<string,
     private createSchema: Schema,
     private updateSchema: Schema,
     private deleteSchema: Schema,
+    public IsResumeSection: boolean,
     private bodyParser: (req: Request) => { [key: string]: unknown }) {
   }
 
@@ -35,32 +36,6 @@ export class UserSectionBaseController<T extends { id: number } & Record<string,
         status: 500,
         success: true,
         code: `UNEXPECTED_ERROR_GET_USER_${this.tableName.toUpperCase()}`,
-        message: `Error inesperado recuperando ${this.tableDesc}`,
-        data: null,
-      })
-    }
-  }
-
-  async getUserResumeSectionAsync(req: Request, res: Response) {
-    try {
-      const userId = Number(req.params.userId)
-
-      const rows = await dbGetUserResumeSectionByUserAsync<T>(this.tableName, userId)
-
-      return res.status((rows.length === 0) ? 404 : 200).json({
-        status: (rows.length === 0) ? 404 : 200,
-        success: true,
-        code: (rows.length === 0) ? `NOT_FOUND_GET_USER_RESUME_${this.tableName.toUpperCase()}` : 'OK',
-        message: (rows.length === 0) ? 'No existen datos' : 'Operación realizada correctamente',
-        data: rows,
-      })
-
-    } catch (error) {
-      console.log(error)
-      return res.status(500).json({
-        status: 500,
-        success: true,
-        code: `UNEXPECTED_ERROR_GET_USER_RESUME_${this.tableName.toUpperCase()}`,
         message: `Error inesperado recuperando ${this.tableDesc}`,
         data: null,
       })
@@ -247,6 +222,44 @@ export class UserSectionBaseController<T extends { id: number } & Record<string,
         success: true,
         code: `UNEXPECTED_ERROR_DELETE_USER_${this.tableName.toUpperCase()}`,
         message: `Error inesperado eliminando sección de usuario: ${this.tableDesc}`,
+        data: null,
+      })
+    }
+  }
+
+  async getUserResumeSectionAsync(req: Request, res: Response) {
+    try {
+
+      if (!this.IsResumeSection) {
+        return res.status(500).json({
+          status: 500,
+          success: true,
+          code: `UNEXPECTED_ERROR_SECTION_RESUME_${this.tableName.toUpperCase()}`,
+          message: `La sección ${this.tableDesc} no es de tipo resumen`,
+          data: null,
+        })
+      }
+
+      const userId = Number(req.params.userId)
+
+      const rows = await dbGetUserResumeSectionByUserAsync<T>(this.tableName, userId)
+
+
+      return res.status((rows.length === 0) ? 404 : 200).json({
+        status: (rows.length === 0) ? 404 : 200,
+        success: true,
+        code: (rows.length === 0) ? `NOT_FOUND_GET_USER_RESUME_${this.tableName.toUpperCase()}` : 'OK',
+        message: (rows.length === 0) ? 'No existen datos' : 'Operación realizada correctamente',
+        data: rows,
+      })
+
+    } catch (error) {
+      console.log(error)
+      return res.status(500).json({
+        status: 500,
+        success: true,
+        code: `UNEXPECTED_ERROR_GET_USER_RESUME_${this.tableName.toUpperCase()}`,
+        message: `Error inesperado recuperando ${this.tableDesc}`,
         data: null,
       })
     }

@@ -22,6 +22,7 @@ export class UserLanguageController extends UserSectionBaseController<{ id: numb
       LanguageCreateSchema,
       LanguageSchema,
       DeleteSectionSchema,
+      true,
       parseBody
     )
   }

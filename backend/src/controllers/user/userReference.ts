@@ -22,6 +22,7 @@ export class UserReferenceController extends UserSectionBaseController<{ id: num
       ReferenceCreateSchema,
       ReferenceSchema,
       DeleteSectionSchema,
+      true,
       parseBody
     )
   }

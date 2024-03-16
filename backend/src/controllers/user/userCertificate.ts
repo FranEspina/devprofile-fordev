@@ -24,6 +24,7 @@ export class UserCertificateController extends UserSectionBaseController<{ id: n
       CertificateCreateSchema,
       CertificateSchema,
       DeleteSectionSchema,
+      true,
       parseBody
     )
   }

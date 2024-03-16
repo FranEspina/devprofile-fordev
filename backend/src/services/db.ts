@@ -3,7 +3,7 @@ import { UserHashPassword, UserDTO, UserCreate } from '../models/user'
 import { UserDeleteSection, SectionData } from '../models/modelSchemas'
 import { camelToSnakeCase, snakeToCamelCase } from '../services/strings'
 
-import { WorkResume, ProjectResume, SkillResume, ProfileResume, Basic, LocationResume, VolunteerResume, EducationResume, AwardResume, CertificateResume, PublicationResume, LanguageResume, InterestResume, ReferenceResume } from '../models/modelSchemas'
+import { Work, Project, Skill, Profile, Basic, Location, Volunteer, Education, Award, Certificate, Publication, Language, Interest, Reference } from '../models/modelSchemas'
 
 
 const pool = new Pool({
@@ -221,6 +221,8 @@ export async function dbGetUserResumeSectionByUserAsync<T extends { [key: string
     WHERE ${sectionFields.table}.user_id = $1
     order by ${sectionFields.table}.id asc;
   `
+  console.log(userSectionQuery)
+
   try {
 
     //TODO: Crear todos los modelos tanto de BBDD como de los DTO de la API
@@ -305,24 +307,31 @@ export async function dbGetUserSectionDataAsync(userId: number): Promise<Section
   }
 }
 
-export async function dbGetUserResumeAsync(userId: number): Promise<{ [key: string]: unknown }> {
+export async function dbGetUserBasicResumeAsync(userId: number, includeIds: boolean): Promise<{ [key: string]: unknown }> {
 
   const resume: { [key: string]: unknown } = {}
-  resume['$schema'] = 'https://raw.githubusercontent.com/jsonresume/resume-schema/v1.0.0/schema.json'
 
   try {
 
     const basic = await dbGetUserSectionByUserAsync<Basic>('basics', userId)
     if (basic && basic.length !== 0) {
-      const { id, userId, ...basicFields } = basic[0]
-      const basicResume: { [key: string]: unknown } = { ...basicFields }
-      const profile = await dbGetUserSectionResumeAsync<ProfileResume>('profiles', userId)
+      let basicResume: { [key: string]: unknown }
+      if (includeIds) {
+        basicResume = basic[0]
+      }
+      else {
+        const { id, userId, ...basicFields } = basic[0]
+        basicResume = { ...basicFields }
+      }
+      console.log('dentro')
+      const profile = await dbGetUserSectionResumeAsync<Profile>('profiles', userId, includeIds)
+      console.log(profile)
       if (profile) {
         if (profile && profile.length !== 0) {
           basicResume['profiles'] = profile
         }
       }
-      const location = await dbGetUserSectionResumeAsync<LocationResume>('locations', userId)
+      const location = await dbGetUserSectionResumeAsync<Location>('locations', userId, includeIds)
       if (location) {
         if (location && location.length !== 0) {
           basicResume['location'] = location[0]
@@ -331,57 +340,99 @@ export async function dbGetUserResumeAsync(userId: number): Promise<{ [key: stri
       resume['basic'] = basicResume
     }
 
-    const work = await dbGetUserSectionResumeAsync<WorkResume>('works', userId)
+    return resume
+  }
+  catch (error) {
+    console.log('Error inesperado recuperando datos básicos de usuario', error)
+    throw error
+  }
+}
+
+export async function dbGetUserResumeAsync(userId: number, includeIds: boolean): Promise<{ [key: string]: unknown }> {
+
+  const resume: { [key: string]: unknown } = {}
+  resume['$schema'] = 'https://raw.githubusercontent.com/jsonresume/resume-schema/v1.0.0/schema.json'
+
+  try {
+
+    const basic = await dbGetUserSectionByUserAsync<Basic>('basics', userId)
+    if (basic && basic.length !== 0) {
+
+      let basicResume: { [key: string]: unknown }
+      if (includeIds) {
+        basicResume = basic[0]
+      }
+      else {
+        const { id, userId, ...basicFields } = basic[0]
+        basicResume = { ...basicFields }
+      }
+
+      const profile = await dbGetUserSectionResumeAsync<Profile>('profiles', userId, includeIds)
+      if (profile) {
+        if (profile && profile.length !== 0) {
+          basicResume['profiles'] = profile
+        }
+      }
+      const location = await dbGetUserSectionResumeAsync<Location>('locations', userId, includeIds)
+      if (location) {
+        if (location && location.length !== 0) {
+          basicResume['location'] = location[0]
+        }
+      }
+      resume['basic'] = basicResume
+    }
+
+    const work = await dbGetUserSectionResumeAsync<Work>('works', userId, includeIds)
     if (work && work.length !== 0) {
       resume['work'] = work
     }
 
-    const volunteer = await dbGetUserSectionResumeAsync<VolunteerResume>('volunteers', userId)
+    const volunteer = await dbGetUserSectionResumeAsync<Volunteer>('volunteers', userId, includeIds)
     if (volunteer && volunteer.length !== 0) {
       resume['volunteer'] = volunteer
     }
 
-    const education = await dbGetUserSectionResumeAsync<EducationResume>('educations', userId)
+    const education = await dbGetUserSectionResumeAsync<Education>('educations', userId, includeIds)
     if (education && education.length !== 0) {
       resume['education'] = education
     }
 
-    const awards = await dbGetUserSectionResumeAsync<AwardResume>('awards', userId)
+    const awards = await dbGetUserSectionResumeAsync<Award>('awards', userId, includeIds)
     if (awards && awards.length !== 0) {
       resume['awards'] = awards
     }
 
-    const publications = await dbGetUserSectionResumeAsync<PublicationResume>('publications', userId)
+    const publications = await dbGetUserSectionResumeAsync<Publication>('publications', userId, includeIds)
     if (publications && publications.length !== 0) {
       resume['publications'] = publications
     }
 
-    const certificates = await dbGetUserSectionResumeAsync<CertificateResume>('certificates', userId)
+    const certificates = await dbGetUserSectionResumeAsync<Certificate>('certificates', userId, includeIds)
     if (certificates && certificates.length !== 0) {
       resume['certificates'] = certificates
     }
 
-    const skills = await dbGetUserSectionResumeAsync<SkillResume>('skills', userId)
+    const skills = await dbGetUserSectionResumeAsync<Skill>('skills', userId, includeIds)
     if (skills && work.length !== 0) {
       resume['skills'] = skills
     }
 
-    const languages = await dbGetUserSectionResumeAsync<LanguageResume>('languages', userId)
+    const languages = await dbGetUserSectionResumeAsync<Language>('languages', userId, includeIds)
     if (languages && languages.length !== 0) {
       resume['languages'] = languages
     }
 
-    const interests = await dbGetUserSectionResumeAsync<InterestResume>('interests', userId)
+    const interests = await dbGetUserSectionResumeAsync<Interest>('interests', userId, includeIds)
     if (interests && interests.length !== 0) {
       resume['interests'] = interests
     }
 
-    const references = await dbGetUserSectionResumeAsync<ReferenceResume>('user_references', userId)
+    const references = await dbGetUserSectionResumeAsync<Reference>('user_references', userId, includeIds)
     if (references && references.length !== 0) {
       resume['references'] = references
     }
 
-    const projects = await dbGetUserSectionResumeAsync<ProjectResume>('projects', userId)
+    const projects = await dbGetUserSectionResumeAsync<Project>('projects', userId, includeIds)
     if (projects && projects.length !== 0) {
       resume['projects'] = projects
     }
@@ -399,7 +450,7 @@ export async function dbGetUserResumeAsync(userId: number): Promise<{ [key: stri
   }
 }
 
-export async function dbGetUserSectionResumeAsync<T>(tablename: string, userId: number): Promise<T[]> {
+export async function dbGetUserSectionResumeAsync<T>(tablename: string, userId: number, incluideIds: boolean): Promise<T[]> {
 
   const resume: { [key: string]: unknown } = {}
 
@@ -424,7 +475,7 @@ export async function dbGetUserSectionResumeAsync<T>(tablename: string, userId: 
         for (let index = 0; index < result.fields.length; index++) {
           const field = result.fields[index];
           const name: string = field['name']
-          if (name !== 'id' && name !== 'user_id') {
+          if (incluideIds || (name !== 'id' && name !== 'user_id')) {
             const camelCaseName = snakeToCamelCase(name) as keyof T
             model = updateObject<T>(model, camelCaseName, row[name])
           }

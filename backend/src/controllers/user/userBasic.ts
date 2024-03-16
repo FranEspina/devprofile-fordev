@@ -25,6 +25,7 @@ export class UserBasicController extends UserSectionBaseController<{ id: number,
       BasicCreateSchema,
       BasicSchema,
       BasicDeleteSchema,
+      false,
       parseBody
     )
   }

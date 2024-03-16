@@ -28,6 +28,7 @@ export class UserWorkController extends UserSectionBaseController<{ id: number, 
       WorkCreateSchema,
       WorkSchema,
       WorkDeleteSchema,
+      true,
       parseBody
     )
   }

@@ -21,6 +21,7 @@ export class UserSkillController extends UserSectionBaseController<{ id: number,
       SkillCreateSchema,
       SkillSchema,
       SkillDeleteSchema,
+      true,
       parseBody
     )
   }

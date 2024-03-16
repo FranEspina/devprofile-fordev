@@ -24,6 +24,7 @@ export class UserAwardController extends UserSectionBaseController<{ id: number,
       AwardCreateSchema,
       AwardSchema,
       DeleteSectionSchema,
+      true,
       parseBody
     )
   }

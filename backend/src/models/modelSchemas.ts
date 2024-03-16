@@ -16,6 +16,16 @@ import { LanguageResumeSchema } from '../schemas/languageSchema'
 import { InterestResumeSchema } from '../schemas/interestSchema'
 import { ReferenceResumeSchema } from '../schemas/referenceSchema'
 
+import { LocationSchema } from '../schemas/locationSchema'
+import { VolunteerSchema } from '../schemas/volunteerSchema'
+import { EducationSchema } from '../schemas/educationSchema'
+import { AwardSchema } from '../schemas/awardSchema'
+import { CertificateSchema } from '../schemas/certificateSchema'
+import { PublicationSchema } from '../schemas/publicationSchema'
+import { LanguageSchema } from '../schemas/languageSchema'
+import { InterestSchema } from '../schemas/interestSchema'
+import { ReferenceSchema } from '../schemas/referenceSchema'
+
 
 
 export type DevResource = z.infer<typeof DevResourceSchema>;
@@ -44,6 +54,16 @@ export type SkillResume = z.infer<typeof SkillResumeSchema>
 
 export type Basic = z.infer<typeof BasicSchema>
 export type BasicResume = z.infer<typeof BasicResumeSchema>
+
+export type Location = z.infer<typeof LocationSchema>
+export type Volunteer = z.infer<typeof VolunteerSchema>
+export type Education = z.infer<typeof EducationSchema>
+export type Award = z.infer<typeof AwardSchema>
+export type Certificate = z.infer<typeof CertificateSchema>
+export type Publication = z.infer<typeof PublicationSchema>
+export type Language = z.infer<typeof LanguageSchema>
+export type Interest = z.infer<typeof InterestSchema>
+export type Reference = z.infer<typeof ReferenceSchema>
 
 
 export type LocationResume = z.infer<typeof LocationResumeSchema>

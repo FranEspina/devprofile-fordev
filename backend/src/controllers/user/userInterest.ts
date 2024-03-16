@@ -22,6 +22,7 @@ export class UserInterestController extends UserSectionBaseController<{ id: numb
       InterestCreateSchema,
       InterestSchema,
       DeleteSectionSchema,
+      true,
       parseBody
     )
   }

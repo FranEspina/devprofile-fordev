@@ -25,6 +25,7 @@ export class UserLocationController extends UserSectionBaseController<{ id: numb
       LocationCreateSchema,
       LocationSchema,
       DeleteSectionSchema,
+      true,
       parseBody
     )
   }

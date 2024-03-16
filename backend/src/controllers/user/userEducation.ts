@@ -28,6 +28,7 @@ export class UserEducationController extends UserSectionBaseController<{ id: num
       EducationCreateSchema,
       EducationSchema,
       DeleteSectionSchema,
+      true,
       parseBody
     )
   }

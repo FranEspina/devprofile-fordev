@@ -32,7 +32,9 @@ Web que permite a los usuario logarse y crear una cuenta de desarrollador donde 
 - [x] Incluir todas las secciones del cv
 - [ ] Poder seleccionar la plantilla pública del cv (varios templates)
 - [ ] Permitir importar las secciones del cv según el esquema
-- [ ] Permitir exportar el cv a formato json segun el esquema 
+- [ ] Permitir exportar el cv a formato json segun el esquema
+- [ ] Incluir un username en el registro del usuario y que sea único
+- [ ] poder perdir las secciones públicas por 'username' y no por id de usuario
 - [ ] Crear gestiones de aplicaciones asociadas al usuario para exponer una api_key
 - [ ] Integrar la api con las peticiones por api_key
 - [ ] Verificar el token contra el api del backend en la autorización

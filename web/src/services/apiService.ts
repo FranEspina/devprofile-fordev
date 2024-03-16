@@ -214,6 +214,40 @@ export async function createUserSection<T>(sectionName: string, userSection: T, 
   }
 }
 
+export async function getUserResumeSection<T>(section: string, id: number): Promise<apiResultType<T[]>> {
+  const endpoint = `${API_BASE_URL}/user/${id}/resume/${section}`
+  console.log(endpoint)
+  try {
+    const response = await axios.get(endpoint)
+    const results: apiResponse<T[]> = response.data
+    console.log(results)
+    if (results.success === true) {
+      return { success: true, message: 'Operación realizada con éxito', data: results.data }
+    }
+    return { success: false, message: results.message }
+  } catch (error) {
+    console.log(error)
+    if (axios.isAxiosError(error)) {
+      console.log('Error axios:', error.message);
+      if (error.response) {
+        const results: apiResponse<T[]> = error.response.data
+        if (results) {
+          return { success: false, message: 'Error inesperado recuperando resumen sección' }
+        }
+      }
+    } else if (error instanceof Error) {
+      console.log('Exception:', error.message);
+    } else if (typeof error === "string") {
+      console.log('Error:', error);
+    } else {
+      console.log('Unknow error:', error);
+    }
+
+    return { success: false, message: 'Error inesperado recuperando resumen sección' }
+
+  }
+}
+
 export async function getUserSection<T>(section: string, id: number, token: string) {
   const endpoint = `${API_BASE_URL}/user/${id}/${section}`
   console.log(endpoint)

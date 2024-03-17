@@ -1,0 +1,15 @@
+---
+import FromToDate from "@/components/templates/midudev/FromToDate.astro";
+const { work } = Astro.props;
+---
+
+<div class="mb-2">
+  <header class="flex flex-row">
+    <p class="flex-1 font-bold">{work.position}</p>
+    <FromToDate startDate={work.startDate} endDate={work.endDate} />
+  </header>
+  <div>
+    <p>{work.description}</p>
+    <p>{work.summary}</p>
+  </div>
+</div>

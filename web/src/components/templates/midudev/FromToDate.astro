@@ -1,0 +1,11 @@
+---
+const { startDate, endDate } = Astro.props;
+import { formatYearInterval } from "@/lib/dates.ts";
+import { cn } from "@/lib/utils";
+
+const { classNames } = Astro.props;
+---
+
+<div class={cn(classNames, "")}>
+  <p>{formatYearInterval(startDate, endDate)}</p>
+</div>

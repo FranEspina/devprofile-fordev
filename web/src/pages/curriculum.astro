@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import SelectTemplate from "@/components/Curriculum/ViewPublicCV";
-
+import { SaveResume } from "@/components/Curriculum/SaveResume";
 const { user } = Astro.locals;
 ---
 
@@ -21,8 +21,8 @@ const { user } = Astro.locals;
       class="flex flex-col justify-start content-start items-start w-full my-4"
     >
       <body>
-        <ul class="flex flex-col md:flex-row gap-3 items-start">
-          <li>
+        <ul class="flex flex-col gap-3 items-start">
+          <li class="flex flex-start flex-wrap gap-2">
             <a
               href="/secciones/"
               class={cn(
@@ -33,6 +33,7 @@ const { user } = Astro.locals;
                 className="ml-2 text-blue-500"
               /></a
             >
+            <SaveResume userId={user.id} client:load />
           </li>
           <li>
             <ViewPublicCV client:load userId={user.id} />

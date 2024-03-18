@@ -323,7 +323,6 @@ export async function dbGetUserBasicResumeAsync(userId: number, includeIds: bool
         const { id, userId, ...basicFields } = basic[0]
         basicResume = { ...basicFields }
       }
-      console.log('dentro')
       const profile = await dbGetUserSectionResumeAsync<Profile>('profiles', userId, includeIds)
       console.log(profile)
       if (profile) {

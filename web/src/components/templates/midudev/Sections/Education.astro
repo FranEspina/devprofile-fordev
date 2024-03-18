@@ -1,0 +1,78 @@
+---
+import Section from "@/components/templates/midudev/Section.astro";
+import FromToDate from "@/components/templates/midudev/FromToDate.astro";
+import { type Education } from "@/Schemas/educationSchema";
+import { getUserResumeSection } from "@/services/apiService";
+import { type apiResultType } from "@/types/apiTypes";
+
+const { userId } = Astro.props;
+
+const result: apiResultType<Education[]> =
+  await getUserResumeSection<Education>("education", Number(userId));
+
+const { success, data: education } = result;
+---
+
+<Section title="Educación">
+  <ul>
+    {
+      education &&
+        education.map(({ institution, startDate, endDate, area }) => {
+          const startYear = new Date(startDate).getFullYear();
+          const endYear =
+            endDate != null ? new Date(endDate).getFullYear() : "Actual";
+          const years = `${startYear} - ${endYear}`;
+
+          return (
+            <li>
+              <article>
+                <header>
+                  <div>
+                    <h3>{institution}</h3>
+                  </div>
+
+                  <FromToDate startDate={startDate} endDate={endDate} />
+                </header>
+
+                <footer>
+                  <p>{area}</p>
+                </footer>
+              </article>
+            </li>
+          );
+        })
+    }
+  </ul>
+</Section>
+
+<style>
+  ul {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  article h3 {
+    font-weight: 500;
+    color: #111;
+  }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 4px;
+  }
+
+  time {
+    color: #555;
+    font-size: 0.85rem;
+    min-width: 102px;
+  }
+
+  @media (width <= 700px) {
+    time {
+      text-align: right;
+    }
+  }
+</style>

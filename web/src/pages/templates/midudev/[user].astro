@@ -3,9 +3,13 @@ import { getUserResumeSection } from "../../../services/apiService";
 import { type BasicResume } from "../../../Schemas/basicSchema";
 import { type apiResultType } from "../../../types/apiTypes";
 import "../../../styles/globals.css";
-import WorldMap from "@/icons/WorldMap.astro";
+
 import Section from "@/components/templates/midudev/Section.astro";
-import Works from "@/components/templates/midudev/Works.astro";
+import Works from "@/components/templates/midudev/Sections/Works.astro";
+import Education from "@/components/templates/midudev/Sections/Education.astro";
+import Header from "@/components/templates/midudev/Sections/Header.astro";
+import Projects from "@/components/templates/midudev/Sections/Projects.astro";
+import Skills from "@/components/templates/midudev/Sections/Skills.astro";
 
 const { title } = Astro.props;
 
@@ -17,7 +21,6 @@ if (!result || !result.data) {
   return Astro.redirect("/");
 }
 const { basic } = result.data[0];
-const { profiles, location } = basic;
 ---
 
 <!doctype html>
@@ -26,65 +29,33 @@ const { profiles, location } = basic;
     <meta charset="UTF-8" />
     <title>{basic.name}</title>
     <meta name="description" content={basic.summary} />
-    <!-- <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="preload" as="image" href={basic.image} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="preload" as="image" href={image} />
 
-    <meta property="og:url" content={url} />
+    <meta property="og:url" content={basic.url} />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
-    <meta property="og:description" content={summary} />
+    <meta property="og:description" content={basic.summary} />
     <meta property="og:image" content="" />
-
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta property="twitter:domain" content={url.split("//")[1] ?? ""} />
-    <meta property="twitter:url" content={url} />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={summary} />
-    <meta name="twitter:image" content="" /> -->
   </head>
   <body>
     <main>
-      <Section>
-        <header class="flex flex-col md:flex-row-reverse items-center gap-2">
-          <div class="min-w-100 rounded-sm">
-            <img class="object-cover" src={basic.image} />
-          </div>
-          <div>
-            <h1 class="text-4xl mb-3">{basic.name}</h1>
-            <h2 class="text-xl font-semibold opacity-80">{basic.label}</h2>
-            <span class="flex items-center gap-1 text-opacity-80">
-              <WorldMap />
-              {location.address}
-              {location.city}
-              {location.countryCode}
-            </span>
-            <ul class="flex flex-row list-none">
-              <li>
-                {basic.phone}
-              </li>
-              <li>
-                {basic.email}
-              </li>
-              {profiles ? profiles.map((p) => <li>{p.network}</li>) : ""}
-            </ul>
-          </div>
-        </header>
-      </Section>
+      <Header basic={basic} />
       <Section title="Sobre mí">
         <p>{basic.summary}</p>
       </Section>
-      <Section title="Experiencia Laboral">
-        <Works userId={user} />
-      </Section>
-      <Section title="Educación" />
-      <Section title="Proyectos" />
-      <Section title="Habilidades" />
+      <Works userId={user} />
+      <Education userId={user} />
+      <Projects userId={user} />
+      <Skills userId={user} />
     </main>
   </body>
 </html>
 
 <style is:global>
+  @tailwind base;
+
   html {
     font-family:
       Menlo,
@@ -176,6 +147,18 @@ const { profiles, location } = basic;
 
     article {
       break-inside: avoid;
+    }
+  }
+
+  main {
+    padding: 4rem;
+    margin: auto;
+    width: 100%;
+  }
+
+  @media (width <= 700px) {
+    main {
+      padding: 2rem;
     }
   }
 </style>

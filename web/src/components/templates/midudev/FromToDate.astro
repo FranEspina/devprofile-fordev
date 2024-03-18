@@ -6,6 +6,20 @@ import { cn } from "@/lib/utils";
 const { classNames } = Astro.props;
 ---
 
-<div class={cn(classNames, "")}>
-  <p>{formatYearInterval(startDate, endDate)}</p>
-</div>
+<time class={cn(classNames, "")}>
+  {formatYearInterval(startDate, endDate)}
+</time>
+
+<style>
+  time {
+    color: #555;
+    font-size: 0.85rem;
+    min-width: 102px;
+  }
+
+  @media (width <= 700px) {
+    time {
+      text-align: right;
+    }
+  }
+</style>

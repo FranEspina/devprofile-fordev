@@ -1,0 +1,91 @@
+---
+import Section from "@/components/templates/midudev/Section.astro";
+import { getUserResumeSection } from "@/services/apiService";
+import { type Work } from "@/Schemas/workSchema";
+import { type apiResultType } from "@/types/apiTypes";
+import FromToDate from "@/components/templates/midudev/FromToDate.astro";
+
+const { userId } = Astro.props;
+
+const result: apiResultType<Work[]> = await getUserResumeSection<Work>(
+  "work",
+  Number(userId),
+);
+
+const { success, data: work } = result;
+---
+
+<Section title="Experiencia laboral">
+  <ul>
+    {
+      work &&
+        work.map(
+          ({
+            name,
+            startDate,
+            endDate,
+            position,
+            summary,
+            highlights,
+            url,
+          }) => {
+            return (
+              <li>
+                <article>
+                  <header>
+                    <div>
+                      <h3>
+                        <a href={url} title={`Ver ${name}`} target="_blank">
+                          {name}
+                        </a>
+                      </h3>
+                      <h4>{position}</h4>
+                    </div>
+
+                    <FromToDate startDate={startDate} endDate={endDate} />
+                  </header>
+
+                  <footer>
+                    <p>{summary}</p>
+                  </footer>
+                </article>
+              </li>
+            );
+          },
+        )
+    }
+  </ul>
+</Section>
+
+<style>
+  ul {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  article h3 {
+    font-weight: 500;
+    color: #111;
+  }
+
+  article a {
+    color: #111;
+  }
+
+  article a:hover {
+    text-decoration: underline;
+  }
+
+  article h4 {
+    color: #222;
+    font-weight: 400;
+  }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 4px;
+  }
+</style>

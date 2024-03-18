@@ -1,4 +1,5 @@
 /// <reference types="astro/client" />
+
 declare namespace App {
   interface Locals {
     user: {
@@ -7,3 +8,5 @@ declare namespace App {
     },
   }
 }
+
+export type SocialIcon = Record<string, string | any>

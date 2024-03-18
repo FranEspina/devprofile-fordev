@@ -22,7 +22,6 @@ const { success, data: projects } = result;
     {
       projects &&
         projects.map(({ url, description, keywords, name, endDate }) => {
-          console.log(keywords);
           const keywordsArray: Option[] = JSON.parse(keywords || "");
           const isActive = !endDate;
           return (

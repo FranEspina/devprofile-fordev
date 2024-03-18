@@ -34,6 +34,7 @@ export function EditWorkDialog({ work }: { work: Work }) {
   const { setWorkStamp } = useRefreshStore(state => state)
   const [workState, setWorkState] = useState(work)
   const [highlights, setHighlights] = useState<Option[]>([])
+  const buttonSaveRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
     setLoading(false)
@@ -52,6 +53,7 @@ export function EditWorkDialog({ work }: { work: Work }) {
     }
 
     setWorkState(work)
+    buttonSaveRef.current?.focus()
 
   }, [isOpen])
 
@@ -89,7 +91,6 @@ export function EditWorkDialog({ work }: { work: Work }) {
 
     let work: Work | undefined = structuredClone(workState)
     work.highlights = JSON.stringify(highlights)
-    console.log(work)
 
     try {
 
@@ -171,7 +172,7 @@ export function EditWorkDialog({ work }: { work: Work }) {
             <Label htmlFor="description" className="text-right text-xs md:text-sm">
               Descripción
             </Label>
-            <Textarea id="description" placeholder="Descripción del puesto de trabajo" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Textarea value={workState.description} onChange={handleChange} id="description" placeholder="Descripción del puesto de trabajo" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['description'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['description']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
@@ -226,7 +227,7 @@ export function EditWorkDialog({ work }: { work: Work }) {
         <DialogFooter className="flex flex-row items-center justify-end gap-2">
           {errors['generic'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['generic']}</p>}
           <LoadIndicator loading={loading} />
-          <Button className="text-xs md:text-sm" variant="outline" type="submit" onClick={handleSave} disabled={loading}>Guardar</Button>
+          <Button ref={buttonSaveRef} className="text-xs md:text-sm" variant="outline" type="submit" onClick={handleSave} disabled={loading}>Guardar</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -4,6 +4,7 @@ import { getUserResumeSection } from "@/services/apiService";
 import { type Work } from "@/Schemas/workSchema";
 import { type apiResultType } from "@/types/apiTypes";
 import FromToDate from "@/components/templates/midudev/FromToDate.astro";
+import { type Option } from "@/components/ui/multiple-selector";
 
 const { userId } = Astro.props;
 
@@ -27,8 +28,11 @@ const { success, data: work } = result;
             position,
             summary,
             highlights,
+            location,
             url,
           }) => {
+            const highlightsArray: Option[] = JSON.parse(highlights || "");
+
             return (
               <li>
                 <article>
@@ -39,7 +43,9 @@ const { success, data: work } = result;
                           {name}
                         </a>
                       </h3>
-                      <h4>{position}</h4>
+                      <h4>
+                        {position} - {location}
+                      </h4>
                     </div>
 
                     <FromToDate startDate={startDate} endDate={endDate} />
@@ -47,6 +53,13 @@ const { success, data: work } = result;
 
                   <footer>
                     <p>{summary}</p>
+                    <div class="higlights">
+                      {highlightsArray &&
+                        highlightsArray.length !== 0 &&
+                        highlightsArray.map((highlight) => {
+                          return <span>{highlight.value}</span>;
+                        })}
+                    </div>
                   </footer>
                 </article>
               </li>
@@ -87,5 +100,21 @@ const { success, data: work } = result;
     justify-content: space-between;
     align-items: flex-start;
     margin-bottom: 4px;
+  }
+
+  footer .higlights {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    font-size: 0.6rem;
+  }
+
+  footer .higlights span {
+    border-radius: 6px;
+    background: #eee;
+    color: #444;
+    font-size: 0.6rem;
+    font-weight: 500;
+    padding: 0.2rem 0.6rem;
   }
 </style>

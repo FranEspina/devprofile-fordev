@@ -16,7 +16,7 @@ export function useNotify() {
     })
 
   const notifySuccess = (message: string) =>
-    toast.error(message, {
+    toast.success(message, {
       position: "bottom-center",
       autoClose: 1000,
       hideProgressBar: false,

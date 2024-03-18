@@ -21,8 +21,8 @@ body {
   --toastify-color-dark: rgb(6, 11, 24);
   --toastify-color-info: rgb(59, 130, 246);
   --toastify-color-success: rgb(59, 130, 246);
-  --toastify-color-warning: rgb(59, 130, 246);
-  --toastify-color-error: rgb(30, 64, 175);
+  --toastify-color-warning: rgb(26, 121, 108);
+  --toastify-color-error: rgb(175, 30, 30);
   --toastify-color-transparent: rgba(255, 255, 255, 0.7);
 
   --toastify-icon-color-info: var(--toastify-color-info);

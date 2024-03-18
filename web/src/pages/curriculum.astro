@@ -1,10 +1,13 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { CurriculumView } from "../components/Curriculum/Curriculum";
+import ViewPublicCV from "@/components/Curriculum/ViewPublicCV";
+
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import SelectTemplate from "@/components/Curriculum/ViewPublicCV";
 
 const { user } = Astro.locals;
 ---
@@ -18,7 +21,7 @@ const { user } = Astro.locals;
       class="flex flex-col justify-start content-start items-start w-full my-4"
     >
       <body>
-        <ul class="flex flex-row gap-2">
+        <ul class="flex flex-col md:flex-row gap-3 items-start">
           <li>
             <a
               href="/secciones/"
@@ -32,17 +35,7 @@ const { user } = Astro.locals;
             >
           </li>
           <li>
-            <a
-              href=`/templates/midudev/${user.id}`
-              target="_blank"
-              class={cn(
-                buttonVariants({ variant: "outline" }),
-                "text-xs md:text-sm",
-              )}
-              >Ver versión pública <ArrowRight
-                className="ml-2 text-blue-500"
-              /></a
-            >
+            <ViewPublicCV client:load userId={user.id} />
           </li>
         </ul>
       </body>
@@ -50,3 +43,4 @@ const { user } = Astro.locals;
     <CurriculumView client:load />
   </main>
 </Layout>
+@/components/Curriculum/ViewPublicCV

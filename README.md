@@ -26,13 +26,16 @@ Web que permite a los usuario logarse y crear una cuenta de desarrollador donde 
 - [ ] Validaciones de fecha inicio y fin pendientes en algunos esquemas
 - [ ] FIX: al eliminar el último elemento de una sección lo borra en bd pero sigue en pantalla
 - [ ] Poder decidir si tu cv se puede ver públicamente
-- [ ] Poder indicar que campos se ven públicamente y cuales son privados
+- [x] Poder indicar que campos se ven públicamente y cuales son privados
 - [ ] Poder order dentro de las secciones
 - [x] Crear vista pública del cv
 - [x] Incluir todas las secciones del cv
-- [ ] Poder seleccionar la plantilla pública del cv (varios templates)
+- [x] Poder seleccionar la plantilla pública del cv (varios templates)
+- [ ] Tener una validación de los campos / secciones que son obligatorios para poder usar una plantilla
+- [ ] Revisar que la(s) plantilla(s) no da(n) un error no controlado cuando le(s) falta un campo
 - [ ] Permitir importar las secciones del cv según el esquema
-- [ ] Permitir exportar el cv a formato json segun el esquema
+- [x] Permitir exportar el cv a formato json segun el esquema
+- [ ] FIX. Revisar el esquema, las fechas y arrays se están exportando en un formato que no cumple el esquema
 - [ ] Incluir un username en el registro del usuario y que sea único
 - [ ] poder perdir las secciones públicas por 'username' y no por id de usuario
 - [ ] Crear gestiones de aplicaciones asociadas al usuario para exponer una api_key

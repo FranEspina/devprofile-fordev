@@ -4,15 +4,7 @@ import { Request } from 'express'
 
 function parseBody(req: Request) {
   const formatBody = {
-    id: req.body.id,
-    userId: req.body.userId,
-    name: req.body.name,
-    label: req.body.label,
-    image: req.body.image,
-    email: req.body.email,
-    phone: req.body.phone,
-    url: req.body.url,
-    summary: req.body.summary
+    ...req.body
   }
   return formatBody
 }

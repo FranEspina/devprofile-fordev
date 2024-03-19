@@ -23,8 +23,7 @@ import { createUserSection } from '@/services/apiService'
 import { useRefreshStore } from '@/store/refreshStore'
 import { LoadIndicator } from '@/components/LoadIndicator'
 import MultipleSelector, { type Option } from '@/components/ui/multiple-selector';
-
-
+import { dateUtcToIso8601, localIso8601ToUtcDate } from '@/lib/dates'
 
 export function CreateProjectDialog() {
   const [loading, setLoading] = useState(false)
@@ -32,8 +31,8 @@ export function CreateProjectDialog() {
   const { user, token } = useProfileStore(state => state)
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
   const { notifyError, notifySuccess } = useNotify()
-  const [startDate, setStartDate] = useState<Date>()
-  const [endDate, setEndDate] = useState<Date>()
+  const [startDate, setStartDate] = useState<string>('')
+  const [endDate, setEndDate] = useState<string>('')
 
   const [keywords, setKeywords] = useState<Option[]>([])
   const [roles, setRoles] = useState<Option[]>([])
@@ -55,8 +54,8 @@ export function CreateProjectDialog() {
   useEffect(() => {
     setLoading(false)
     setErrors({})
-    setStartDate(undefined)
-    setEndDate(undefined)
+    setStartDate('')
+    setEndDate('')
     setKeywords([])
     setRoles([])
   }, [isOpen])
@@ -168,7 +167,7 @@ export function CreateProjectDialog() {
             <Label className="text-right text-xs md:text-sm">
               Desde
             </Label>
-            <DatePicker date={startDate} onSelect={setStartDate} />
+            <DatePicker date={localIso8601ToUtcDate(startDate)} onSelect={(day, selectedDay, activeModifiers, e) => setStartDate(dateUtcToIso8601(selectedDay))} />
             {errors['startDate'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['startDate']}</p>}
 
           </div>
@@ -176,7 +175,7 @@ export function CreateProjectDialog() {
             <Label className="text-right text-xs md:text-sm">
               Hasta
             </Label>
-            <DatePicker date={endDate} onSelect={setEndDate} />
+            <DatePicker date={localIso8601ToUtcDate(endDate)} onSelect={(day, selectedDay, activeModifiers, e) => setEndDate((day) ? dateUtcToIso8601(day) : '')} />
             {errors['endDate'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['endDate']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">

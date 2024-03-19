@@ -45,7 +45,6 @@ export function InterestDialog({ editMode = false, initialState = undefined }: I
   }, [])
 
   useEffect(() => {
-    console.log(user)
     const userId = (user) ? user.id : -1
     const newInterest = { ...interestState, userId }
     setInterestState(newInterest);

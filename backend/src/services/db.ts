@@ -152,10 +152,11 @@ export async function dbCreateUserSectionAsync<T>(tablename: string, model: T): 
     const queryInsert = `
       INSERT INTO ${tablename}(${fieldsClause.join(', ')})
       VALUES (${valuesClause.join(', ')}) RETURNING id; `
-    const result = await pool.query(queryInsert, queryParams)
 
     console.log(queryInsert)
     console.log(queryParams)
+
+    const result = await pool.query(queryInsert, queryParams)
 
     return result.rows[0].id
 

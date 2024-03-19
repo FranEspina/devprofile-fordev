@@ -60,3 +60,20 @@ export const diffDate = (from: string, to: string) => {
   }
   return diferencia;
 };
+
+export function dateUtcToIso8601(utc: Date) {
+  // const fecha = new Date(Date.UTC(2024, 3, 18, 23, 0, 0))
+  // console.log(fecha.toLocaleDateString('es-ES', { timeZone: 'UTC' })) //Zona UTC: 2024-04-18
+  // //This works because the Swedish language locale (svenska) uses the ISO 8601 format.
+  // console.log(fecha.toLocaleDateString('sv', { timeZone: 'Europe/Madrid' })) //2024-04-19
+  // console.log(fecha.toLocaleDateString('sv')) //Al no poner zona usa la local: 2024-04-19
+  console.log(utc)
+  return utc.toLocaleDateString('sv', { timeZone: 'Europe/Madrid' })
+}
+
+export function localIso8601ToUtcDate(iso8601Date: string | undefined | null) {
+  if (!iso8601Date) return undefined
+  console.log(iso8601Date)
+  const [year, month, day] = iso8601Date.split("-")
+  return new Date(Number(year), Number(month) - 1, Number(day), 1, 0, 0, 0)
+}

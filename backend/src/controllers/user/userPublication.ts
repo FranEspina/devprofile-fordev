@@ -6,13 +6,7 @@ import { PublicationSchema, PublicationCreateSchema } from '../../schemas/public
 
 function parseBody(req: Request) {
   const formatBody = {
-    id: req.body.id,
-    userId: req.body.userId,
-    name: req.body.name,
-    publisher: req.body.publisher,
-    releaseDate: new Date(req.body.releaseDate),
-    url: req.body.url,
-    summary: req.body.summary,
+    ...req.body
   }
   return formatBody
 }

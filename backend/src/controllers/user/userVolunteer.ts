@@ -6,15 +6,7 @@ import { VolunteerSchema, VolunteerCreateSchema } from '../../schemas/volunteerS
 
 function parseBody(req: Request) {
   const formatBody = {
-    id: req.body.id,
-    userId: req.body.userId,
-    organization: req.body.organization,
-    position: req.body.position,
-    url: req.body.url,
-    startDate: new Date(req.body.startDate),
-    endDate: (req.body.endDate) ? new Date(req.body.endDate) : undefined,
-    summary: req.body.summary,
-    highlights: req.body.highlights,
+    ...req.body
   }
   return formatBody
 }

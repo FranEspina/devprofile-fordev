@@ -6,16 +6,7 @@ import { EducationSchema, EducationCreateSchema } from '../../schemas/educationS
 
 function parseBody(req: Request) {
   const formatBody = {
-    id: req.body.id,
-    userId: req.body.userId,
-    institution: req.body.institution,
-    url: req.body.url,
-    area: req.body.area,
-    studyType: req.body.studyType,
-    startDate: new Date(req.body.startDate),
-    endDate: (req.body.endDate) ? new Date(req.body.endDate) : undefined,
-    score: req.body.score,
-    courses: req.body.courses,
+    ...req.body
   }
   return formatBody
 }

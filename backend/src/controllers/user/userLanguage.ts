@@ -6,10 +6,7 @@ import { LanguageSchema, LanguageCreateSchema } from '../../schemas/languageSche
 
 function parseBody(req: Request) {
   const formatBody = {
-    id: req.body.id,
-    userId: req.body.userId,
-    language: req.body.language,
-    fluency: req.body.fluency,
+    ...req.body
   }
   return formatBody
 }

@@ -24,6 +24,7 @@ import { useRefreshStore } from '@/store/refreshStore'
 import { type SelectSingleEventHandler } from 'react-day-picker'
 import { LoadIndicator } from '@/components/LoadIndicator'
 import MultipleSelector, { type Option } from '@/components/ui/multiple-selector';
+import { dateUtcToIso8601, localIso8601ToUtcDate } from '@/lib/dates'
 
 export function EditProjectDialog({ project }: { project: Project }) {
   const [loading, setLoading] = useState(false)
@@ -41,14 +42,6 @@ export function EditProjectDialog({ project }: { project: Project }) {
   useEffect(() => {
     setLoading(false)
     setErrors({})
-    //TODO: FIX en servidor que devuelva fechas
-    project.startDate = new Date(project.startDate)
-    if (project.endDate) {
-      project.endDate = new Date(project.endDate)
-    }
-    else {
-      project.endDate = undefined
-    }
     setProjectState(project);
 
     if (project.keywords) {
@@ -67,13 +60,13 @@ export function EditProjectDialog({ project }: { project: Project }) {
 
   const handleSelectStart: SelectSingleEventHandler = (day, selectedDay, activeModifiers, e) => {
     const newProject = structuredClone(projectState)
-    newProject.startDate = selectedDay
+    newProject.startDate = dateUtcToIso8601(selectedDay)
     setProjectState(newProject);
   }
 
   const handleSelectEnd: SelectSingleEventHandler = (day, selectedDay, activeModifiers, e) => {
     const newProject = structuredClone(projectState)
-    newProject.endDate = day
+    newProject.endDate = (day) ? dateUtcToIso8601(day) : ''
     setProjectState(newProject);
   }
 
@@ -175,7 +168,7 @@ export function EditProjectDialog({ project }: { project: Project }) {
             <Label className="text-right text-xs md:text-sm">
               Desde
             </Label>
-            <DatePicker date={projectState.startDate} onSelect={handleSelectStart} />
+            <DatePicker date={localIso8601ToUtcDate(projectState.startDate)} onSelect={handleSelectStart} />
             {errors['startDate'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['startDate']}</p>}
 
           </div>
@@ -183,7 +176,7 @@ export function EditProjectDialog({ project }: { project: Project }) {
             <Label className="text-right text-xs md:text-sm">
               Hasta
             </Label>
-            <DatePicker date={projectState.endDate} onSelect={handleSelectEnd} />
+            <DatePicker date={localIso8601ToUtcDate(projectState.endDate)} onSelect={handleSelectEnd} />
             {errors['endDate'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['endDate']}</p>}
 
           </div>

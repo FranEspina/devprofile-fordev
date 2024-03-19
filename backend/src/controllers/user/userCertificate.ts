@@ -6,12 +6,7 @@ import { CertificateSchema, CertificateCreateSchema } from '../../schemas/certif
 
 function parseBody(req: Request) {
   const formatBody = {
-    id: req.body.id,
-    userId: req.body.userId,
-    name: req.body.name,
-    date: new Date(req.body.date),
-    url: req.body.url,
-    issuer: req.body.issuer,
+    ...req.body
   }
   return formatBody
 }

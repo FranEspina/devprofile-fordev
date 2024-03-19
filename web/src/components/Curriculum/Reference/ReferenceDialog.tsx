@@ -44,7 +44,6 @@ export function ReferenceDialog({ editMode = false, initialState = undefined }: 
   }, [])
 
   useEffect(() => {
-    console.log(user)
     const userId = (user) ? user.id : -1
     const newReference = { ...referenceState, userId }
     setReferenceState(newReference);

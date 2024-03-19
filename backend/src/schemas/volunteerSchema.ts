@@ -6,8 +6,8 @@ export const VolunteerSchema = z.object({
   organization: z.string({ required_error: 'Obligatorio' }).min(1, 'Obligatorio'),
   position: z.string({ required_error: 'Obligatorio' }).min(1, 'Obligatorio'),
   url: z.string().url({ message: 'url inválida' }).optional(),
-  startDate: z.date({ required_error: 'Fecha desde obligatoria' }),
-  endDate: z.date().optional(),
+  startDate: z.string({ required_error: 'Fecha desde obligatoria' }).min(1, 'Obligatorio'),
+  endDate: z.string().nullable().optional(),
   summary: z.string({ required_error: 'Obligatorio' }).min(1, 'Obligatorio'),
   highlights: z.string().optional(),
 })

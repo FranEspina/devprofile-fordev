@@ -6,13 +6,7 @@ import { LocationSchema, LocationCreateSchema } from '../../schemas/locationSche
 
 function parseBody(req: Request) {
   const formatBody = {
-    id: req.body.id,
-    userId: req.body.userId,
-    address: req.body.address,
-    postalCode: req.body.postalCode,
-    city: req.body.city,
-    countryCode: req.body.countryCode,
-    region: req.body.region,
+    ...req.body
   }
   return formatBody
 }

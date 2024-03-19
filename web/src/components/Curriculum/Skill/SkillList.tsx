@@ -41,7 +41,6 @@ export function SkillList() {
     getUserSection<Skill>("skill", user.id, token).then((apiResult) => {
       if (apiResult.success) {
         if (apiResult.data) {
-          console.log(apiResult.data)
           setSkills(apiResult.data)
         }
         else {

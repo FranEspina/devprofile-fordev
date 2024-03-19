@@ -24,6 +24,8 @@ import { type ChangeEvent } from "react"
 import { Textarea } from "@/components/ui/textarea"
 import { DatePicker } from '@/components/ui/DatePicker'
 import { type SelectSingleEventHandler } from 'react-day-picker'
+import { dateUtcToIso8601, localIso8601ToUtcDate } from '@/lib/dates'
+
 
 interface CertificateDialogProps {
   editMode: boolean,
@@ -46,7 +48,6 @@ export function CertificateDialog({ editMode = false, initialState = undefined }
   }, [])
 
   useEffect(() => {
-    console.log(user)
     const userId = (user) ? user.id : -1
     const newCertificate = { ...certificateState, userId }
     setCertificateState(newCertificate);
@@ -65,7 +66,6 @@ export function CertificateDialog({ editMode = false, initialState = undefined }
   useEffect(() => {
     if (editMode === true) {
       if (initialState) {
-        initialState.date = new Date(initialState.date)
         setCertificateState(initialState)
       } else {
         throw new Error("El estado inicial es necesario en modo edición del componente")
@@ -88,7 +88,7 @@ export function CertificateDialog({ editMode = false, initialState = undefined }
 
   const handleSelectDate: SelectSingleEventHandler = (day, selectedDay, activeModifiers, e) => {
     const newCertificate = structuredClone(certificateState)
-    newCertificate.date = selectedDay
+    newCertificate.date = dateUtcToIso8601(selectedDay)
     console.log(newCertificate)
     setCertificateState(newCertificate);
   }
@@ -191,7 +191,7 @@ export function CertificateDialog({ editMode = false, initialState = undefined }
             <Label className="text-right text-xs md:text-sm">
               Fecha
             </Label>
-            <DatePicker date={certificateState.date} onSelect={handleSelectDate} />
+            <DatePicker date={localIso8601ToUtcDate(certificateState.date)} onSelect={handleSelectDate} />
             {errors['date'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['date']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">

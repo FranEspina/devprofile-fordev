@@ -7,9 +7,9 @@ export const EducationSchema = z.object({
   url: z.string().url({ message: 'url inválida' }).optional(),
   area: z.string({ required_error: 'Obligatorio' }).min(1, 'Obligatorio'),
   studyType: z.string({ required_error: 'Obligatorio' }).min(1, 'Obligatorio'),
-  startDate: z.date({ required_error: 'Fecha desde obligatoria' }),
-  endDate: z.date().optional(),
-  score: z.string().optional(),
+  startDate: z.string({ required_error: 'Fecha desde obligatoria' }).min(1, 'Obligatorio'),
+  endDate: z.string().nullable().optional(),
+  score: z.string().nullable().optional(),
   courses: z.string().optional(),
 })
 

@@ -4,13 +4,7 @@ import { UserSectionBaseController } from './base/UserSectionBaseController'
 
 function parseBody(req: Request) {
   const formatBody = {
-    id: req.body.id,
-    userId: req.body.userId,
-    title: req.body.title,
-    description: req.body.description,
-    type: req.body.type,
-    keywords: req.body.keywords,
-    url: req.body.url,
+    ...req.body
   }
   return formatBody
 }

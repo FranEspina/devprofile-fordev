@@ -24,6 +24,8 @@ import { type ChangeEvent } from "react"
 import { Textarea } from "@/components/ui/textarea"
 import { DatePicker } from '@/components/ui/DatePicker'
 import { type SelectSingleEventHandler } from 'react-day-picker'
+import { dateUtcToIso8601, localIso8601ToUtcDate } from '@/lib/dates'
+
 
 interface PublicationDialogProps {
   editMode: boolean,
@@ -46,7 +48,6 @@ export function PublicationDialog({ editMode = false, initialState = undefined }
   }, [])
 
   useEffect(() => {
-    console.log(user)
     const userId = (user) ? user.id : -1
     const newPublication = { ...publicationState, userId }
     setPublicationState(newPublication);
@@ -65,7 +66,6 @@ export function PublicationDialog({ editMode = false, initialState = undefined }
   useEffect(() => {
     if (editMode === true) {
       if (initialState) {
-        initialState.releaseDate = new Date(initialState.releaseDate)
         setPublicationState(initialState)
       } else {
         throw new Error("El estado inicial es necesario en modo edición del componente")
@@ -88,8 +88,7 @@ export function PublicationDialog({ editMode = false, initialState = undefined }
 
   const handleSelectDate: SelectSingleEventHandler = (day, selectedDay, activeModifiers, e) => {
     const newPublication = structuredClone(publicationState)
-    newPublication.releaseDate = selectedDay
-    console.log(newPublication)
+    newPublication.releaseDate = dateUtcToIso8601(selectedDay)
     setPublicationState(newPublication);
   }
 
@@ -198,7 +197,7 @@ export function PublicationDialog({ editMode = false, initialState = undefined }
             <Label className="text-right text-xs md:text-sm">
               Fecha
             </Label>
-            <DatePicker date={publicationState.releaseDate} onSelect={handleSelectDate} />
+            <DatePicker date={localIso8601ToUtcDate(publicationState.releaseDate)} onSelect={handleSelectDate} />
             {errors['releaseDate'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['releaseDate']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">

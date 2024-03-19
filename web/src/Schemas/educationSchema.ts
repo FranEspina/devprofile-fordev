@@ -1,27 +1,38 @@
 import { z } from 'astro/zod'
 import { DeleteSectionSchema } from './commonSchema'
 
-export const EducationSchema = z.object({
+const EducationBaseSchema = z.object({
   id: z.number({ required_error: 'Identificador del perfil obligatorio' }),
   userId: z.number({ required_error: 'Identificador del usuario obligatorio' }),
   institution: z.string({ required_error: 'Obligatorio' }).min(1, 'Obligatorio'),
   url: z.string().url({ message: 'url inválida' }).optional(),
   area: z.string({ required_error: 'Obligatorio' }).min(1, 'Obligatorio'),
   studyType: z.string({ required_error: 'Obligatorio' }).min(1, 'Obligatorio'),
-  startDate: z.date({ required_error: 'Fecha desde obligatoria' }),
-  endDate: z.date().optional(),
-  score: z.string().optional(),
+  startDate: z.string({ required_error: 'Fecha desde obligatoria' }).min(1, 'Obligatorio'),
+  endDate: z.string().nullable().optional(),
+  score: z.string().nullable().optional(),
   courses: z.string().optional(),
 })
 
-export const EducationCreateSchema = EducationSchema.omit({
-  id: true,
-})
+const errValDateRange = {
+  message: "La fecha fin debe ser mayor o igual que la fecha inicio",
+  path: ['endDate']
+}
 
-export const EducationResumeSchema = EducationSchema.omit({
+export const EducationSchema = EducationBaseSchema
+  .refine(p => (!p.endDate || (p.endDate && p.endDate > p.startDate)),
+    errValDateRange)
+
+export const EducationCreateSchema = EducationBaseSchema.omit({
+  id: true,
+}).refine(p => (!p.endDate || (p.endDate && p.endDate > p.startDate)),
+  errValDateRange)
+
+export const EducationResumeSchema = EducationBaseSchema.omit({
   id: true,
   userId: true
-})
+}).refine(p => (!p.endDate || (p.endDate && p.endDate > p.startDate)),
+  errValDateRange)
 
 export type Education = z.infer<typeof EducationSchema>
 export type EducationCreate = z.infer<typeof EducationCreateSchema>

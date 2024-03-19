@@ -5,11 +5,7 @@ import { dbGetUserSectionDataAsync } from '../../services/db'
 
 function parseBody(req: Request) {
   const formatBody = {
-    id: req.body.id,
-    userId: req.body.userId,
-    sectionName: req.body.sectionName,
-    sectionId: req.body.sectionId,
-    isPublic: req.body.isPublic,
+    ...req.body
   }
   return formatBody
 }

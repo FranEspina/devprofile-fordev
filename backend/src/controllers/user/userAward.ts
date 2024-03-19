@@ -6,12 +6,7 @@ import { AwardSchema, AwardCreateSchema } from '../../schemas/awardSchema'
 
 function parseBody(req: Request) {
   const formatBody = {
-    id: req.body.id,
-    userId: req.body.userId,
-    title: req.body.title,
-    date: new Date(req.body.date),
-    awarder: req.body.awarder,
-    summary: req.body.summary,
+    ...req.body
   }
   return formatBody
 }

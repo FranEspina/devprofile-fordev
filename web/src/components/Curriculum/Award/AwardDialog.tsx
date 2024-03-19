@@ -24,6 +24,7 @@ import { type ChangeEvent } from "react"
 import { Textarea } from "@/components/ui/textarea"
 import { DatePicker } from '@/components/ui/DatePicker'
 import { type SelectSingleEventHandler } from 'react-day-picker'
+import { dateUtcToIso8601, localIso8601ToUtcDate } from '@/lib/dates'
 
 interface AwardDialogProps {
   editMode: boolean,
@@ -46,7 +47,6 @@ export function AwardDialog({ editMode = false, initialState = undefined }: Awar
   }, [])
 
   useEffect(() => {
-    console.log(user)
     const userId = (user) ? user.id : -1
     const newAward = { ...awardState, userId }
     setAwardState(newAward);
@@ -65,7 +65,6 @@ export function AwardDialog({ editMode = false, initialState = undefined }: Awar
   useEffect(() => {
     if (editMode === true) {
       if (initialState) {
-        initialState.date = new Date(initialState.date)
         setAwardState(initialState)
       } else {
         throw new Error("El estado inicial es necesario en modo edición del componente")
@@ -88,8 +87,7 @@ export function AwardDialog({ editMode = false, initialState = undefined }: Awar
 
   const handleSelectDate: SelectSingleEventHandler = (day, selectedDay, activeModifiers, e) => {
     const newAward = structuredClone(awardState)
-    newAward.date = selectedDay
-    console.log(newAward)
+    newAward.date = dateUtcToIso8601(selectedDay)
     setAwardState(newAward);
   }
 
@@ -191,7 +189,7 @@ export function AwardDialog({ editMode = false, initialState = undefined }: Awar
             <Label className="text-right text-xs md:text-sm">
               Fecha
             </Label>
-            <DatePicker date={awardState.date} onSelect={handleSelectDate} />
+            <DatePicker date={localIso8601ToUtcDate(awardState.date)} onSelect={handleSelectDate} />
             {errors['date'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['date']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">

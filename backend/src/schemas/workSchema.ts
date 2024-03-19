@@ -8,8 +8,8 @@ export const WorkSchema = z.object({
   description: z.string({ required_error: 'Descripción obligatoria' }).min(1, 'Descripción obligatoria'),
   position: z.string({ required_error: 'Posición obligatoria' }).min(1, 'Posición obligatoria'),
   url: z.string().url({ message: 'url inválida' }).optional(),
-  startDate: z.date({ required_error: 'Fecha desde obligatoria' }),
-  endDate: z.date().optional(),
+  startDate: z.string({ required_error: 'Fecha desde obligatoria' }).min(1, 'Obligatorio'),
+  endDate: z.string().nullable().optional(),
   summary: z.string().optional(),
   highlights: z.string().optional(),
 })

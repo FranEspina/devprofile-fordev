@@ -6,10 +6,7 @@ import { ReferenceSchema, ReferenceCreateSchema } from '../../schemas/referenceS
 
 function parseBody(req: Request) {
   const formatBody = {
-    id: req.body.id,
-    userId: req.body.userId,
-    name: req.body.name,
-    reference: req.body.reference,
+    ...req.body
   }
   return formatBody
 }

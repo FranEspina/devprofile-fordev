@@ -24,6 +24,7 @@ import { useRefreshStore } from '@/store/refreshStore'
 import { type SelectSingleEventHandler } from 'react-day-picker'
 import { LoadIndicator } from '@/components/LoadIndicator'
 import MultipleSelector, { type Option } from '@/components/ui/multiple-selector';
+import { dateUtcToIso8601, localIso8601ToUtcDate } from '@/lib/dates'
 
 export function EditWorkDialog({ work }: { work: Work }) {
   const [loading, setLoading] = useState(false)
@@ -39,19 +40,9 @@ export function EditWorkDialog({ work }: { work: Work }) {
   useEffect(() => {
     setLoading(false)
     setErrors({})
-
-    //TODO: FIX en servidor que devuelva fechas
-    work.startDate = new Date(work.startDate)
-    if (work.endDate) {
-      work.endDate = new Date(work.endDate)
-    }
-    else {
-      work.endDate = undefined
-    }
     if (work.highlights) {
       setHighlights(JSON.parse(work.highlights))
     }
-
     setWorkState(work)
     buttonSaveRef.current?.focus()
 
@@ -65,14 +56,14 @@ export function EditWorkDialog({ work }: { work: Work }) {
 
   const handleSelectStart: SelectSingleEventHandler = (day, selectedDay, activeModifiers, e) => {
     const newWork = structuredClone(workState)
-    newWork.startDate = selectedDay
+    newWork.startDate = dateUtcToIso8601(selectedDay)
     setWorkState(newWork);
   }
 
   const handleSelectEnd: SelectSingleEventHandler = (day, selectedDay, activeModifiers, e) => {
     const newWork = structuredClone(workState)
     console.log(day)
-    newWork.endDate = day
+    newWork.endDate = day ? dateUtcToIso8601(day) : ''
     setWorkState(newWork);
   }
 
@@ -193,7 +184,7 @@ export function EditWorkDialog({ work }: { work: Work }) {
             <Label className="text-right text-xs md:text-sm">
               Desde
             </Label>
-            <DatePicker date={workState.startDate} onSelect={handleSelectStart} />
+            <DatePicker date={localIso8601ToUtcDate(workState.startDate)} onSelect={handleSelectStart} />
             {errors['startDate'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['startDate']}</p>}
 
           </div>
@@ -201,7 +192,7 @@ export function EditWorkDialog({ work }: { work: Work }) {
             <Label className="text-right text-xs md:text-sm">
               Hasta
             </Label>
-            <DatePicker date={workState.endDate} onSelect={handleSelectEnd} />
+            <DatePicker date={localIso8601ToUtcDate(workState.endDate)} onSelect={handleSelectEnd} />
             {errors['endDate'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['endDate']}</p>}
 
           </div>

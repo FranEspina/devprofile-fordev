@@ -43,7 +43,6 @@ export function LanguageDialog({ editMode = false, initialState = undefined }: L
   }, [])
 
   useEffect(() => {
-    console.log(user)
     const userId = (user) ? user.id : -1
     const newLanguage = { ...languageState, userId }
     setLanguageState(newLanguage);

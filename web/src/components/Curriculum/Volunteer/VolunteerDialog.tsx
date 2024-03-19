@@ -25,6 +25,8 @@ import { DatePicker } from '@/components/ui/DatePicker'
 import { type SelectSingleEventHandler } from 'react-day-picker'
 import MultipleSelector, { type Option } from "@/components/ui/multiple-selector"
 import { Textarea } from "@/components/ui/textarea"
+import { dateUtcToIso8601, localIso8601ToUtcDate } from '@/lib/dates'
+
 
 interface VolunteerDialogProps {
   editMode: boolean,
@@ -48,7 +50,6 @@ export function VolunteerDialog({ editMode = false, initialState = undefined }: 
   }, [])
 
   useEffect(() => {
-    console.log(user)
     const userId = (user) ? user.id : -1
     const newVolunteer = { ...volunteerState, userId }
     setVolunteerState(newVolunteer);
@@ -70,10 +71,6 @@ export function VolunteerDialog({ editMode = false, initialState = undefined }: 
   useEffect(() => {
     if (editMode === true) {
       if (initialState) {
-        initialState.startDate = new Date(initialState.startDate)
-        if (initialState.endDate) {
-          initialState.endDate = new Date(initialState.endDate)
-        }
         setVolunteerState(initialState)
       } else {
         throw new Error("El estado inicial es necesario en modo edición del componente")
@@ -97,13 +94,13 @@ export function VolunteerDialog({ editMode = false, initialState = undefined }: 
 
   const handleSelectStartDate: SelectSingleEventHandler = (day, selectedDay, activeModifiers, e) => {
     const newVolunteer = structuredClone(volunteerState)
-    newVolunteer.startDate = selectedDay
+    newVolunteer.startDate = dateUtcToIso8601(selectedDay)
     setVolunteerState(newVolunteer);
   }
 
   const handleSelectEndDate: SelectSingleEventHandler = (day, selectedDay, activeModifiers, e) => {
     const newVolunteer = structuredClone(volunteerState)
-    newVolunteer.endDate = day
+    newVolunteer.endDate = day ? dateUtcToIso8601(day) : ''
     setVolunteerState(newVolunteer);
   }
 
@@ -221,14 +218,14 @@ export function VolunteerDialog({ editMode = false, initialState = undefined }: 
             <Label className="text-right text-xs md:text-sm">
               Desde
             </Label>
-            <DatePicker date={volunteerState.startDate} onSelect={handleSelectStartDate} />
+            <DatePicker date={localIso8601ToUtcDate(volunteerState.startDate)} onSelect={handleSelectStartDate} />
             {errors['startDate'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['startDate']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-right text-xs md:text-sm">
               Hasta
             </Label>
-            <DatePicker date={volunteerState.endDate} onSelect={handleSelectEndDate} />
+            <DatePicker date={localIso8601ToUtcDate(volunteerState.endDate)} onSelect={handleSelectEndDate} />
             {errors['endDate'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['endDate']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">

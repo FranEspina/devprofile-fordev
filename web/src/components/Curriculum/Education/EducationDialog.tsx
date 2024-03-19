@@ -24,6 +24,7 @@ import { type ChangeEvent } from "react"
 import { DatePicker } from '@/components/ui/DatePicker'
 import { type SelectSingleEventHandler } from 'react-day-picker'
 import MultipleSelector, { type Option } from "@/components/ui/multiple-selector"
+import { dateUtcToIso8601, localIso8601ToUtcDate } from '@/lib/dates'
 
 interface EducationDialogProps {
   editMode: boolean,
@@ -42,36 +43,21 @@ export function EducationDialog({ editMode = false, initialState = undefined }: 
   const { setEducationStamp } = useRefreshStore(state => state)
 
   useEffect(() => {
-    setLoading(false)
-    setErrors({})
-  }, [])
-
-  useEffect(() => {
-    console.log(user)
     const userId = (user) ? user.id : -1
     const newEducation = { ...educationState, userId }
     setEducationState(newEducation);
   }, [user])
 
   useEffect(() => {
-    if (editMode === true) {
-      if (initialState?.courses) {
-        setCourses(JSON.parse(initialState.courses))
-      }
-      if (initialState) {
-        setEducationState(initialState)
-      } else {
-        throw new Error("El estado inicial es necesario en modo edición del componente")
-      }
-    }
-  }, [])
+    setLoading(false)
+    setErrors({})
+  }, [isOpen])
 
   useEffect(() => {
     if (editMode === true) {
       if (initialState) {
-        initialState.startDate = new Date(initialState.startDate)
-        if (initialState.endDate) {
-          initialState.endDate = new Date(initialState.endDate)
+        if (initialState.courses) {
+          setCourses(JSON.parse(initialState.courses))
         }
         setEducationState(initialState)
       } else {
@@ -84,11 +70,6 @@ export function EducationDialog({ editMode = false, initialState = undefined }: 
     }
   }, [isOpen])
 
-  useEffect(() => {
-    setLoading(false)
-    setErrors({})
-  }, [isOpen])
-
   const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const newEducation = { ...educationState, [event.target.id]: event.target.value }
     setEducationState(newEducation);
@@ -96,13 +77,14 @@ export function EducationDialog({ editMode = false, initialState = undefined }: 
 
   const handleSelectStartDate: SelectSingleEventHandler = (day, selectedDay, activeModifiers, e) => {
     const newEducation = structuredClone(educationState)
-    newEducation.startDate = selectedDay
+    newEducation.startDate = dateUtcToIso8601(selectedDay)
     setEducationState(newEducation);
   }
 
   const handleSelectEndDate: SelectSingleEventHandler = (day, selectedDay, activeModifiers, e) => {
     const newEducation = structuredClone(educationState)
-    newEducation.endDate = day
+    const fechaIso = (day) ? dateUtcToIso8601(day) : ''
+    newEducation.endDate = fechaIso
     setEducationState(newEducation);
   }
 
@@ -227,21 +209,21 @@ export function EducationDialog({ editMode = false, initialState = undefined }: 
             <Label className="text-right text-xs md:text-sm">
               Desde
             </Label>
-            <DatePicker date={educationState.startDate} onSelect={handleSelectStartDate} />
+            <DatePicker date={localIso8601ToUtcDate(educationState.startDate)} onSelect={handleSelectStartDate} />
             {errors['startDate'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['startDate']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-right text-xs md:text-sm">
               Hasta
             </Label>
-            <DatePicker date={educationState.endDate} onSelect={handleSelectEndDate} />
+            <DatePicker date={localIso8601ToUtcDate(educationState.endDate)} onSelect={handleSelectEndDate} />
             {errors['endDate'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['endDate']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="score" className="text-right text-xs md:text-sm">
               Calificación
             </Label>
-            <Input id="score" value={educationState.score} onChange={handleChange} placeholder="p.ej: 3.5/4.0, Sobresaliente, ..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Input id="score" value={educationState.score || ''} onChange={handleChange} placeholder="p.ej: 3.5/4.0, Sobresaliente, ..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['score'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['score']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">

@@ -20,7 +20,7 @@ const result: apiResultType<BasicResume[]> =
 if (!result || !result.data) {
   return Astro.redirect("/");
 }
-const { basic } = result.data[0];
+const basic = result.data[0];
 ---
 
 <!doctype html>

@@ -1,21 +1,21 @@
 ---
 import { getUserResume } from "../../../services/apiService";
-import { type Work } from "../../../Schemas/workSchema";
-import { type Basic } from "../../../Schemas/basicSchema";
-import { type Skill } from "../../../Schemas/skillSchema";
-import { type Education } from "../../../Schemas/educationSchema";
+import { type WorkResume } from "../../../Schemas/workSchema";
+import { type BasicResume } from "../../../Schemas/basicSchema";
+import { type SkillResume } from "../../../Schemas/skillSchema";
+import { type EducationResume } from "../../../Schemas/educationSchema";
 import { type Award } from "../../../Schemas/awardSchema";
 import { type Interest } from "../../../Schemas/interestSchema";
 import { type Reference } from "../../../Schemas/referenceSchema";
 
 interface resultData {
-  work: [];
-  basics: [];
-  skills: [];
-  education: [];
-  awards: [];
-  interests: [];
-  references: [];
+  work: WorkResume[];
+  basics: BasicResume;
+  skills: SkillResume[];
+  education: EducationResume[];
+  awards: Award[];
+  interests: Interest[];
+  references: Reference[];
 }
 
 const { user } = Astro.params;
@@ -192,7 +192,6 @@ import { formatDate, diffDate } from "@/lib/dates";
                                 <>
                                   <i
                                     class="icon-circle current-event"
-                                    rel="tooltip"
                                     title="Currently Working"
                                     data-placement="left"
                                   />
@@ -205,11 +204,12 @@ import { formatDate, diffDate } from "@/lib/dates";
                                   <>
                                     <span class="space-right">
                                       {formatDate(w.startDate)} -
-                                      {formatDate(w.endDate)}
+                                      {w.endDate && formatDate(w.endDate)}
                                     </span>
                                     <span>
                                       <i class="icon-clock mr-5" />
-                                      {diffDate(w.startDate, w.endDate)}
+                                      {w.endDate &&
+                                        diffDate(w.startDate, w.endDate)}
                                     </span>
                                   </>
                                 </small>

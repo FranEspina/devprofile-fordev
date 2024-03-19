@@ -2,12 +2,10 @@
 import Layout from "../layouts/Layout.astro";
 import { CurriculumView } from "../components/Curriculum/Curriculum";
 import ViewPublicCV from "@/components/Curriculum/ViewPublicCV";
-
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import SelectTemplate from "@/components/Curriculum/ViewPublicCV";
 import { SaveResume } from "@/components/Curriculum/SaveResume";
 const { user } = Astro.locals;
 ---
@@ -44,4 +42,3 @@ const { user } = Astro.locals;
     <CurriculumView client:load />
   </main>
 </Layout>
-@/components/Curriculum/ViewPublicCV

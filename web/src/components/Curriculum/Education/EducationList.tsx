@@ -102,7 +102,7 @@ export function EducationList() {
       </div>
       {!loading && <ul>{educations.map(model =>
         <li key={model.id} className="flex flex-row w-full gap-2 items-center">
-          <p className="flex-1 text-start text-xs md:text-sm">{model.institution}</p>
+          <p className="flex-1 text-start text-xs md:text-sm">{model.studyType}</p>
           <Button variant={"outline"} onClick={() => alertDelete(model.id)}>
             <Trash className="h-3 w-3" />
             <span className="sr-only">Eliminar estudio</span>

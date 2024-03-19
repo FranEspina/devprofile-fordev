@@ -36,11 +36,12 @@ export function CreateProjectDialog() {
 
   const [keywords, setKeywords] = useState<Option[]>([])
   const [roles, setRoles] = useState<Option[]>([])
+  const [highlights, setHighlights] = useState<Option[]>([])
+
 
   const nameInputRef = useRef<HTMLInputElement>(null)
   const descriptioncInputRef = useRef<HTMLTextAreaElement>(null)
   const urlInputRef = useRef<HTMLInputElement>(null)
-  const highlightsInputRef = useRef<HTMLInputElement>(null)
   const entityInputRef = useRef<HTMLInputElement>(null)
   const typeInputRef = useRef<HTMLInputElement>(null)
 
@@ -58,6 +59,7 @@ export function CreateProjectDialog() {
     setEndDate('')
     setKeywords([])
     setRoles([])
+    setHighlights([])
   }, [isOpen])
 
   const handleSave = async () => {
@@ -82,7 +84,7 @@ export function CreateProjectDialog() {
       url: urlInputRef.current?.value,
       startDate: startDate,
       endDate: endDate,
-      highlights: highlightsInputRef.current?.value,
+      highlights: JSON.stringify(highlights),
       keywords: JSON.stringify(keywords),
       roles: JSON.stringify(roles),
       entity: entityInputRef.current?.value,
@@ -203,7 +205,11 @@ export function CreateProjectDialog() {
             <Label htmlFor="highlights" className="text-right text-xs md:text-sm">
               Lo más destacable
             </Label>
-            <Input ref={highlightsInputRef} id="highlights" placeholder="Descripción de lo más destacable" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <div className="col-span-3 text-xs md:text-sm">
+              <MultipleSelector value={highlights} onChange={setHighlights} placeholder="escriba y pulse ENTER"
+                creatable
+              />
+            </div>
             {errors['highlights'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['highlights']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">

@@ -57,7 +57,6 @@ export function SkillList() {
 
 
   const alertDelete = (id: number) => {
-    console.log('dentro')
     deleteRef.current = () => {
       handleDeleteSkill(id)
     };
@@ -84,9 +83,7 @@ export function SkillList() {
     }
 
     deleteUserSection<UserSection>("skill", userSection, token).then((apiResult) => {
-      console.log(apiResult)
       if (apiResult.success) {
-        console.log(apiResult)
         setSkillStamp(Date.now())
       }
       else {

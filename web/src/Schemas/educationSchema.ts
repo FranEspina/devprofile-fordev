@@ -23,17 +23,19 @@ export const EducationSchema = EducationBaseSchema
   .refine(p => (!p.endDate || (p.endDate && p.endDate > p.startDate)),
     errValDateRange)
 
-export const EducationCreateSchema = EducationBaseSchema.omit({
-  id: true,
-}).refine(p => (!p.endDate || (p.endDate && p.endDate > p.startDate)),
+export const EducationResumeSchema = EducationBaseSchema.extend(
+  {
+    courses: z.string().array().optional(),
+  }
+).refine(p => (!p.endDate || (p.endDate && p.endDate > p.startDate)),
   errValDateRange)
 
-export const EducationResumeSchema = EducationBaseSchema.omit({
+export const EducationCreateSchema = EducationBaseSchema.omit({
   id: true,
-  userId: true
 }).refine(p => (!p.endDate || (p.endDate && p.endDate > p.startDate)),
   errValDateRange)
 
 export type Education = z.infer<typeof EducationSchema>
 export type EducationCreate = z.infer<typeof EducationCreateSchema>
 export type EducationDelete = z.infer<typeof DeleteSectionSchema>
+export type EducationResume = z.infer<typeof EducationResumeSchema>

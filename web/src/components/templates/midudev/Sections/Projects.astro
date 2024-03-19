@@ -2,17 +2,15 @@
 import GitHub from "@/icons/GitHub.astro";
 import Section from "../Section.astro";
 import FromToDate from "@/components/templates/midudev/FromToDate.astro";
-import { type Project } from "@/Schemas/projectSchema";
+import { type ProjectResume } from "@/Schemas/projectSchema";
 import { getUserResumeSection } from "@/services/apiService";
 import { type apiResultType } from "@/types/apiTypes";
 import { type Option } from "@/components/ui/multiple-selector";
 
 const { userId } = Astro.props;
 
-const result: apiResultType<Project[]> = await getUserResumeSection<Project>(
-  "project",
-  Number(userId),
-);
+const result: apiResultType<ProjectResume[]> =
+  await getUserResumeSection<ProjectResume>("project", Number(userId));
 
 const { success, data: projects } = result;
 ---
@@ -22,7 +20,6 @@ const { success, data: projects } = result;
     {
       projects &&
         projects.map(({ url, description, keywords, name, endDate }) => {
-          const keywordsArray: Option[] = JSON.parse(keywords || "");
           const isActive = !endDate;
           return (
             <li>
@@ -53,10 +50,10 @@ const { success, data: projects } = result;
                   <p>{description}</p>
                 </header>
                 <footer>
-                  {keywordsArray &&
-                    keywordsArray.length !== 0 &&
-                    keywordsArray.map((keyword) => {
-                      return <span>{keyword.value}</span>;
+                  {keywords &&
+                    keywords.length !== 0 &&
+                    keywords.map((keyword: string) => {
+                      return <span>{keyword}</span>;
                     })}
                 </footer>
               </article>

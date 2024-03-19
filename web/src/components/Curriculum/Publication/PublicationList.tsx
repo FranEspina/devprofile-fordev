@@ -55,7 +55,6 @@ export function PublicationList() {
 
 
   const alertDelete = (id: number) => {
-    console.log('dentro')
     deleteRef.current = () => {
       handleDeletePublication(id)
     };

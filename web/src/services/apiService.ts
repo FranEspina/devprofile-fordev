@@ -149,12 +149,10 @@ export async function getDevUserDevResourcesRow(id: number, token: string) {
 
 export async function createUserDevResource(resource: apiDevResourceDto, token: string): Promise<apiResultType<apiDevResourceDto>> {
 
-  console.log(resource)
   const endpoint = `${API_BASE_URL}/user/${resource.userId}/resource`
 
   try {
     const response = await axios.post(endpoint, resource, authHeader(token))
-    console.log(response)
     const results: apiResponse<apiDevResourceDto> = response.data
     if (results.success === true) {
       return { success: true, message: 'Recurso creado correctamente', data: results.data, token: results.token }

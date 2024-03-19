@@ -55,7 +55,6 @@ export function LanguageList() {
 
 
   const alertDelete = (id: number) => {
-    console.log('dentro')
     deleteRef.current = () => {
       handleDeleteLanguage(id)
     };

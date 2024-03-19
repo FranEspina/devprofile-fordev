@@ -89,7 +89,6 @@ export function CertificateDialog({ editMode = false, initialState = undefined }
   const handleSelectDate: SelectSingleEventHandler = (day, selectedDay, activeModifiers, e) => {
     const newCertificate = structuredClone(certificateState)
     newCertificate.date = dateUtcToIso8601(selectedDay)
-    console.log(newCertificate)
     setCertificateState(newCertificate);
   }
 

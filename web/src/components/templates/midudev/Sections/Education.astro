@@ -1,14 +1,14 @@
 ---
 import Section from "@/components/templates/midudev/Section.astro";
 import FromToDate from "@/components/templates/midudev/FromToDate.astro";
-import { type Education } from "@/Schemas/educationSchema";
+import { type EducationResume } from "@/Schemas/educationSchema";
 import { getUserResumeSection } from "@/services/apiService";
 import { type apiResultType } from "@/types/apiTypes";
 
 const { userId } = Astro.props;
 
-const result: apiResultType<Education[]> =
-  await getUserResumeSection<Education>("education", Number(userId));
+const result: apiResultType<EducationResume[]> =
+  await getUserResumeSection<EducationResume>("education", Number(userId));
 
 const { success, data: education } = result;
 ---

@@ -12,11 +12,11 @@ export const InterestCreateSchema = InterestSchema.omit({
   id: true,
 })
 
-export const InterestResumeSchema = InterestSchema.omit({
-  id: true,
-  userId: true
+export const InterestResumeSchema = InterestSchema.extend({
+  keywords: z.string({ required_error: 'Obligatorio' }).array(),
 })
 
 export type Interest = z.infer<typeof InterestSchema>
 export type InterestCreate = z.infer<typeof InterestCreateSchema>
+export type InterestResume = z.infer<typeof InterestResumeSchema>
 export type InterestDelete = z.infer<typeof DeleteSectionSchema>

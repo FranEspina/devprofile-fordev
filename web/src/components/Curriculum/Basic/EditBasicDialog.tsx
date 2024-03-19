@@ -81,8 +81,6 @@ export function EditBasicDialog({ basic }: { basic: Basic }) {
 
     try {
       var { success, message, data } = await updateUserSection<Basic>("basic", basic, token)
-      console.log(success)
-      console.log(message)
       if (success) {
         notifySuccess(message)
         setErrors({})

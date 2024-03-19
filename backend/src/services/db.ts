@@ -4,6 +4,7 @@ import { UserDeleteSection, SectionData } from '../models/modelSchemas'
 import { camelToSnakeCase, snakeToCamelCase } from '../services/strings'
 
 import { Work, Project, Skill, Profile, Basic, Location, Volunteer, Education, Award, Certificate, Publication, Language, Interest, Reference } from '../models/modelSchemas'
+import { unknown } from 'zod'
 
 
 const pool = new Pool({
@@ -153,13 +154,8 @@ export async function dbCreateUserSectionAsync<T>(tablename: string, model: T): 
       INSERT INTO ${tablename}(${fieldsClause.join(', ')})
       VALUES (${valuesClause.join(', ')}) RETURNING id; `
 
-    console.log(queryInsert)
-    console.log(queryParams)
-
     const result = await pool.query(queryInsert, queryParams)
-
     return result.rows[0].id
-
   }
   catch (error) {
     console.log('Error inesperado creando puesto de trabajo de usuario', error)
@@ -204,56 +200,56 @@ export async function dbGetUserSectionByUserAsync<T extends { [key: string]: unk
   }
 }
 
-export async function dbGetUserResumeSectionByUserAsync<T extends { [key: string]: unknown }>(tablename: string, userId: number): Promise<T[]> {
+// export async function dbGetUserResumeSectionByUserAsync<T extends { [key: string]: unknown }>(tablename: string, userId: number): Promise<T[]> {
 
-  const sectionFields = SECTION_FIELDS.find(s => s.table === tablename)
-  if (!sectionFields) {
-    return []
-  }
+//   const sectionFields = SECTION_FIELDS.find(s => s.table === tablename)
+//   if (!sectionFields) {
+//     return []
+//   }
 
-  //TODO: pasar a un array las secciones y realizar con un bucle forEach
-  const userSectionQuery = `
-    SELECT ${sectionFields.table}.*
-    FROM ${sectionFields.table} 
-      inner join sections  
-        on (sections.user_id = $1  
-          and sections.section_name = $2
-          and sections.section_id = ${sectionFields.table}.id)
-    WHERE ${sectionFields.table}.user_id = $1
-    order by ${sectionFields.table}.id asc;
-  `
-  console.log(userSectionQuery)
+//   //TODO: pasar a un array las secciones y realizar con un bucle forEach
+//   const userSectionQuery = `
+//     SELECT ${sectionFields.table}.*
+//     FROM ${sectionFields.table} 
+//       inner join sections  
+//         on (sections.user_id = $1  
+//           and sections.section_name = $2
+//           and sections.section_id = ${sectionFields.table}.id)
+//     WHERE ${sectionFields.table}.user_id = $1
+//     order by ${sectionFields.table}.id asc;
+//   `
+//   console.log(userSectionQuery)
 
-  try {
+//   try {
 
-    //TODO: Crear todos los modelos tanto de BBDD como de los DTO de la API
-    //No queremos tener dos clases, una para los controladores (camelCase) y otra para la bbdd (snake_case)
-    //const result = await pool.query<T>(userSectionQuery, [userId])
-    const result = await pool.query(userSectionQuery, [userId, tablename])
-    if (!result || !result.rowCount) {
-      return []
-    }
+//     //TODO: Crear todos los modelos tanto de BBDD como de los DTO de la API
+//     //No queremos tener dos clases, una para los controladores (camelCase) y otra para la bbdd (snake_case)
+//     //const result = await pool.query<T>(userSectionQuery, [userId])
+//     const result = await pool.query(userSectionQuery, [userId, tablename])
+//     if (!result || !result.rowCount) {
+//       return []
+//     }
 
-    //TODO eliminar cuando existan los modelos
-    const sections: T[] = []
-    for (let indexRow = 0; indexRow < result.rows.length; indexRow++) {
-      const row = result.rows[indexRow]
-      let section: T = {} as T
+//     //TODO eliminar cuando existan los modelos
+//     const sections: T[] = []
+//     for (let indexRow = 0; indexRow < result.rows.length; indexRow++) {
+//       const row = result.rows[indexRow]
+//       let section: T = {} as T
 
-      for (let index = 0; index < result.fields.length; index++) {
-        const field = result.fields[index];
-        const name: string = field['name']
-        section = updateObject(section, snakeToCamelCase(name), row[name])
-      }
-      sections.push(section)
-    }
-    return sections
-  }
-  catch (error) {
-    console.log(`Error inesperado recuperando sección públic de usuario: '${tablename}'`, error)
-    throw error
-  }
-}
+//       for (let index = 0; index < result.fields.length; index++) {
+//         const field = result.fields[index];
+//         const name: string = field['name']
+//         section = updateObject(section, snakeToCamelCase(name), row[name])
+//       }
+//       sections.push(section)
+//     }
+//     return sections
+//   }
+//   catch (error) {
+//     console.log(`Error inesperado recuperando sección públic de usuario: '${tablename}'`, error)
+//     throw error
+//   }
+// }
 
 export async function dbGetUserSectionDataAsync(userId: number): Promise<SectionData[]> {
 
@@ -308,7 +304,7 @@ export async function dbGetUserSectionDataAsync(userId: number): Promise<Section
   }
 }
 
-export async function dbGetUserBasicResumeAsync(userId: number, includeIds: boolean): Promise<{ [key: string]: unknown }[]> {
+export async function dbGetUserBasicResumeAsync({ userId, includeIds, arrayParsed }: { userId: number, includeIds: boolean, arrayParsed: boolean }): Promise<{ [key: string]: unknown }[]> {
 
   const resume: { [key: string]: unknown } = {}
 
@@ -324,14 +320,13 @@ export async function dbGetUserBasicResumeAsync(userId: number, includeIds: bool
         const { id, userId, ...basicFields } = basic[0]
         basicResume = { ...basicFields }
       }
-      const profile = await dbGetUserSectionResumeAsync<Profile>('profiles', userId, includeIds)
-      console.log(profile)
+      const profile = await dbGetUserSectionResumeAsync<Profile>({ tablename: 'profiles', userId, includeIds, arrayParsed })
       if (profile) {
         if (profile && profile.length !== 0) {
           basicResume['profiles'] = profile
         }
       }
-      const location = await dbGetUserSectionResumeAsync<Location>('locations', userId, includeIds)
+      const location = await dbGetUserSectionResumeAsync<Location>({ tablename: 'locations', userId, includeIds, arrayParsed })
       if (location) {
         if (location && location.length !== 0) {
           basicResume['location'] = location[0]
@@ -348,7 +343,7 @@ export async function dbGetUserBasicResumeAsync(userId: number, includeIds: bool
   }
 }
 
-export async function dbGetUserResumeAsync(userId: number, includeIds: boolean): Promise<{ [key: string]: unknown }> {
+export async function dbGetUserResumeAsync({ userId, includeIds, arrayParsed }: { userId: number, includeIds: boolean, arrayParsed: boolean }): Promise<{ [key: string]: unknown }> {
 
   const resume: { [key: string]: unknown } = {}
   resume['$schema'] = 'https://raw.githubusercontent.com/jsonresume/resume-schema/v1.0.0/schema.json'
@@ -367,72 +362,72 @@ export async function dbGetUserResumeAsync(userId: number, includeIds: boolean):
         basicResume = { ...basicFields }
       }
 
-      const profile = await dbGetUserSectionResumeAsync<Profile>('profiles', userId, includeIds)
+      const profile = await dbGetUserSectionResumeAsync<Profile>({ tablename: 'profiles', userId, includeIds, arrayParsed })
       if (profile) {
         if (profile && profile.length !== 0) {
           basicResume['profiles'] = profile
         }
       }
-      const location = await dbGetUserSectionResumeAsync<Location>('locations', userId, includeIds)
+      const location = await dbGetUserSectionResumeAsync<Location>({ tablename: 'locations', userId, includeIds, arrayParsed })
       if (location) {
         if (location && location.length !== 0) {
           basicResume['location'] = location[0]
         }
       }
-      resume['basic'] = basicResume
+      resume['basics'] = basicResume
     }
 
-    const work = await dbGetUserSectionResumeAsync<Work>('works', userId, includeIds)
+    const work = await dbGetUserSectionResumeAsync<Work>({ tablename: 'works', userId, includeIds, arrayParsed })
     if (work && work.length !== 0) {
       resume['work'] = work
     }
 
-    const volunteer = await dbGetUserSectionResumeAsync<Volunteer>('volunteers', userId, includeIds)
+    const volunteer = await dbGetUserSectionResumeAsync<Volunteer>({ tablename: 'volunteers', userId, includeIds, arrayParsed })
     if (volunteer && volunteer.length !== 0) {
       resume['volunteer'] = volunteer
     }
 
-    const education = await dbGetUserSectionResumeAsync<Education>('educations', userId, includeIds)
+    const education = await dbGetUserSectionResumeAsync<Education>({ tablename: 'educations', userId, includeIds, arrayParsed })
     if (education && education.length !== 0) {
       resume['education'] = education
     }
 
-    const awards = await dbGetUserSectionResumeAsync<Award>('awards', userId, includeIds)
+    const awards = await dbGetUserSectionResumeAsync<Award>({ tablename: 'awards', userId, includeIds, arrayParsed })
     if (awards && awards.length !== 0) {
       resume['awards'] = awards
     }
 
-    const publications = await dbGetUserSectionResumeAsync<Publication>('publications', userId, includeIds)
+    const publications = await dbGetUserSectionResumeAsync<Publication>({ tablename: 'publications', userId, includeIds, arrayParsed })
     if (publications && publications.length !== 0) {
       resume['publications'] = publications
     }
 
-    const certificates = await dbGetUserSectionResumeAsync<Certificate>('certificates', userId, includeIds)
+    const certificates = await dbGetUserSectionResumeAsync<Certificate>({ tablename: 'certificates', userId, includeIds, arrayParsed })
     if (certificates && certificates.length !== 0) {
       resume['certificates'] = certificates
     }
 
-    const skills = await dbGetUserSectionResumeAsync<Skill>('skills', userId, includeIds)
+    const skills = await dbGetUserSectionResumeAsync<Skill>({ tablename: 'skills', userId, includeIds, arrayParsed })
     if (skills && work.length !== 0) {
       resume['skills'] = skills
     }
 
-    const languages = await dbGetUserSectionResumeAsync<Language>('languages', userId, includeIds)
+    const languages = await dbGetUserSectionResumeAsync<Language>({ tablename: 'languages', userId, includeIds, arrayParsed })
     if (languages && languages.length !== 0) {
       resume['languages'] = languages
     }
 
-    const interests = await dbGetUserSectionResumeAsync<Interest>('interests', userId, includeIds)
+    const interests = await dbGetUserSectionResumeAsync<Interest>({ tablename: 'interests', userId, includeIds, arrayParsed })
     if (interests && interests.length !== 0) {
       resume['interests'] = interests
     }
 
-    const references = await dbGetUserSectionResumeAsync<Reference>('user_references', userId, includeIds)
+    const references = await dbGetUserSectionResumeAsync<Reference>({ tablename: 'user_references', userId, includeIds, arrayParsed })
     if (references && references.length !== 0) {
       resume['references'] = references
     }
 
-    const projects = await dbGetUserSectionResumeAsync<Project>('projects', userId, includeIds)
+    const projects = await dbGetUserSectionResumeAsync<Project>({ tablename: 'projects', userId, includeIds, arrayParsed })
     if (projects && projects.length !== 0) {
       resume['projects'] = projects
     }
@@ -450,7 +445,7 @@ export async function dbGetUserResumeAsync(userId: number, includeIds: boolean):
   }
 }
 
-export async function dbGetUserSectionResumeAsync<T>(tablename: string, userId: number, incluideIds: boolean): Promise<T[]> {
+export async function dbGetUserSectionResumeAsync<T>({ tablename, userId, includeIds, arrayParsed }: { tablename: string, userId: number, includeIds: boolean, arrayParsed: boolean }): Promise<T[]> {
 
   const resume: { [key: string]: unknown } = {}
 
@@ -475,20 +470,108 @@ export async function dbGetUserSectionResumeAsync<T>(tablename: string, userId: 
         for (let index = 0; index < result.fields.length; index++) {
           const field = result.fields[index];
           const name: string = field['name']
-          if (incluideIds || (name !== 'id' && name !== 'user_id')) {
-            const camelCaseName = snakeToCamelCase(name) as keyof T
-            model = updateObject<T>(model, camelCaseName, row[name])
+          if (includeIds || (name !== 'id' && name !== 'user_id')) {
+            let value = row[name]
+            if (validateOptionalFields(tablename, name, value)) {
+              if (arrayParsed && isArrayField(tablename, name)) {
+                value = parseArray(value)
+              }
+              const camelCaseName = snakeToCamelCase(name) as keyof T
+              model = updateObject<T>(model, camelCaseName, value)
+            }
           }
         }
         sections.push(model)
       }
     }
-
-
     return sections
   }
   catch (error) {
     console.log('Error inesperado recuperando secciones de usuario', error)
     throw error
   }
+}
+
+function isArrayField(tablename: string, fieldname: string) {
+  if (tablename === 'works' && fieldname === 'highlights') {
+    return true
+  } else if (tablename === 'volunteers' && fieldname === 'highlights') {
+    return true
+  } else if (tablename === 'educations' && fieldname === 'courses') {
+    return true
+  } else if (tablename === 'skills' && fieldname === 'keywords') {
+    return true
+  } else if (tablename === 'interests' && fieldname === 'keywords') {
+    return true
+  } else if (tablename === 'projects' && fieldname === 'keywords') {
+    return true
+  } else if (tablename === 'projects' && fieldname === 'roles') {
+    return true
+  } else if (tablename === 'projects' && fieldname === 'highlights') {
+    return true
+  }
+  return false
+}
+
+function validateOptionalFields(tablename: string, fieldname: string, value: unknown) {
+  let isRequired = true
+
+  if (tablename === 'basics' && (
+    fieldname === 'phone' ||
+    fieldname === 'summary')) {
+    isRequired = false
+  } else if (tablename === 'works' && (
+    fieldname === 'end_date' ||
+    fieldname === 'summary' ||
+    fieldname === 'highlights')) {
+    isRequired = false
+  } else if (tablename === 'projects' && (
+    fieldname === 'highlights' ||
+    fieldname === 'keywords' ||
+    fieldname === 'end_date' ||
+    fieldname === 'roles' ||
+    fieldname === 'entity' ||
+    fieldname === 'type')) {
+    isRequired = false
+  } else if (tablename === 'skills' && (
+    fieldname === 'keywords')) {
+    isRequired = false
+  } else if (tablename === 'volunteers' && (
+    fieldname === 'url' ||
+    fieldname === 'end_date' ||
+    fieldname === 'summary' ||
+    fieldname === 'highlights')) {
+    isRequired = false
+  } else if (tablename === 'educations' && (
+    fieldname === 'url' ||
+    fieldname === 'end_date' ||
+    fieldname === 'score' ||
+    fieldname === 'courses')) {
+    isRequired = false
+  } else if (tablename === 'awards' && (
+    fieldname === 'awarder' ||
+    fieldname === 'summary')) {
+    isRequired = false
+  } else if (tablename === 'certificates' && (
+    fieldname === 'url')) {
+    isRequired = false
+  } else if (tablename === 'publications' && (
+    fieldname === 'url' ||
+    fieldname === 'summary')) {
+    isRequired = false
+  } else if (tablename === 'interests' && (
+    fieldname === 'keywords')) {
+    isRequired = false
+  }
+
+  if (isRequired)
+    return true
+
+  return value ? true : false
+
+}
+
+function parseArray(value: string) {
+  const object: [{ value: string, label: string }] = JSON.parse(value)
+  return Object.values(object).map((e) => e.value)
 }

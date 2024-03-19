@@ -62,7 +62,6 @@ export function EditWorkDialog({ work }: { work: Work }) {
 
   const handleSelectEnd: SelectSingleEventHandler = (day, selectedDay, activeModifiers, e) => {
     const newWork = structuredClone(workState)
-    console.log(day)
     newWork.endDate = day ? dateUtcToIso8601(day) : ''
     setWorkState(newWork);
   }
@@ -87,7 +86,6 @@ export function EditWorkDialog({ work }: { work: Work }) {
 
       const validated = await validateSchemaAsync<Work>(WorkSchema, work)
       if (!validated.success) {
-        console.log(errors)
         setErrors(validated.errors)
         setLoading(false)
         return

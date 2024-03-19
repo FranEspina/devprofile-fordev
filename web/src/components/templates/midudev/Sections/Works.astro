@@ -1,17 +1,14 @@
 ---
 import Section from "@/components/templates/midudev/Section.astro";
 import { getUserResumeSection } from "@/services/apiService";
-import { type Work } from "@/Schemas/workSchema";
+import { type WorkResume } from "@/Schemas/workSchema";
 import { type apiResultType } from "@/types/apiTypes";
 import FromToDate from "@/components/templates/midudev/FromToDate.astro";
-import { type Option } from "@/components/ui/multiple-selector";
 
 const { userId } = Astro.props;
 
-const result: apiResultType<Work[]> = await getUserResumeSection<Work>(
-  "work",
-  Number(userId),
-);
+const result: apiResultType<WorkResume[]> =
+  await getUserResumeSection<WorkResume>("work", Number(userId));
 
 const { success, data: work } = result;
 ---
@@ -31,8 +28,6 @@ const { success, data: work } = result;
             location,
             url,
           }) => {
-            const highlightsArray: Option[] = JSON.parse(highlights || "");
-
             return (
               <li>
                 <article>
@@ -54,10 +49,10 @@ const { success, data: work } = result;
                   <footer>
                     <p>{summary}</p>
                     <div class="higlights">
-                      {highlightsArray &&
-                        highlightsArray.length !== 0 &&
-                        highlightsArray.map((highlight) => {
-                          return <span>{highlight.value}</span>;
+                      {highlights &&
+                        highlights.length !== 0 &&
+                        highlights.map((highlight) => {
+                          return <span>{highlight}</span>;
                         })}
                     </div>
                   </footer>
@@ -107,6 +102,7 @@ const { success, data: work } = result;
     flex-wrap: wrap;
     gap: 4px;
     font-size: 0.6rem;
+    margin-top: 6px;
   }
 
   footer .higlights span {

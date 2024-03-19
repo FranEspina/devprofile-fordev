@@ -55,7 +55,6 @@ export function InterestList() {
 
 
   const alertDelete = (id: number) => {
-    console.log('dentro')
     deleteRef.current = () => {
       handleDeleteInterest(id)
     };

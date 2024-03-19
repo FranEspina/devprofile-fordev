@@ -9,13 +9,13 @@ import { type Interest } from "../../../Schemas/interestSchema";
 import { type Reference } from "../../../Schemas/referenceSchema";
 
 interface resultData {
-  work: Work[];
-  basic: Basic[];
-  skills: Skill[];
-  education: Education[];
-  awards: Award[];
-  interests: Interest[];
-  references: Reference[];
+  work: [];
+  basics: [];
+  skills: [];
+  education: [];
+  awards: [];
+  interests: [];
+  references: [];
 }
 
 const { user } = Astro.params;
@@ -27,7 +27,7 @@ if (!result || !result.data) {
 
 const {
   work,
-  basic,
+  basics,
   skills,
   education,
   awards,
@@ -42,7 +42,7 @@ import { formatDate, diffDate } from "@/lib/dates";
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>{basic.name}</title>
+  <title>{basics.name}</title>
   <link
     rel="stylesheet"
     href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
@@ -95,14 +95,14 @@ import { formatDate, diffDate } from "@/lib/dates";
             <div class="profile-pic">
               <img
                 class="media-object img-circle center-block"
-                alt={basic.name}
-                src={basic.image}
+                alt={basics.name}
+                src={basics.image}
                 itemprop="image"
               />
             </div>
             <div class="name-and-profession text-center">
-              <h3 itemprop="name"><b>{basic.name}</b></h3>
-              <h5 class="text-muted" itemprop="jobTitle">{basic.label}</h5>
+              <h3 itemprop="name"><b>{basics.name}</b></h3>
+              <h5 class="text-muted" itemprop="jobTitle">{basics.label}</h5>
             </div>
           </span>
           <hr />
@@ -110,8 +110,8 @@ import { formatDate, diffDate } from "@/lib/dates";
             <div class="detail">
               <span class="icon"><i class="icon fs-lg icon-location"></i></span
               ><span class="info"
-                >{basic.location.address}, {basic.location.postalCode}, {
-                  basic.location.countryCode
+                >{basics.location.address}, {basics.location.postalCode}, {
+                  basics.location.countryCode
                 }</span
               >
             </div>
@@ -120,15 +120,15 @@ import { formatDate, diffDate } from "@/lib/dates";
               ><span class="info"
                 ><a
                   class="link-disguise"
-                  href=`mailto:${basic.email}`
-                  itemprop="email">{basic.email}</a
+                  href=`mailto:${basics.email}`
+                  itemprop="email">{basics.email}</a
                 ></span
               >
             </div>
             <div class="detail">
               <span class="icon"><i class="icon fs-lg icon-link"></i></span
               ><span class="info"
-                ><a href={basic.url} target="_blank">{basic.url}</a></span
+                ><a href={basics.url} target="_blank">{basics.url}</a></span
               >
             </div>
           </div>
@@ -136,14 +136,14 @@ import { formatDate, diffDate } from "@/lib/dates";
           <div class="social-links text-center">
             <div>
               {
-                basic.profiles &&
-                  basic.profiles.map((p) => (
+                basics.profiles &&
+                  basics.profiles.map((p) => (
                     <a
                       class={`fs-2x social-link link-${p.network.toLowerCase()} icon-${p.network.toLowerCase()}`}
                       href={p.url}
                       target="_blank"
                       data-toggle="tooltip"
-                      title={`${basic.name} on ${p.network}`}
+                      title={`${basics.name} on ${p.network}`}
                     />
                   ))
               }
@@ -167,7 +167,7 @@ import { formatDate, diffDate } from "@/lib/dates";
                 <div class="card card-nested">
                   <div class="content mop-wrapper" itemprop="description">
                     <p>
-                      {basic.summary}
+                      {basics.summary}
                     </p>
                   </div>
                 </div>
@@ -184,49 +184,51 @@ import { formatDate, diffDate } from "@/lib/dates";
                 <ul class="list-unstyled clear-margin">
                   {
                     work &&
-                      work.map((w) => (
-                        <li class="card card-nested clearfix">
-                          <div class="content">
-                            <p class="clear-margin relative">
-                              <>
-                                <i
-                                  class="icon-circle current-event"
-                                  rel="tooltip"
-                                  title="Currently Working"
-                                  data-placement="left"
-                                />
-                                <strong>{w.name}</strong>
-                              </>
-                              ,&nbsp;{w.position}
-                            </p>
-                            <p class="text-muted">
-                              <small>
+                      work.map((w) => {
+                        return (
+                          <li class="card card-nested clearfix">
+                            <div class="content">
+                              <p class="clear-margin relative">
                                 <>
-                                  <span class="space-right">
-                                    {formatDate(w.startDate)} -
-                                    {formatDate(w.endDate)}
-                                  </span>
-                                  <span>
-                                    <i class="icon-clock mr-5" />
-                                    {diffDate(w.startDate, w.endDate)}
-                                  </span>
+                                  <i
+                                    class="icon-circle current-event"
+                                    rel="tooltip"
+                                    title="Currently Working"
+                                    data-placement="left"
+                                  />
+                                  <strong>{w.name}</strong>
                                 </>
-                              </small>
-                            </p>
-                            <div class="mop-wrapper space-bottom">
-                              <p>{w.description}</p>
+                                ,&nbsp;{w.position}
+                              </p>
+                              <p class="text-muted">
+                                <small>
+                                  <>
+                                    <span class="space-right">
+                                      {formatDate(w.startDate)} -
+                                      {formatDate(w.endDate)}
+                                    </span>
+                                    <span>
+                                      <i class="icon-clock mr-5" />
+                                      {diffDate(w.startDate, w.endDate)}
+                                    </span>
+                                  </>
+                                </small>
+                              </p>
+                              <div class="mop-wrapper space-bottom">
+                                <p>{w.description}</p>
+                              </div>
+                              <ul>
+                                {w.highlights &&
+                                  w.highlights.map((h) => (
+                                    <li class="mop-wrapper">
+                                      <p>{h}</p>
+                                    </li>
+                                  ))}
+                              </ul>
                             </div>
-                            <ul>
-                              {w.highlights &&
-                                JSON.parse(w.highlights).map((h) => (
-                                  <li class="mop-wrapper">
-                                    <p>{h.label}</p>
-                                  </li>
-                                ))}
-                            </ul>
-                          </div>
-                        </li>
-                      ))
+                          </li>
+                        );
+                      })
                   }
                 </ul>
               </div>
@@ -249,9 +251,9 @@ import { formatDate, diffDate } from "@/lib/dates";
                               <strong>{s.name}</strong>
                               <div class="space-top labels">
                                 {s.keywords &&
-                                  JSON.parse(s.keywords).map((k) => (
+                                  s.keywords.map((k) => (
                                     <span class="label label-keyword">
-                                      <p>{k.value}</p>
+                                      <p>{k}</p>
                                     </span>
                                   ))}
                               </div>

@@ -45,8 +45,19 @@ export const ProjectDeleteSchema = ProjectBaseSchema.omit({
   type: true,
 })
 
+export const ProjectResumeSchema = ProjectBaseSchema.extend({
+  keywords: z.string().array().optional(),
+  roles: z.string().array().optional(),
+  highlights: z.string().array().optional(),
+})
+  .refine(p => (!p.endDate || (p.endDate && p.endDate > p.startDate)),
+    {
+      message: "La fecha fin debe ser mayor o igual que la fecha inicio",
+      path: ['endDate']
+    })
+
 export type Project = z.infer<typeof ProjectSchema>
 export type ProjectCreate = z.infer<typeof ProjectCreateSchema>
 export type ProjectDelete = z.infer<typeof ProjectDeleteSchema>
-
+export type ProjectResume = z.infer<typeof ProjectResumeSchema>
 

@@ -55,7 +55,6 @@ export function AwardList() {
 
 
   const alertDelete = (id: number) => {
-    console.log('dentro')
     deleteRef.current = () => {
       handleDeleteAward(id)
     };

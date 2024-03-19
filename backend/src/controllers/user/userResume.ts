@@ -5,7 +5,7 @@ export async function getUserResumeAsync(req: Request, res: Response) {
   try {
     const userId = Number(req.params.userId)
 
-    const resume = await dbGetUserResumeAsync(userId, false)
+    const resume = await dbGetUserResumeAsync({ userId, includeIds: false, arrayParsed: true })
 
     return res.status(200).json({
       status: 200,
@@ -31,7 +31,7 @@ export async function getUserBasicResumeAsync(req: Request, res: Response) {
   try {
     const userId = Number(req.params.userId)
 
-    const rows = await dbGetUserBasicResumeAsync(userId, true)
+    const rows = await dbGetUserBasicResumeAsync({ userId, includeIds: false, arrayParsed: true })
 
     return res.status((rows.length === 0) ? 404 : 200).json({
       status: (rows.length === 0) ? 404 : 200,

@@ -64,7 +64,6 @@ export const SignInModal = ({ text = 'Iniciar sesión' }) => {
       }
     }
     finally {
-      console.log('ejecutado')
       setLoading(false)
     }
   }

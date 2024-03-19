@@ -100,8 +100,6 @@ export function EditSkillDialog({ skill }: { skill: Skill }) {
 
     try {
       var { success, message, data } = await updateUserSection<Skill>("skill", formData, token)
-      console.log(success)
-      console.log(message)
       if (success) {
         notifySuccess(message)
         setErrors({})

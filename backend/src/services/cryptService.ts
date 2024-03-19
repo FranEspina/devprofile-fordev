@@ -5,7 +5,6 @@ export async function hashAsync(value: string): Promise<string> {
 }
 
 export async function compareHashAsync(value: string, valueHashed: string): Promise<boolean> {
-  console.log(valueHashed)
   return await bcrypt.compare(value, valueHashed)
 }
 

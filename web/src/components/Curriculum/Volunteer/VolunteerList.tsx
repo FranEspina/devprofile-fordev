@@ -55,7 +55,6 @@ export function VolunteerList() {
 
 
   const alertDelete = (id: number) => {
-    console.log('dentro')
     deleteRef.current = () => {
       handleDeleteVolunteer(id)
     };

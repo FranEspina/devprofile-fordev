@@ -14,6 +14,10 @@ export const SkillCreateSchema = SkillSchema.omit({
   id: true
 })
 
+export const SkillResumeSchema = SkillSchema.extend({
+  keywords: z.string().array().optional(),
+})
+
 export const SkillDeleteSchema = SkillSchema.omit({
   name: true,
   level: true,
@@ -23,5 +27,7 @@ export const SkillDeleteSchema = SkillSchema.omit({
 export type Skill = z.infer<typeof SkillSchema>
 export type SkillCreate = z.infer<typeof SkillCreateSchema>
 export type SkillDelete = z.infer<typeof SkillDeleteSchema>
+export type SkillResume = z.infer<typeof SkillResumeSchema>
+
 
 

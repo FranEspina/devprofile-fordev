@@ -55,7 +55,6 @@ export function ProjectList() {
 
 
   const alertDelete = (id: number) => {
-    console.log('dentro')
     deleteRef.current = () => {
       handleDeleteProject(id)
     };

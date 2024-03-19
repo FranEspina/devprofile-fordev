@@ -55,7 +55,6 @@ export function ProfileList() {
 
 
   const alertDelete = (id: number) => {
-    console.log('dentro')
     deleteRef.current = () => {
       handleDeleteProfile(id)
     };
@@ -64,7 +63,6 @@ export function ProfileList() {
 
   const handleDeleteProfile = (id: number) => {
 
-    console.log(id)
     if (token === 'not-loaded') {
       return
     }
@@ -84,9 +82,7 @@ export function ProfileList() {
     }
 
     deleteUserSection<UserSection>("profile", userSection, token).then((apiResult) => {
-      console.log(apiResult)
       if (apiResult.success) {
-        console.log(apiResult)
         setProfileStamp(Date.now())
       }
       else {

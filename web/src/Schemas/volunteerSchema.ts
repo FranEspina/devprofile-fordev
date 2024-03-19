@@ -29,9 +29,8 @@ export const VolunteerCreateSchema = VolunteerBaseSchema.omit({
     path: ['endDate']
   })
 
-export const VolunteerResumeSchema = VolunteerBaseSchema.omit({
-  id: true,
-  userId: true
+export const VolunteerResumeSchema = VolunteerBaseSchema.extend({
+  highlights: z.string().array().optional(),
 }).refine(p => (!p.endDate || (p.endDate && p.endDate > p.startDate)),
   {
     message: "La fecha fin debe ser mayor o igual que la fecha inicio",
@@ -41,3 +40,4 @@ export const VolunteerResumeSchema = VolunteerBaseSchema.omit({
 export type Volunteer = z.infer<typeof VolunteerSchema>
 export type VolunteerCreate = z.infer<typeof VolunteerCreateSchema>
 export type VolunteerDelete = z.infer<typeof DeleteSectionSchema>
+export type VolunteerResume = z.infer<typeof VolunteerResumeSchema>

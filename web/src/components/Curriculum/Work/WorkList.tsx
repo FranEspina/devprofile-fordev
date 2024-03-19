@@ -57,7 +57,6 @@ export function WorkList() {
 
 
   const alertDelete = (id: number) => {
-    console.log('dentro')
     deleteRef.current = () => {
       handleDeleteWork(id)
     };
@@ -84,9 +83,7 @@ export function WorkList() {
     }
 
     deleteUserSection<UserSection>("work", userSection, token).then((apiResult) => {
-      console.log(apiResult)
       if (apiResult.success) {
-        console.log(apiResult)
         setWorkStamp(Date.now())
       }
       else {

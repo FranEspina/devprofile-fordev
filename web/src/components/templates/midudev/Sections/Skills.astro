@@ -16,16 +16,14 @@ import SwiftUI from "@/icons/swiftui.astro";
 import Kotlin from "@/icons/kotlin.astro";
 import Flutter from "@/icons/flutter.astro";
 
-import { type Skill } from "@/Schemas/skillSchema";
+import { type SkillResume } from "@/Schemas/skillSchema";
 import { getUserResumeSection } from "@/services/apiService";
 import { type apiResultType } from "@/types/apiTypes";
 
 const { userId } = Astro.props;
 
-const result: apiResultType<Skill[]> = await getUserResumeSection<Skill>(
-  "skill",
-  Number(userId),
-);
+const result: apiResultType<SkillResume[]> =
+  await getUserResumeSection<SkillResume>("skill", Number(userId));
 
 const { success, data: skills } = result;
 

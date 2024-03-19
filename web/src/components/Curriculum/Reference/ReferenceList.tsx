@@ -55,7 +55,6 @@ export function ReferenceList() {
 
 
   const alertDelete = (id: number) => {
-    console.log('dentro')
     deleteRef.current = () => {
       handleDeleteReference(id)
     };

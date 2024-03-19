@@ -55,7 +55,6 @@ export function CertificateList() {
 
 
   const alertDelete = (id: number) => {
-    console.log('dentro')
     deleteRef.current = () => {
       handleDeleteCertificate(id)
     };

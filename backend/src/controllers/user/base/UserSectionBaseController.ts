@@ -1,8 +1,9 @@
 import { Request, Response } from 'express'
-import { dbGetUserSectionByUserAsync, dbCreateUserSectionAsync, dbUpdateUserSectionAsync, getUserByIdAsync, dbDeleteUserSectionAsync, dbGetUserResumeSectionByUserAsync } from '../../../services/db'
+import { dbGetUserSectionByUserAsync, dbCreateUserSectionAsync, dbUpdateUserSectionAsync, getUserByIdAsync, dbDeleteUserSectionAsync, dbGetUserSectionResumeAsync } from '../../../services/db'
 import { validateSchemaAsync } from '../../../services/validationService'
 import { Schema } from 'zod'
 import { UserDeleteSection } from '../../../models/modelSchemas'
+
 
 export class UserSectionBaseController<T extends { id: number } & Record<string, unknown>>{
 
@@ -241,10 +242,7 @@ export class UserSectionBaseController<T extends { id: number } & Record<string,
       }
 
       const userId = Number(req.params.userId)
-
-      const rows = await dbGetUserResumeSectionByUserAsync<T>(this.tableName, userId)
-
-
+      const rows = await dbGetUserSectionResumeAsync({ tablename: this.tableName, userId, includeIds: true, arrayParsed: true })
       return res.status((rows.length === 0) ? 404 : 200).json({
         status: (rows.length === 0) ? 404 : 200,
         success: true,

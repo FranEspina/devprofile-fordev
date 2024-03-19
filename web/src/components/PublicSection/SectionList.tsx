@@ -32,7 +32,6 @@ export function SectionList() {
       .then(service => {
         if (service.success) {
           if (service.data) {
-            console.log(service.data)
             setSections(service.data)
           }
         }

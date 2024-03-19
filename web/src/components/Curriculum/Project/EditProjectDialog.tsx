@@ -38,6 +38,7 @@ export function EditProjectDialog({ project }: { project: Project }) {
 
   const [keywords, setKeywords] = useState<Option[]>([])
   const [roles, setRoles] = useState<Option[]>([])
+  const [highlights, setHighlights] = useState<Option[]>([])
 
   useEffect(() => {
     setLoading(false)
@@ -49,6 +50,9 @@ export function EditProjectDialog({ project }: { project: Project }) {
     }
     if (project.roles) {
       setRoles(JSON.parse(project.roles))
+    }
+    if (project.highlights) {
+      setHighlights(JSON.parse(project.highlights))
     }
 
   }, [isOpen])
@@ -86,12 +90,12 @@ export function EditProjectDialog({ project }: { project: Project }) {
     let project: Project | undefined = structuredClone(projectState)
     project.keywords = JSON.stringify(keywords)
     project.roles = JSON.stringify(roles)
+    project.highlights = JSON.stringify(highlights)
 
     try {
 
       const validated = await validateSchemaAsync<Project>(ProjectSchema, project)
       if (!validated.success) {
-        console.log(errors)
         setErrors(validated.errors)
         setLoading(false)
         return
@@ -108,8 +112,6 @@ export function EditProjectDialog({ project }: { project: Project }) {
 
     try {
       var { success, message, data } = await updateUserSection<Project>("project", project, token)
-      console.log(success)
-      console.log(message)
       if (success) {
         notifySuccess(message)
         setErrors({})
@@ -205,7 +207,11 @@ export function EditProjectDialog({ project }: { project: Project }) {
             <Label htmlFor="highlights" className="text-right text-xs md:text-sm">
               Lo más destacable
             </Label>
-            <Input value={projectState.highlights} onChange={handleChange} id="highlights" placeholder="Descripción de lo más destacable" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <div className="col-span-3 text-xs md:text-sm">
+              <MultipleSelector value={highlights} onChange={setHighlights} placeholder="escriba y pulse ENTER"
+                creatable
+              />
+            </div>
             {errors['highlights'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['highlights']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">

@@ -55,7 +55,6 @@ export function LocationList() {
 
 
   const alertDelete = (id: number) => {
-    console.log('dentro')
     deleteRef.current = () => {
       handleDeleteLocation(id)
     };

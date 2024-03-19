@@ -13,7 +13,6 @@ export async function validateSchemaAsync<T>(schema: Schema, data: unknown): Pro
 
   try {
     const parsed = await schema.safeParseAsync(data)
-    console.log(parsed)
     if (!parsed.success) {
       if (parsed.error instanceof z.ZodError) {
         parsed.error.errors.forEach((err) => {

@@ -106,8 +106,6 @@ export function EditProfileDialog({ profile }: { profile: Profile }) {
 
     try {
       var { success, message, data } = await updateUserSection<Profile>("profile", formData, token)
-      console.log(success)
-      console.log(message)
       if (success) {
         notifySuccess(message)
         setErrors({})

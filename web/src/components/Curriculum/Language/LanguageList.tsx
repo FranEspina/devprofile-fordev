@@ -36,6 +36,7 @@ export function LanguageList() {
 
     setLoading(true)
 
+
     getUserSection<Language>("language", user.id, token).then((apiResult) => {
       if (apiResult.success) {
         if (apiResult.data) {

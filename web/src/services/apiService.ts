@@ -254,9 +254,11 @@ export async function getUserSection<T>(section: string, id: number, token: stri
     }
     return { success: false, message: results.message }
   } catch (error) {
-    console.log(error)
     if (axios.isAxiosError(error)) {
-      console.log('Error axios:', error.message);
+      if (error.response?.status === 404) {
+        return { success: true, message: 'No existen datos', data: [] }
+      }
+      console.log('Error axios:', error);
       if (error.response) {
         const results: apiResponse<T[]> = error.response.data
         if (results) {

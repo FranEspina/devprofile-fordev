@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label"
 import { Plus, Edit } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useProfileStore } from '@/store/profileStore'
-import { type VolunteerCreate, VolunteerSchema, VolunteerCreateSchema, type Volunteer } from '@/Schemas/volunteerSchema'
+import { type VolunteerCreate, VolunteerSchema, VolunteerCreateSchema, type Volunteer, VolunteerBaseSchema } from '@/Schemas/volunteerSchema'
 import { navigate } from "astro/virtual-modules/transitions-router.js"
 import { useNotify } from '@/hooks/useNotify'
 import { validateSchemaAsync } from '@/lib/validations'
@@ -27,7 +27,7 @@ import MultipleSelector, { type Option } from "@/components/ui/multiple-selector
 import { Textarea } from "@/components/ui/textarea"
 import { dateUtcToIso8601, localIso8601ToUtcDate } from '@/lib/dates'
 import { InputDate } from "@/components/ui/InputDate"
-
+import { z } from 'astro/zod'
 
 interface VolunteerDialogProps {
   editMode: boolean,
@@ -42,12 +42,13 @@ export function VolunteerDialog({ editMode = false, initialState = undefined }: 
   const { notifyError, notifySuccess } = useNotify()
   const [volunteerState, setVolunteerState] = useState<Volunteer>({} as Volunteer)
   const [highlights, setHighlights] = useState<Option[]>([])
-
+  const [validateOnBlur, setValidateOnBlur] = useState(false)
   const { setVolunteerStamp } = useRefreshStore(state => state)
 
   useEffect(() => {
     setLoading(false)
     setErrors({})
+    setValidateOnBlur(false)
   }, [])
 
   useEffect(() => {
@@ -86,6 +87,7 @@ export function VolunteerDialog({ editMode = false, initialState = undefined }: 
   useEffect(() => {
     setLoading(false)
     setErrors({})
+    setValidateOnBlur(false)
   }, [isOpen])
 
   const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -97,13 +99,52 @@ export function VolunteerDialog({ editMode = false, initialState = undefined }: 
     const newVolunteer = structuredClone(volunteerState)
     newVolunteer.startDate = date ? dateUtcToIso8601(date) : ''
     setVolunteerState(newVolunteer);
+    if (validateOnBlur) {
+      validateField("startDate", newVolunteer.startDate)
+    }
   }
 
   const handleSelectEndDate = (date: Date | undefined) => {
     const newVolunteer = structuredClone(volunteerState)
     newVolunteer.endDate = date ? dateUtcToIso8601(date) : ''
     setVolunteerState(newVolunteer);
+    if (validateOnBlur) {
+      validateField("endDate", newVolunteer.endDate)
+    }
   }
+
+  const validateField = (field: string, value: unknown) => {
+    const newErrors = { ...errors }
+
+    const partialSchema = VolunteerBaseSchema.pick({ [field]: VolunteerBaseSchema.shape[field as keyof typeof VolunteerBaseSchema.shape] });
+
+    // Realiza la validación con Zod
+    partialSchema.parseAsync({ [field]: value })
+      .then(() => {
+        if (newErrors[field] !== '') {
+          newErrors[field] = '';
+          setErrors(newErrors)
+        }
+      })
+      .catch((error) => {
+        if (error instanceof z.ZodError) {
+          error.errors.forEach((err) => {
+            newErrors[err.path[0]] = err.message;
+          });
+        } else {
+          newErrors['generic'] = error
+        }
+        setErrors(newErrors)
+      })
+  }
+
+  const handleBlur: React.FocusEventHandler<HTMLInputElement | HTMLTextAreaElement> = (event) => {
+    if (!validateOnBlur) return
+    const { id, name, value } = event.target;
+    const field = (id) ? id : (name ? name : '')
+    validateField(field, value)
+  }
+
 
   async function createAsync(model: unknown) {
     const validated = await validateSchemaAsync<VolunteerCreate>(VolunteerCreateSchema, model)
@@ -137,6 +178,7 @@ export function VolunteerDialog({ editMode = false, initialState = undefined }: 
 
   const handleSave = async () => {
     setLoading(true)
+    setValidateOnBlur(true)
 
     if (token === 'not-loaded')
       return
@@ -198,21 +240,21 @@ export function VolunteerDialog({ editMode = false, initialState = undefined }: 
             <Label htmlFor="organization" className="text-right text-xs md:text-sm">
               Organización
             </Label>
-            <Input id="organization" value={volunteerState.organization} onChange={handleChange} placeholder="Organización" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Input id="organization" value={volunteerState.organization} onChange={handleChange} onBlur={handleBlur} placeholder="Organización" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['organization'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['organization']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="position" className="text-right text-xs md:text-sm">
               Puesto
             </Label>
-            <Input id="position" value={volunteerState.position} onChange={handleChange} placeholder="Tareas desempeñadas" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Input id="position" value={volunteerState.position} onChange={handleChange} onBlur={handleBlur} placeholder="Tareas desempeñadas" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['position'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['position']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="url" className="text-right text-xs md:text-sm">
               Url
             </Label>
-            <Input id="url" value={volunteerState.url} onChange={handleChange} placeholder="https://..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Input id="url" value={volunteerState.url || ''} onChange={handleChange} onBlur={handleBlur} placeholder="https://..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['url'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['url']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
@@ -233,7 +275,7 @@ export function VolunteerDialog({ editMode = false, initialState = undefined }: 
             <Label htmlFor="summary" className="text-right text-xs md:text-sm">
               Resumen
             </Label>
-            <Textarea id="summary" value={volunteerState.summary} onChange={handleChange} placeholder="Resumen" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Textarea id="summary" value={volunteerState.summary} onChange={handleChange} onBlur={handleBlur} placeholder="Resumen" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['summary'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['summary']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">

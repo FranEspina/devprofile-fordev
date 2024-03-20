@@ -26,6 +26,7 @@ import { DatePicker } from '@/components/ui/DatePicker'
 import { type SelectSingleEventHandler } from 'react-day-picker'
 import { dateUtcToIso8601, localIso8601ToUtcDate } from '@/lib/dates'
 import { InputDate } from "@/components/ui/InputDate"
+import { z, ZodSchema } from 'zod';
 
 interface AwardDialogProps {
   editMode: boolean,
@@ -39,6 +40,7 @@ export function AwardDialog({ editMode = false, initialState = undefined }: Awar
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
   const { notifyError, notifySuccess } = useNotify()
   const [awardState, setAwardState] = useState<Award>({} as Award)
+  const [validateOnBlur, setValidateOnBlur] = useState(false)
 
   const { setAwardStamp } = useRefreshStore(state => state)
 
@@ -79,6 +81,7 @@ export function AwardDialog({ editMode = false, initialState = undefined }: Awar
   useEffect(() => {
     setLoading(false)
     setErrors({})
+    setValidateOnBlur(false)
   }, [isOpen])
 
   const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -90,6 +93,42 @@ export function AwardDialog({ editMode = false, initialState = undefined }: Awar
     const newAward = structuredClone(awardState)
     newAward.date = date ? dateUtcToIso8601(date) : ''
     setAwardState(newAward);
+    if (validateOnBlur) {
+      validateField("date", newAward.date)
+    }
+  }
+
+  const validateField = (field: string, value: unknown) => {
+    const newErrors = { ...errors }
+
+    const partialSchema = AwardSchema.pick({ [field]: AwardSchema.shape[field as keyof typeof AwardSchema.shape] });
+
+    // Realiza la validación con Zod
+    partialSchema.parseAsync({ [field]: value })
+      .then(() => {
+        if (newErrors[field] !== '') {
+          newErrors[field] = '';
+          setErrors(newErrors)
+        }
+      })
+      .catch((error) => {
+        if (error instanceof z.ZodError) {
+          error.errors.forEach((err) => {
+            newErrors[err.path[0]] = err.message;
+          });
+        } else {
+          newErrors['generic'] = error
+        }
+        setErrors(newErrors)
+      })
+  }
+
+  // Función para manejar los cambios en los campos del formulario
+  const handleBlur: React.FocusEventHandler<HTMLInputElement | HTMLTextAreaElement> = (event) => {
+    if (!validateOnBlur) return
+    const { id, name, value } = event.target;
+    const field = (id) ? id : (name ? name : '')
+    validateField(field, value)
   }
 
   async function createAsync(model: unknown) {
@@ -124,6 +163,7 @@ export function AwardDialog({ editMode = false, initialState = undefined }: Awar
 
   const handleSave = async () => {
     setLoading(true)
+    setValidateOnBlur(true)
 
     if (token === 'not-loaded')
       return
@@ -183,28 +223,28 @@ export function AwardDialog({ editMode = false, initialState = undefined }: Awar
             <Label htmlFor="title" className="text-right text-xs md:text-sm">
               Logro
             </Label>
-            <Input id="title" value={awardState.title} onChange={handleChange} placeholder="Logro" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Input id="title" value={awardState.title} onChange={handleChange} onBlur={handleBlur} placeholder="Logro" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['title'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['title']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-right text-xs md:text-sm">
               Fecha
             </Label>
-            <InputDate date={localIso8601ToUtcDate(awardState.date)} onSelect={handleSelectDate} />
+            <InputDate id="date" date={localIso8601ToUtcDate(awardState.date)} onSelect={handleSelectDate} />
             {errors['date'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['date']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="awarder" className="text-right text-xs md:text-sm">
               Entidad
             </Label>
-            <Input id="awarder" value={awardState.awarder} onChange={handleChange} placeholder="Entidad relacionada" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Input id="awarder" value={awardState.awarder} onChange={handleChange} onBlur={handleBlur} placeholder="Entidad relacionada" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['awarder'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['awarder']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="summary" className="text-right text-xs md:text-sm">
               Resumen
             </Label>
-            <Textarea id="summary" value={awardState.summary} onChange={handleChange} placeholder="Resumen de la logro" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Textarea id="summary" value={awardState.summary} onChange={handleChange} onBlur={handleBlur} placeholder="Resumen de la logro" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['summary'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['summary']}</p>}
           </div>
         </div>

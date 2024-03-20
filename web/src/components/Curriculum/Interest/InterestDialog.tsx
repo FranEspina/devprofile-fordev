@@ -22,6 +22,7 @@ import { useRefreshStore } from '@/store/refreshStore'
 import { LoadIndicator } from '@/components/LoadIndicator'
 import { type ChangeEvent } from "react"
 import MultipleSelector, { type Option } from "@/components/ui/multiple-selector"
+import { z } from 'astro/zod'
 
 interface InterestDialogProps {
   editMode: boolean,
@@ -36,29 +37,15 @@ export function InterestDialog({ editMode = false, initialState = undefined }: I
   const { notifyError, notifySuccess } = useNotify()
   const [interestState, setInterestState] = useState<Interest>({} as Interest)
   const [keywords, setKeywords] = useState<Option[]>([])
+  const [validateOnBlur, setValidateOnBlur] = useState(false)
 
   const { setInterestStamp } = useRefreshStore(state => state)
-
-  useEffect(() => {
-    setLoading(false)
-    setErrors({})
-  }, [])
 
   useEffect(() => {
     const userId = (user) ? user.id : -1
     const newInterest = { ...interestState, userId }
     setInterestState(newInterest);
   }, [user])
-
-  useEffect(() => {
-    if (editMode === true) {
-      if (initialState) {
-        setInterestState(initialState)
-      } else {
-        throw new Error("El estado inicial es necesario en modo edición del componente")
-      }
-    }
-  }, [])
 
   useEffect(() => {
     if (editMode === true) {
@@ -80,11 +67,44 @@ export function InterestDialog({ editMode = false, initialState = undefined }: I
   useEffect(() => {
     setLoading(false)
     setErrors({})
+    setValidateOnBlur(false)
   }, [isOpen])
 
   const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const newInterest = { ...interestState, [event.target.id]: event.target.value }
     setInterestState(newInterest);
+  }
+
+  const validateField = (field: string, value: unknown) => {
+    const newErrors = { ...errors }
+
+    const partialSchema = InterestSchema.pick({ [field]: InterestSchema.shape[field as keyof typeof InterestSchema.shape] });
+
+    // Realiza la validación con Zod
+    partialSchema.parseAsync({ [field]: value })
+      .then(() => {
+        if (newErrors[field] !== '') {
+          newErrors[field] = '';
+          setErrors(newErrors)
+        }
+      })
+      .catch((error) => {
+        if (error instanceof z.ZodError) {
+          error.errors.forEach((err) => {
+            newErrors[err.path[0]] = err.message;
+          });
+        } else {
+          newErrors['generic'] = error
+        }
+        setErrors(newErrors)
+      })
+  }
+
+  const handleBlur: React.FocusEventHandler<HTMLInputElement | HTMLTextAreaElement> = (event) => {
+    if (!validateOnBlur) return
+    const { id, name, value } = event.target;
+    const field = (id) ? id : (name ? name : '')
+    validateField(field, value)
   }
 
   async function createAsync(model: unknown) {
@@ -119,6 +139,7 @@ export function InterestDialog({ editMode = false, initialState = undefined }: I
 
   const handleSave = async () => {
     setLoading(true)
+    setValidateOnBlur(true)
 
     if (token === 'not-loaded')
       return
@@ -181,7 +202,7 @@ export function InterestDialog({ editMode = false, initialState = undefined }: I
             <Label htmlFor="name" className="text-right text-xs md:text-sm">
               Interés
             </Label>
-            <Input id="name" value={interestState.name} onChange={handleChange} placeholder="Deporte, tecnología, filosofía, ..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Input id="name" value={interestState.name} onChange={handleChange} onBlur={handleBlur} placeholder="Deporte, tecnología, filosofía, ..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['name'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['name']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">

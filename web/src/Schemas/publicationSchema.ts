@@ -7,7 +7,7 @@ export const PublicationSchema = z.object({
   name: z.string({ required_error: 'Obligatorio' }).min(1, 'Obligatorio'),
   publisher: z.string({ required_error: 'Obligatorio' }).min(1, 'Obligatorio'),
   releaseDate: z.string({ required_error: 'Fecha obligatoria' }).min(1, 'Fecha obligatoria'),
-  url: z.string().url({ message: 'url inválida' }).optional(),
+  url: z.string().url({ message: 'url inválida' }).nullable().optional().or(z.literal('')),
   summary: z.string({ required_error: 'Obligatorio' }).min(1, 'Obligatorio'),
 })
 

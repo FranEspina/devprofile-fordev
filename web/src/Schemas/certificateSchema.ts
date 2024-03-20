@@ -6,7 +6,7 @@ export const CertificateSchema = z.object({
   userId: z.number({ required_error: 'Identificador del usuario obligatorio' }),
   name: z.string({ required_error: 'Obligatorio' }).min(1, 'Obligatorio'),
   date: z.string({ required_error: 'Fecha obligatoria' }).min(1, 'Fecha obligatoria'),
-  url: z.string().url({ message: 'url inválida' }).optional(),
+  url: z.string().url({ message: 'url inválida' }).nullable().optional().or(z.literal('')),
   issuer: z.string({ required_error: 'Obligatorio' }).min(1, 'Obligatorio'),
 })
 

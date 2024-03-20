@@ -26,7 +26,7 @@ export const DevResourceSchema = z.object({
       }
     }
   }),
-  url: z.string().url({ message: 'url inválida' }).optional(),
+  url: z.string().url({ message: 'url inválida' }).nullable().optional().or(z.literal('')),
   keywords: z.string().optional()
 })
 

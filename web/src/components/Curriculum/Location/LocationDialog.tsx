@@ -21,6 +21,7 @@ import { createUserSection, updateUserSection } from '@/services/apiService'
 import { useRefreshStore } from '@/store/refreshStore'
 import { LoadIndicator } from '@/components/LoadIndicator'
 import { type ChangeEvent } from "react"
+import { z } from 'astro/zod'
 
 interface LocationDialogProps {
   editMode: boolean,
@@ -34,29 +35,15 @@ export function LocationDialog({ editMode = false, initialState = undefined }: L
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
   const { notifyError, notifySuccess } = useNotify()
   const [locationState, setLocationState] = useState<Location>({} as Location)
+  const [validateOnBlur, setValidateOnBlur] = useState(false)
 
   const { setLocationStamp } = useRefreshStore(state => state)
-
-  useEffect(() => {
-    setLoading(false)
-    setErrors({})
-  }, [])
 
   useEffect(() => {
     const userId = (user) ? user.id : -1
     const newLocation = { ...locationState, userId }
     setLocationState(newLocation);
   }, [user])
-
-  useEffect(() => {
-    if (editMode === true) {
-      if (initialState) {
-        setLocationState(initialState)
-      } else {
-        throw new Error("El estado inicial es necesario en modo edición del componente")
-      }
-    }
-  }, [])
 
   useEffect(() => {
     if (editMode === true) {
@@ -74,11 +61,44 @@ export function LocationDialog({ editMode = false, initialState = undefined }: L
   useEffect(() => {
     setLoading(false)
     setErrors({})
+    setValidateOnBlur(false)
   }, [isOpen])
 
   const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const newLocation = { ...locationState, [event.target.id]: event.target.value }
     setLocationState(newLocation);
+  }
+
+  const validateField = (field: string, value: unknown) => {
+    const newErrors = { ...errors }
+
+    const partialSchema = LocationSchema.pick({ [field]: LocationSchema.shape[field as keyof typeof LocationSchema.shape] });
+
+    // Realiza la validación con Zod
+    partialSchema.parseAsync({ [field]: value })
+      .then(() => {
+        if (newErrors[field] !== '') {
+          newErrors[field] = '';
+          setErrors(newErrors)
+        }
+      })
+      .catch((error) => {
+        if (error instanceof z.ZodError) {
+          error.errors.forEach((err) => {
+            newErrors[err.path[0]] = err.message;
+          });
+        } else {
+          newErrors['generic'] = error
+        }
+        setErrors(newErrors)
+      })
+  }
+
+  const handleBlur: React.FocusEventHandler<HTMLInputElement | HTMLTextAreaElement> = (event) => {
+    if (!validateOnBlur) return
+    const { id, name, value } = event.target;
+    const field = (id) ? id : (name ? name : '')
+    validateField(field, value)
   }
 
   async function createAsync(model: unknown) {
@@ -113,6 +133,7 @@ export function LocationDialog({ editMode = false, initialState = undefined }: L
 
   const handleSave = async () => {
     setLoading(true)
+    setValidateOnBlur(true)
 
     if (token === 'not-loaded')
       return
@@ -172,35 +193,35 @@ export function LocationDialog({ editMode = false, initialState = undefined }: L
             <Label htmlFor="address" className="text-right text-xs md:text-sm">
               Dirección
             </Label>
-            <Input id="address" value={locationState.address} onChange={handleChange} placeholder="Dirección" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Input id="address" value={locationState.address} onChange={handleChange} onBlur={handleBlur} placeholder="Dirección" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['address'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['address']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="postalCode" className="text-right text-xs md:text-sm">
               C.Postal
             </Label>
-            <Input id="postalCode" value={locationState.postalCode} onChange={handleChange} placeholder="Código postal" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Input id="postalCode" value={locationState.postalCode} onChange={handleChange} onBlur={handleBlur} placeholder="Código postal" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['postalCode'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['postalCode']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="city" className="text-right text-xs md:text-sm">
               Ciudad
             </Label>
-            <Input id="city" value={locationState.city} onChange={handleChange} placeholder="Ciudad" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Input id="city" value={locationState.city} onChange={handleChange} onBlur={handleBlur} placeholder="Ciudad" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['city'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['city']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="countryCode" className="text-right text-xs md:text-sm">
               Pais
             </Label>
-            <Input id="countryCode" value={locationState.countryCode} onChange={handleChange} placeholder="por ejemplo: ES, US, IT, ..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Input id="countryCode" value={locationState.countryCode} onChange={handleChange} onBlur={handleBlur} placeholder="por ejemplo: ES, US, IT, ..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['countryCode'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['countryCode']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="region" className="text-right text-xs md:text-sm">
               Region
             </Label>
-            <Input id="region" value={locationState.region} onChange={handleChange} placeholder="Región" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Input id="region" value={locationState.region} onChange={handleChange} onBlur={handleBlur} placeholder="Región" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['region'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['region']}</p>}
           </div>
         </div>

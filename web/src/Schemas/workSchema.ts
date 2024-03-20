@@ -8,7 +8,7 @@ export const WorkBaseSchema = z.object(
     location: z.string({ required_error: 'Lugar obligatorio' }).min(1, 'Lugar obligatorio'),
     description: z.string({ required_error: 'Descripción obligatoria' }).min(1, 'Descripción obligatoria'),
     position: z.string({ required_error: 'Posición obligatoria' }).min(1, 'Posición obligatoria'),
-    url: z.string().url({ message: 'url inválida' }).optional(),
+    url: z.string().url({ message: 'url inválida' }).nullable().optional().or(z.literal('')),
     startDate: z.string({ required_error: 'Fecha desde obligatoria' }).min(1, 'Obligatorio'),
     endDate: z.string().nullable().optional(),
     summary: z.string().optional(),

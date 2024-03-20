@@ -21,11 +21,12 @@ import { es } from 'date-fns/locale';
 export interface InputDateProps {
   date: Date | undefined,
   onSelect: (date: Date | undefined) => void | undefined
-  autoClosed?: boolean
+  autoClosed?: boolean,
+  id?: string,
 }
 
 
-export function InputDate({ date, onSelect, autoClosed = true }: InputDateProps) {
+export function InputDate({ id, date, onSelect, autoClosed = true }: InputDateProps) {
 
   const [selected, setSelected] = React.useState<Date>();
   const [inputValue, setInputValue] = React.useState<string>('');
@@ -42,20 +43,9 @@ export function InputDate({ date, onSelect, autoClosed = true }: InputDateProps)
   const handleInputChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     const date = parse(e.currentTarget.value, 'dd/MM/y', new Date());
     setInputValue(e.currentTarget.value);
-    if (isValid(date)) {
-      setSelected(date);
-      if (onSelect) {
-        onSelect(date)
-      }
-    } else {
-      setSelected(undefined);
-      if (onSelect) {
-        onSelect(undefined)
-      }
-    }
   };
 
-  const handleInputBlur: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+  const handleInputBlur: React.FocusEventHandler<HTMLInputElement | HTMLTextAreaElement> = (e) => {
     const date = parse(e.currentTarget.value, 'dd/MM/y', new Date());
     if (isValid(date)) {
       setInputValue(e.currentTarget.value);
@@ -64,7 +54,6 @@ export function InputDate({ date, onSelect, autoClosed = true }: InputDateProps)
         onSelect(date)
       }
     } else {
-      setInputValue('');
       setSelected(undefined);
       if (onSelect) {
         onSelect(undefined)
@@ -88,7 +77,6 @@ export function InputDate({ date, onSelect, autoClosed = true }: InputDateProps)
       if (autoClosed) {
         closePopper();
       }
-
     } else {
       setInputValue('');
       onSelect(undefined)
@@ -101,7 +89,7 @@ export function InputDate({ date, onSelect, autoClosed = true }: InputDateProps)
 
   return (
     <div className="flex flex-row gap-1 items-center">
-      <Input
+      <Input id={id}
         className="w-30 text-xs md:text-sm"
         type="text"
         // placeholder={format(new Date(), 'dd/MM/y')}
@@ -109,6 +97,7 @@ export function InputDate({ date, onSelect, autoClosed = true }: InputDateProps)
         value={inputValue}
         onChange={handleInputChange}
         onBlur={handleInputBlur}
+        maxLength={10}
       />
       <Popover open={isPopperOpen} onOpenChange={setIsPopperOpen} defaultOpen={isPopperOpen}>
         <PopoverTrigger asChild>

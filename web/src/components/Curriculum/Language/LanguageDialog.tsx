@@ -21,6 +21,7 @@ import { createUserSection, updateUserSection } from '@/services/apiService'
 import { useRefreshStore } from '@/store/refreshStore'
 import { LoadIndicator } from '@/components/LoadIndicator'
 import { type ChangeEvent } from "react"
+import { z } from 'astro/zod'
 
 interface LanguageDialogProps {
   editMode: boolean,
@@ -34,29 +35,15 @@ export function LanguageDialog({ editMode = false, initialState = undefined }: L
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
   const { notifyError, notifySuccess } = useNotify()
   const [languageState, setLanguageState] = useState<Language>({} as Language)
+  const [validateOnBlur, setValidateOnBlur] = useState(false)
 
   const { setLanguageStamp } = useRefreshStore(state => state)
-
-  useEffect(() => {
-    setLoading(false)
-    setErrors({})
-  }, [])
 
   useEffect(() => {
     const userId = (user) ? user.id : -1
     const newLanguage = { ...languageState, userId }
     setLanguageState(newLanguage);
   }, [user])
-
-  useEffect(() => {
-    if (editMode === true) {
-      if (initialState) {
-        setLanguageState(initialState)
-      } else {
-        throw new Error("El estado inicial es necesario en modo edición del componente")
-      }
-    }
-  }, [])
 
   useEffect(() => {
     if (editMode === true) {
@@ -74,11 +61,44 @@ export function LanguageDialog({ editMode = false, initialState = undefined }: L
   useEffect(() => {
     setLoading(false)
     setErrors({})
+    setValidateOnBlur(false)
   }, [isOpen])
 
   const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const newLanguage = { ...languageState, [event.target.id]: event.target.value }
     setLanguageState(newLanguage);
+  }
+
+  const validateField = (field: string, value: unknown) => {
+    const newErrors = { ...errors }
+
+    const partialSchema = LanguageSchema.pick({ [field]: LanguageSchema.shape[field as keyof typeof LanguageSchema.shape] });
+
+    // Realiza la validación con Zod
+    partialSchema.parseAsync({ [field]: value })
+      .then(() => {
+        if (newErrors[field] !== '') {
+          newErrors[field] = '';
+          setErrors(newErrors)
+        }
+      })
+      .catch((error) => {
+        if (error instanceof z.ZodError) {
+          error.errors.forEach((err) => {
+            newErrors[err.path[0]] = err.message;
+          });
+        } else {
+          newErrors['generic'] = error
+        }
+        setErrors(newErrors)
+      })
+  }
+
+  const handleBlur: React.FocusEventHandler<HTMLInputElement | HTMLTextAreaElement> = (event) => {
+    if (!validateOnBlur) return
+    const { id, name, value } = event.target;
+    const field = (id) ? id : (name ? name : '')
+    validateField(field, value)
   }
 
   async function createAsync(model: unknown) {
@@ -113,6 +133,7 @@ export function LanguageDialog({ editMode = false, initialState = undefined }: L
 
   const handleSave = async () => {
     setLoading(true)
+    setValidateOnBlur(true)
 
     if (token === 'not-loaded')
       return
@@ -172,14 +193,14 @@ export function LanguageDialog({ editMode = false, initialState = undefined }: L
             <Label htmlFor="language" className="text-right text-xs md:text-sm">
               Idioma
             </Label>
-            <Input id="language" value={languageState.language} onChange={handleChange} placeholder="Español, Inglés, ..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Input id="language" value={languageState.language} onChange={handleChange} onBlur={handleBlur} placeholder="Español, Inglés, ..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['language'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['language']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="fluency" className="text-right text-xs md:text-sm">
               Nivel
             </Label>
-            <Input id="fluency" value={languageState.fluency} onChange={handleChange} placeholder="Alto, nativo, fluido, ..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Input id="fluency" value={languageState.fluency} onChange={handleChange} onBlur={handleBlur} placeholder="Alto, nativo, fluido, ..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['fluency'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['fluency']}</p>}
           </div>
         </div>

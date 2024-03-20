@@ -22,6 +22,8 @@ import { useRefreshStore } from '@/store/refreshStore'
 import { LoadIndicator } from '@/components/LoadIndicator'
 import { type ChangeEvent } from "react"
 import { Textarea } from "@/components/ui/textarea"
+import { z } from 'astro/zod'
+import { InterestSchema } from "@/Schemas/interestSchema"
 
 interface ReferenceDialogProps {
   editMode: boolean,
@@ -35,29 +37,16 @@ export function ReferenceDialog({ editMode = false, initialState = undefined }: 
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
   const { notifyError, notifySuccess } = useNotify()
   const [referenceState, setReferenceState] = useState<Reference>({} as Reference)
+  const [validateOnBlur, setValidateOnBlur] = useState(false)
 
   const { setReferenceStamp } = useRefreshStore(state => state)
 
-  useEffect(() => {
-    setLoading(false)
-    setErrors({})
-  }, [])
 
   useEffect(() => {
     const userId = (user) ? user.id : -1
     const newReference = { ...referenceState, userId }
     setReferenceState(newReference);
   }, [user])
-
-  useEffect(() => {
-    if (editMode === true) {
-      if (initialState) {
-        setReferenceState(initialState)
-      } else {
-        throw new Error("El estado inicial es necesario en modo edición del componente")
-      }
-    }
-  }, [])
 
   useEffect(() => {
     if (editMode === true) {
@@ -75,11 +64,44 @@ export function ReferenceDialog({ editMode = false, initialState = undefined }: 
   useEffect(() => {
     setLoading(false)
     setErrors({})
+    setValidateOnBlur(false)
   }, [isOpen])
 
   const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const newReference = { ...referenceState, [event.target.id]: event.target.value }
     setReferenceState(newReference);
+  }
+
+  const validateField = (field: string, value: unknown) => {
+    const newErrors = { ...errors }
+
+    const partialSchema = InterestSchema.pick({ [field]: InterestSchema.shape[field as keyof typeof InterestSchema.shape] });
+
+    // Realiza la validación con Zod
+    partialSchema.parseAsync({ [field]: value })
+      .then(() => {
+        if (newErrors[field] !== '') {
+          newErrors[field] = '';
+          setErrors(newErrors)
+        }
+      })
+      .catch((error) => {
+        if (error instanceof z.ZodError) {
+          error.errors.forEach((err) => {
+            newErrors[err.path[0]] = err.message;
+          });
+        } else {
+          newErrors['generic'] = error
+        }
+        setErrors(newErrors)
+      })
+  }
+
+  const handleBlur: React.FocusEventHandler<HTMLInputElement | HTMLTextAreaElement> = (event) => {
+    if (!validateOnBlur) return
+    const { id, name, value } = event.target;
+    const field = (id) ? id : (name ? name : '')
+    validateField(field, value)
   }
 
   async function createAsync(model: unknown) {
@@ -114,6 +136,7 @@ export function ReferenceDialog({ editMode = false, initialState = undefined }: 
 
   const handleSave = async () => {
     setLoading(true)
+    setValidateOnBlur(true)
 
     if (token === 'not-loaded')
       return
@@ -173,14 +196,14 @@ export function ReferenceDialog({ editMode = false, initialState = undefined }: 
             <Label htmlFor="name" className="text-right text-xs md:text-sm">
               Autor
             </Label>
-            <Input id="name" value={referenceState.name} onChange={handleChange} placeholder="Nombre completo" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Input id="name" value={referenceState.name} onChange={handleChange} onBlur={handleBlur} placeholder="Nombre completo" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['name'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['name']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="reference" className="text-right text-xs md:text-sm">
               Referencia
             </Label>
-            <Textarea id="reference" value={referenceState.reference} onChange={handleChange} placeholder="Referencia del autor" className="col-span-3 text-xs md:text-sm h-52" autoComplete="off" />
+            <Textarea id="reference" value={referenceState.reference} onChange={handleChange} onBlur={handleBlur} placeholder="Referencia del autor" className="col-span-3 text-xs md:text-sm h-52" autoComplete="off" />
             {errors['reference'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['reference']}</p>}
           </div>
         </div>

@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label"
 import { Plus, Edit } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useProfileStore } from '@/store/profileStore'
-import { type EducationCreate, EducationSchema, EducationCreateSchema, type Education } from '@/Schemas/educationSchema'
+import { type EducationCreate, EducationSchema, EducationCreateSchema, EducationBaseSchema, type Education } from '@/Schemas/educationSchema'
 import { navigate } from "astro/virtual-modules/transitions-router.js"
 import { useNotify } from '@/hooks/useNotify'
 import { validateSchemaAsync } from '@/lib/validations'
@@ -26,6 +26,8 @@ import { type SelectSingleEventHandler } from 'react-day-picker'
 import MultipleSelector, { type Option } from "@/components/ui/multiple-selector"
 import { dateUtcToIso8601, localIso8601ToUtcDate } from '@/lib/dates'
 import { InputDate } from "@/components/ui/InputDate"
+import { z } from 'astro/zod'
+
 
 interface EducationDialogProps {
   editMode: boolean,
@@ -40,7 +42,7 @@ export function EducationDialog({ editMode = false, initialState = undefined }: 
   const { notifyError, notifySuccess } = useNotify()
   const [educationState, setEducationState] = useState<Education>({} as Education)
   const [courses, setCourses] = useState<Option[]>([])
-
+  const [validateOnBlur, setValidateOnBlur] = useState(false)
   const { setEducationStamp } = useRefreshStore(state => state)
 
   useEffect(() => {
@@ -52,6 +54,7 @@ export function EducationDialog({ editMode = false, initialState = undefined }: 
   useEffect(() => {
     setLoading(false)
     setErrors({})
+    setValidateOnBlur(false)
   }, [isOpen])
 
   useEffect(() => {
@@ -80,12 +83,50 @@ export function EducationDialog({ editMode = false, initialState = undefined }: 
     const newEducation = structuredClone(educationState)
     newEducation.startDate = date ? dateUtcToIso8601(date) : ''
     setEducationState(newEducation);
+    if (validateOnBlur) {
+      validateField("startDate", newEducation.startDate)
+    }
   }
 
   const handleSelectEndDate = (date: Date | undefined) => {
     const newEducation = structuredClone(educationState)
     newEducation.endDate = date ? dateUtcToIso8601(date) : ''
     setEducationState(newEducation);
+    if (validateOnBlur) {
+      validateField("endDate", newEducation.endDate)
+    }
+  }
+
+  const validateField = (field: string, value: unknown) => {
+    const newErrors = { ...errors }
+
+    const partialSchema = EducationBaseSchema.pick({ [field]: EducationBaseSchema.shape[field as keyof typeof EducationBaseSchema.shape] });
+
+    // Realiza la validación con Zod
+    partialSchema.parseAsync({ [field]: value })
+      .then(() => {
+        if (newErrors[field] !== '') {
+          newErrors[field] = '';
+          setErrors(newErrors)
+        }
+      })
+      .catch((error) => {
+        if (error instanceof z.ZodError) {
+          error.errors.forEach((err) => {
+            newErrors[err.path[0]] = err.message;
+          });
+        } else {
+          newErrors['generic'] = error
+        }
+        setErrors(newErrors)
+      })
+  }
+
+  const handleBlur: React.FocusEventHandler<HTMLInputElement | HTMLTextAreaElement> = (event) => {
+    if (!validateOnBlur) return
+    const { id, name, value } = event.target;
+    const field = (id) ? id : (name ? name : '')
+    validateField(field, value)
   }
 
   async function createAsync(model: unknown) {
@@ -120,6 +161,7 @@ export function EducationDialog({ editMode = false, initialState = undefined }: 
 
   const handleSave = async () => {
     setLoading(true)
+    setValidateOnBlur(true)
 
     if (token === 'not-loaded')
       return
@@ -181,28 +223,28 @@ export function EducationDialog({ editMode = false, initialState = undefined }: 
             <Label htmlFor="institution" className="text-right text-xs md:text-sm">
               Institución
             </Label>
-            <Input id="institution" value={educationState.institution} onChange={handleChange} placeholder="Universidad de ..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Input id="institution" value={educationState.institution} onChange={handleChange} onBlur={handleBlur} placeholder="Universidad de ..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['institution'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['institution']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="url" className="text-right text-xs md:text-sm">
               Url
             </Label>
-            <Input id="url" value={educationState.url} onChange={handleChange} placeholder="https://..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Input id="url" value={educationState.url || ''} onChange={handleChange} onBlur={handleBlur} placeholder="https://..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['url'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['url']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="area" className="text-right text-xs md:text-sm">
               Área
             </Label>
-            <Input id="area" value={educationState.area} onChange={handleChange} placeholder="Matemáticas, Informática, ..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Input id="area" value={educationState.area} onChange={handleChange} onBlur={handleBlur} placeholder="Matemáticas, Informática, ..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['area'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['area']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="studyType" className="text-right text-xs md:text-sm">
               Tipo
             </Label>
-            <Input id="studyType" value={educationState.studyType} onChange={handleChange} placeholder="Licenciado en matemáticas, Ingeniero ..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Input id="studyType" value={educationState.studyType} onChange={handleChange} onBlur={handleBlur} placeholder="Licenciado en matemáticas, Ingeniero ..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['studyType'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['studyType']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
@@ -223,7 +265,7 @@ export function EducationDialog({ editMode = false, initialState = undefined }: 
             <Label htmlFor="score" className="text-right text-xs md:text-sm">
               Calificación
             </Label>
-            <Input id="score" value={educationState.score || ''} onChange={handleChange} placeholder="p.ej: 3.5/4.0, Sobresaliente, ..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Input id="score" value={educationState.score || ''} onChange={handleChange} onBlur={handleBlur} placeholder="p.ej: 3.5/4.0, Sobresaliente, ..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['score'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['score']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">

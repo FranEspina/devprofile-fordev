@@ -8,7 +8,7 @@ const ProjectBaseSchema = z.object(
     description: z.string({ required_error: 'Descripción obligatoria' }).min(1, 'Descripción obligatoria'),
     startDate: z.string({ required_error: 'Fecha desde obligatoria' }).min(1, 'Obligatorio'),
     endDate: z.string().nullable().optional(),
-    url: z.string().url({ message: 'url inválida' }).optional(),
+    url: z.string().url({ message: 'url inválida' }).nullable().optional().or(z.literal('')),
     keywords: z.string().optional(),
     roles: z.string().optional(),
     highlights: z.string().optional(),

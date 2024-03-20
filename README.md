@@ -23,7 +23,8 @@ Web que permite a los usuario logarse y crear una cuenta de desarrollador donde 
 
 # TODO
 - [ ] Validaciones de tamaños máximos en zod
-- [ ] Validaciones de fecha inicio y fin pendientes en algunos esquemas
+- [ ] Las validaciones deberían estar al perder el foco los campos del formulario no sólo al grabar
+- [x] Validaciones de fecha inicio y fin pendientes en algunos esquemas
 - [ ] FIX: al eliminar el último elemento de una sección lo borra en bd pero sigue en pantalla
 - [ ] Cambiar todas las secciones para que compartan el formulario de Edición y creación como se hizo posteriormente con las nuevas
 - [ ] Revisar el scroll de los modales cunando la sección no entra verticalmente 
@@ -37,7 +38,7 @@ Web que permite a los usuario logarse y crear una cuenta de desarrollador donde 
 - [ ] Revisar que la(s) plantilla(s) no da(n) un error no controlado cuando le(s) falta un campo
 - [ ] Permitir importar las secciones del cv según el esquema
 - [x] Permitir exportar el cv a formato json segun el esquema
-- [ ] FIX. Revisar el esquema, las fechas y arrays se están exportando en un formato que no cumple el esquema
+- [x] FIX. Revisar el esquema, las fechas y arrays se están exportando en un formato que no cumple el esquema
 - [ ] Incluir un username en el registro del usuario y que sea único
 - [ ] poder perdir las secciones públicas por 'username' y no por id de usuario
 - [ ] Crear gestiones de aplicaciones asociadas al usuario para exponer una api_key

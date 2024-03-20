@@ -7,8 +7,7 @@ import { getUserSection, deleteUserSection, type UserSection } from '@/services/
 import { Button } from "@/components/ui/button"
 import { Edit, Moon, Trash } from 'lucide-react'
 import { useRefreshStore } from "@/store/refreshStore"
-import { EditBasicDialog } from '@/components/Curriculum/Basic/EditBasicDialog'
-import { CreateBasicDialog } from '@/components/Curriculum/Basic/CreateBasicDialog'
+import { BasicDialog } from '@/components/Curriculum/Basic/BasicDialog'
 
 import { LoadIndicator } from "@/components/LoadIndicator"
 import { AlertDialogPrompt } from '@/components/AlertDialogPrompt'
@@ -116,7 +115,7 @@ export function BasicSection() {
               <Trash className="h-3 w-3" />
               <span className="sr-only">Eliminar</span>
             </Button>
-            <EditBasicDialog basic={basics} />
+            <BasicDialog editMode={true} initialState={basics} />
           </div>
         </li>
         <li className="text-start my-4 text-xs md:text-sm text-gray-500 dark:text-gray-300 ">{basics.summary}</li>
@@ -124,7 +123,7 @@ export function BasicSection() {
       {!loading && !basics &&
         <div className="flex flex-row w-full gap-2 items-center">
           <p className="flex-1 text-start text-xs md:text-sm">No existen datos</p>
-          <CreateBasicDialog />
+          <BasicDialog editMode={false} />
         </div>
       }
       <AlertDialogPrompt open={isOpenAlert} setOpen={setIsOpenAlert} onActionClick={deleteRef.current} />

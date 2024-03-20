@@ -15,7 +15,8 @@ const { basic } = Astro.props;
 const { profiles, location }: { profiles: Profile[]; location: Location } =
   basic;
 
-const linkedInfo = profiles.find(({ network }) => network === "LinkedIn");
+const linkedInfo =
+  profiles && profiles.find(({ network }) => network === "LinkedIn");
 const linkedUrl = linkedInfo?.url;
 const printInfo = [basic.email, basic.phone, linkedUrl]
   .filter(Boolean)
@@ -66,27 +67,34 @@ const SOCIAL_ICONS: SocialIcon = {
           )
         }
         {
-          profiles.map(({ network, url, username }) => {
-            let Icon = SOCIAL_ICONS[network];
-            if (!Icon) Icon = GitHub;
+          profiles &&
+            profiles.map(({ network, url, username }) => {
+              let Icon = SOCIAL_ICONS[network];
+              if (!Icon) Icon = GitHub;
 
-            console.log(Icon);
-            return (
-              <a
-                href={url}
-                title={`Visitar el perfil de ${basic.name} en ${network}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Icon />
-              </a>
-            );
-          })
+              console.log(Icon);
+              return (
+                <a
+                  href={url}
+                  title={`Visitar el perfil de ${basic.name} en ${network}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Icon />
+                </a>
+              );
+            })
         }
       </footer>
     </div>
     <figure>
-      <img src={basic.image} alt={basic.name} />
+      {
+        basic.image && basic.image !== "" ? (
+          <img src={basic.image} alt={basic.name} />
+        ) : (
+          ""
+        )
+      }
     </figure>
   </div>
 </Section>

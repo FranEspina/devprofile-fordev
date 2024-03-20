@@ -55,7 +55,7 @@ export function EditWorkDialog({ work }: { work: Work }) {
     setWorkState(newWork);
   }
 
-  const handleSelectStart: SelectSingleEventHandler = (date: Date | undefined) => {
+  const handleSelectStart = (date: Date | undefined) => {
     const newWork = structuredClone(workState)
     newWork.startDate = date ? dateUtcToIso8601(date) : ''
     setWorkState(newWork);

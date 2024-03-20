@@ -9,7 +9,7 @@ import { WorkList } from '@/components/Curriculum/Work/WorkList'
 import { CreateProjectDialog } from "@/components/Curriculum/Project/CreateProjectDialog";
 import { ProjectList } from '@/components/Curriculum/Project/ProjectList'
 
-import { CreateSkillDialog } from "@/components/Curriculum/Skill/CreateSkillDialog";
+import { SkillDialog } from "@/components/Curriculum/Skill/SkillDialog";
 import { SkillList } from '@/components/Curriculum/Skill/SkillList'
 
 import { LocationDialog } from "@/components/Curriculum/Location/LocationDialog";
@@ -71,7 +71,7 @@ export function CurriculumView() {
         <ProjectList />
       </div>
       <div className="flex flex-col justify-start gap-1">
-        <CreateSkillDialog />
+        <SkillDialog editMode={false} />
         <SkillList />
       </div>
       <div className="flex flex-col justify-start gap-1">

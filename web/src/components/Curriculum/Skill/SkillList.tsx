@@ -7,7 +7,7 @@ import { getUserSection, deleteUserSection, type UserSection } from '@/services/
 import { Button } from "@/components/ui/button"
 import { Edit, Moon, Trash } from 'lucide-react'
 import { useRefreshStore } from "@/store/refreshStore"
-import { EditSkillDialog } from '@/components/Curriculum/Skill/EditSkillDialog'
+import { SkillDialog } from '@/components/Curriculum/Skill/SkillDialog'
 import { LoadIndicator } from "@/components/LoadIndicator"
 import { AlertDialogPrompt } from '@/components/AlertDialogPrompt'
 
@@ -101,14 +101,14 @@ export function SkillList() {
       <div className="w-full flex items-center justify-center">
         <LoadIndicator loading={loading} />
       </div>
-      {!loading && <ul>{skills.map(w =>
-        <li key={w.id} className="flex flex-row w-full gap-2 items-center">
-          <p className="flex-1 text-start text-xs md:text-sm">{w.name}</p>
-          <Button variant={"outline"} onClick={() => alertDelete(w.id)}>
+      {!loading && <ul>{skills.map(model =>
+        <li key={model.id} className="flex flex-row w-full gap-2 items-center">
+          <p className="flex-1 text-start text-xs md:text-sm">{model.name}</p>
+          <Button variant={"outline"} onClick={() => alertDelete(model.id)}>
             <Trash className="h-3 w-3" />
-            <span className="sr-only">Eliminar perfil</span>
+            <span className="sr-only">Eliminar compentencia</span>
           </Button>
-          <EditSkillDialog skill={w} />
+          <SkillDialog editMode={true} initialState={model} />
         </li>
       )}</ul>}
       <AlertDialogPrompt open={isOpenAlert} setOpen={setIsOpenAlert} onActionClick={deleteRef.current} />

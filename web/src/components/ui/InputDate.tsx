@@ -102,7 +102,7 @@ export function InputDate({ date, onSelect, autoClosed = true }: InputDateProps)
   return (
     <div className="flex flex-row gap-1 items-center">
       <Input
-        className="w-30"
+        className="w-30 text-xs md:text-sm"
         type="text"
         // placeholder={format(new Date(), 'dd/MM/y')}
         placeholder="dd/mm/yyyy"

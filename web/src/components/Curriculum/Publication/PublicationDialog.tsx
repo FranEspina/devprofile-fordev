@@ -25,6 +25,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { DatePicker } from '@/components/ui/DatePicker'
 import { type SelectSingleEventHandler } from 'react-day-picker'
 import { dateUtcToIso8601, localIso8601ToUtcDate } from '@/lib/dates'
+import { InputDate } from "@/components/ui/InputDate"
 
 
 interface PublicationDialogProps {
@@ -86,9 +87,9 @@ export function PublicationDialog({ editMode = false, initialState = undefined }
     setPublicationState(newPublication);
   }
 
-  const handleSelectDate: SelectSingleEventHandler = (day, selectedDay, activeModifiers, e) => {
+  const handleSelectDate = (date: Date | undefined) => {
     const newPublication = structuredClone(publicationState)
-    newPublication.releaseDate = dateUtcToIso8601(selectedDay)
+    newPublication.releaseDate = date ? dateUtcToIso8601(date) : ''
     setPublicationState(newPublication);
   }
 
@@ -197,7 +198,7 @@ export function PublicationDialog({ editMode = false, initialState = undefined }
             <Label className="text-right text-xs md:text-sm">
               Fecha
             </Label>
-            <DatePicker date={localIso8601ToUtcDate(publicationState.releaseDate)} onSelect={handleSelectDate} />
+            <InputDate date={localIso8601ToUtcDate(publicationState.releaseDate)} onSelect={handleSelectDate} />
             {errors['releaseDate'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['releaseDate']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">

@@ -25,6 +25,7 @@ import { type SelectSingleEventHandler } from 'react-day-picker'
 import { LoadIndicator } from '@/components/LoadIndicator'
 import MultipleSelector, { type Option } from '@/components/ui/multiple-selector';
 import { dateUtcToIso8601, localIso8601ToUtcDate } from '@/lib/dates'
+import { InputDate } from "@/components/ui/InputDate"
 
 export function EditProjectDialog({ project }: { project: Project }) {
   const [loading, setLoading] = useState(false)
@@ -62,15 +63,15 @@ export function EditProjectDialog({ project }: { project: Project }) {
     setProjectState(newProject);
   }
 
-  const handleSelectStart: SelectSingleEventHandler = (day, selectedDay, activeModifiers, e) => {
+  const handleSelectStart = (date: Date | undefined) => {
     const newProject = structuredClone(projectState)
-    newProject.startDate = dateUtcToIso8601(selectedDay)
+    newProject.startDate = (date) ? dateUtcToIso8601(date) : ''
     setProjectState(newProject);
   }
 
-  const handleSelectEnd: SelectSingleEventHandler = (day, selectedDay, activeModifiers, e) => {
+  const handleSelectEnd = (date: Date | undefined) => {
     const newProject = structuredClone(projectState)
-    newProject.endDate = (day) ? dateUtcToIso8601(day) : ''
+    newProject.endDate = (date) ? dateUtcToIso8601(date) : ''
     setProjectState(newProject);
   }
 
@@ -170,7 +171,7 @@ export function EditProjectDialog({ project }: { project: Project }) {
             <Label className="text-right text-xs md:text-sm">
               Desde
             </Label>
-            <DatePicker date={localIso8601ToUtcDate(projectState.startDate)} onSelect={handleSelectStart} />
+            <InputDate date={localIso8601ToUtcDate(projectState.startDate)} onSelect={handleSelectStart} />
             {errors['startDate'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['startDate']}</p>}
 
           </div>
@@ -178,7 +179,7 @@ export function EditProjectDialog({ project }: { project: Project }) {
             <Label className="text-right text-xs md:text-sm">
               Hasta
             </Label>
-            <DatePicker date={localIso8601ToUtcDate(projectState.endDate)} onSelect={handleSelectEnd} />
+            <InputDate date={localIso8601ToUtcDate(projectState.endDate)} onSelect={handleSelectEnd} />
             {errors['endDate'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['endDate']}</p>}
 
           </div>

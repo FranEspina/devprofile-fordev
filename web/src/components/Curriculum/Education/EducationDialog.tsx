@@ -25,6 +25,7 @@ import { DatePicker } from '@/components/ui/DatePicker'
 import { type SelectSingleEventHandler } from 'react-day-picker'
 import MultipleSelector, { type Option } from "@/components/ui/multiple-selector"
 import { dateUtcToIso8601, localIso8601ToUtcDate } from '@/lib/dates'
+import { InputDate } from "@/components/ui/InputDate"
 
 interface EducationDialogProps {
   editMode: boolean,
@@ -75,16 +76,15 @@ export function EducationDialog({ editMode = false, initialState = undefined }: 
     setEducationState(newEducation);
   }
 
-  const handleSelectStartDate: SelectSingleEventHandler = (day, selectedDay, activeModifiers, e) => {
+  const handleSelectStartDate = (date: Date | undefined) => {
     const newEducation = structuredClone(educationState)
-    newEducation.startDate = dateUtcToIso8601(selectedDay)
+    newEducation.startDate = date ? dateUtcToIso8601(date) : ''
     setEducationState(newEducation);
   }
 
-  const handleSelectEndDate: SelectSingleEventHandler = (day, selectedDay, activeModifiers, e) => {
+  const handleSelectEndDate = (date: Date | undefined) => {
     const newEducation = structuredClone(educationState)
-    const fechaIso = (day) ? dateUtcToIso8601(day) : ''
-    newEducation.endDate = fechaIso
+    newEducation.endDate = date ? dateUtcToIso8601(date) : ''
     setEducationState(newEducation);
   }
 
@@ -209,14 +209,14 @@ export function EducationDialog({ editMode = false, initialState = undefined }: 
             <Label className="text-right text-xs md:text-sm">
               Desde
             </Label>
-            <DatePicker date={localIso8601ToUtcDate(educationState.startDate)} onSelect={handleSelectStartDate} />
+            <InputDate date={localIso8601ToUtcDate(educationState.startDate)} onSelect={handleSelectStartDate} />
             {errors['startDate'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['startDate']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-right text-xs md:text-sm">
               Hasta
             </Label>
-            <DatePicker date={localIso8601ToUtcDate(educationState.endDate)} onSelect={handleSelectEndDate} />
+            <InputDate date={localIso8601ToUtcDate(educationState.endDate)} onSelect={handleSelectEndDate} />
             {errors['endDate'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['endDate']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">

@@ -25,6 +25,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { DatePicker } from '@/components/ui/DatePicker'
 import { type SelectSingleEventHandler } from 'react-day-picker'
 import { dateUtcToIso8601, localIso8601ToUtcDate } from '@/lib/dates'
+import { InputDate } from "@/components/ui/InputDate"
 
 
 interface CertificateDialogProps {
@@ -86,9 +87,9 @@ export function CertificateDialog({ editMode = false, initialState = undefined }
     setCertificateState(newCertificate);
   }
 
-  const handleSelectDate: SelectSingleEventHandler = (day, selectedDay, activeModifiers, e) => {
+  const handleSelectDate = (date: Date | undefined) => {
     const newCertificate = structuredClone(certificateState)
-    newCertificate.date = dateUtcToIso8601(selectedDay)
+    newCertificate.date = date ? dateUtcToIso8601(date) : ''
     setCertificateState(newCertificate);
   }
 
@@ -190,7 +191,7 @@ export function CertificateDialog({ editMode = false, initialState = undefined }
             <Label className="text-right text-xs md:text-sm">
               Fecha
             </Label>
-            <DatePicker date={localIso8601ToUtcDate(certificateState.date)} onSelect={handleSelectDate} />
+            <InputDate date={localIso8601ToUtcDate(certificateState.date)} onSelect={handleSelectDate} />
             {errors['date'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['date']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">

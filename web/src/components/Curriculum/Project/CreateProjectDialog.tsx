@@ -24,6 +24,7 @@ import { useRefreshStore } from '@/store/refreshStore'
 import { LoadIndicator } from '@/components/LoadIndicator'
 import MultipleSelector, { type Option } from '@/components/ui/multiple-selector';
 import { dateUtcToIso8601, localIso8601ToUtcDate } from '@/lib/dates'
+import { InputDate } from "@/components/ui/InputDate"
 
 export function CreateProjectDialog() {
   const [loading, setLoading] = useState(false)
@@ -169,7 +170,7 @@ export function CreateProjectDialog() {
             <Label className="text-right text-xs md:text-sm">
               Desde
             </Label>
-            <DatePicker date={localIso8601ToUtcDate(startDate)} onSelect={(day, selectedDay, activeModifiers, e) => setStartDate(dateUtcToIso8601(selectedDay))} />
+            <InputDate date={localIso8601ToUtcDate(startDate)} onSelect={(date) => setStartDate((date) ? dateUtcToIso8601(date) : '')} />
             {errors['startDate'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['startDate']}</p>}
 
           </div>
@@ -177,7 +178,7 @@ export function CreateProjectDialog() {
             <Label className="text-right text-xs md:text-sm">
               Hasta
             </Label>
-            <DatePicker date={localIso8601ToUtcDate(endDate)} onSelect={(day, selectedDay, activeModifiers, e) => setEndDate((day) ? dateUtcToIso8601(day) : '')} />
+            <InputDate date={localIso8601ToUtcDate(endDate)} onSelect={(date) => setEndDate((date) ? dateUtcToIso8601(date) : '')} />
             {errors['endDate'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['endDate']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">

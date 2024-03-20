@@ -26,6 +26,7 @@ import { type SelectSingleEventHandler } from 'react-day-picker'
 import MultipleSelector, { type Option } from "@/components/ui/multiple-selector"
 import { Textarea } from "@/components/ui/textarea"
 import { dateUtcToIso8601, localIso8601ToUtcDate } from '@/lib/dates'
+import { InputDate } from "@/components/ui/InputDate"
 
 
 interface VolunteerDialogProps {
@@ -92,15 +93,15 @@ export function VolunteerDialog({ editMode = false, initialState = undefined }: 
     setVolunteerState(newVolunteer);
   }
 
-  const handleSelectStartDate: SelectSingleEventHandler = (day, selectedDay, activeModifiers, e) => {
+  const handleSelectStartDate = (date: Date | undefined) => {
     const newVolunteer = structuredClone(volunteerState)
-    newVolunteer.startDate = dateUtcToIso8601(selectedDay)
+    newVolunteer.startDate = date ? dateUtcToIso8601(date) : ''
     setVolunteerState(newVolunteer);
   }
 
-  const handleSelectEndDate: SelectSingleEventHandler = (day, selectedDay, activeModifiers, e) => {
+  const handleSelectEndDate = (date: Date | undefined) => {
     const newVolunteer = structuredClone(volunteerState)
-    newVolunteer.endDate = day ? dateUtcToIso8601(day) : ''
+    newVolunteer.endDate = date ? dateUtcToIso8601(date) : ''
     setVolunteerState(newVolunteer);
   }
 
@@ -218,14 +219,14 @@ export function VolunteerDialog({ editMode = false, initialState = undefined }: 
             <Label className="text-right text-xs md:text-sm">
               Desde
             </Label>
-            <DatePicker date={localIso8601ToUtcDate(volunteerState.startDate)} onSelect={handleSelectStartDate} />
+            <InputDate date={localIso8601ToUtcDate(volunteerState.startDate)} onSelect={handleSelectStartDate} />
             {errors['startDate'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['startDate']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-right text-xs md:text-sm">
               Hasta
             </Label>
-            <DatePicker date={localIso8601ToUtcDate(volunteerState.endDate)} onSelect={handleSelectEndDate} />
+            <InputDate date={localIso8601ToUtcDate(volunteerState.endDate)} onSelect={handleSelectEndDate} />
             {errors['endDate'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['endDate']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">

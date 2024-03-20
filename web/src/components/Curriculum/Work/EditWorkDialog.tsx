@@ -25,6 +25,7 @@ import { type SelectSingleEventHandler } from 'react-day-picker'
 import { LoadIndicator } from '@/components/LoadIndicator'
 import MultipleSelector, { type Option } from '@/components/ui/multiple-selector';
 import { dateUtcToIso8601, localIso8601ToUtcDate } from '@/lib/dates'
+import { InputDate } from "@/components/ui/InputDate"
 
 export function EditWorkDialog({ work }: { work: Work }) {
   const [loading, setLoading] = useState(false)
@@ -54,15 +55,15 @@ export function EditWorkDialog({ work }: { work: Work }) {
     setWorkState(newWork);
   }
 
-  const handleSelectStart: SelectSingleEventHandler = (day, selectedDay, activeModifiers, e) => {
+  const handleSelectStart: SelectSingleEventHandler = (date: Date | undefined) => {
     const newWork = structuredClone(workState)
-    newWork.startDate = dateUtcToIso8601(selectedDay)
+    newWork.startDate = date ? dateUtcToIso8601(date) : ''
     setWorkState(newWork);
   }
 
-  const handleSelectEnd: SelectSingleEventHandler = (day, selectedDay, activeModifiers, e) => {
+  const handleSelectEnd = (date: Date | undefined) => {
     const newWork = structuredClone(workState)
-    newWork.endDate = day ? dateUtcToIso8601(day) : ''
+    newWork.endDate = date ? dateUtcToIso8601(date) : ''
     setWorkState(newWork);
   }
 
@@ -182,7 +183,7 @@ export function EditWorkDialog({ work }: { work: Work }) {
             <Label className="text-right text-xs md:text-sm">
               Desde
             </Label>
-            <DatePicker date={localIso8601ToUtcDate(workState.startDate)} onSelect={handleSelectStart} />
+            <InputDate date={localIso8601ToUtcDate(workState.startDate)} onSelect={handleSelectStart} />
             {errors['startDate'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['startDate']}</p>}
 
           </div>
@@ -190,7 +191,7 @@ export function EditWorkDialog({ work }: { work: Work }) {
             <Label className="text-right text-xs md:text-sm">
               Hasta
             </Label>
-            <DatePicker date={localIso8601ToUtcDate(workState.endDate)} onSelect={handleSelectEnd} />
+            <InputDate date={localIso8601ToUtcDate(workState.endDate)} onSelect={handleSelectEnd} />
             {errors['endDate'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['endDate']}</p>}
 
           </div>

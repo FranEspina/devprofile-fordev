@@ -25,6 +25,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { DatePicker } from '@/components/ui/DatePicker'
 import { type SelectSingleEventHandler } from 'react-day-picker'
 import { dateUtcToIso8601, localIso8601ToUtcDate } from '@/lib/dates'
+import { InputDate } from "@/components/ui/InputDate"
 
 interface AwardDialogProps {
   editMode: boolean,
@@ -85,9 +86,9 @@ export function AwardDialog({ editMode = false, initialState = undefined }: Awar
     setAwardState(newAward);
   }
 
-  const handleSelectDate: SelectSingleEventHandler = (day, selectedDay, activeModifiers, e) => {
+  const handleSelectDate = (date: Date | undefined) => {
     const newAward = structuredClone(awardState)
-    newAward.date = dateUtcToIso8601(selectedDay)
+    newAward.date = date ? dateUtcToIso8601(date) : ''
     setAwardState(newAward);
   }
 
@@ -189,7 +190,7 @@ export function AwardDialog({ editMode = false, initialState = undefined }: Awar
             <Label className="text-right text-xs md:text-sm">
               Fecha
             </Label>
-            <DatePicker date={localIso8601ToUtcDate(awardState.date)} onSelect={handleSelectDate} />
+            <InputDate date={localIso8601ToUtcDate(awardState.date)} onSelect={handleSelectDate} />
             {errors['date'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['date']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">

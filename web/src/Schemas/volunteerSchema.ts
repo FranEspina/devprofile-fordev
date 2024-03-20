@@ -14,7 +14,7 @@ export const VolunteerBaseSchema = z.object({
 })
 
 export const VolunteerSchema = VolunteerBaseSchema
-  .refine(p => (!p.endDate || (p.endDate && p.endDate > p.startDate)),
+  .refine(p => (!p.endDate || (p.endDate && p.endDate >= p.startDate)),
     {
       message: "La fecha fin debe ser mayor o igual que la fecha inicio",
       path: ['endDate']
@@ -23,7 +23,7 @@ export const VolunteerSchema = VolunteerBaseSchema
 
 export const VolunteerCreateSchema = VolunteerBaseSchema.omit({
   id: true,
-}).refine(p => (!p.endDate || (p.endDate && p.endDate > p.startDate)),
+}).refine(p => (!p.endDate || (p.endDate && p.endDate >= p.startDate)),
   {
     message: "La fecha fin debe ser mayor o igual que la fecha inicio",
     path: ['endDate']
@@ -31,7 +31,7 @@ export const VolunteerCreateSchema = VolunteerBaseSchema.omit({
 
 export const VolunteerResumeSchema = VolunteerBaseSchema.extend({
   highlights: z.string().array().optional(),
-}).refine(p => (!p.endDate || (p.endDate && p.endDate > p.startDate)),
+}).refine(p => (!p.endDate || (p.endDate && p.endDate >= p.startDate)),
   {
     message: "La fecha fin debe ser mayor o igual que la fecha inicio",
     path: ['endDate']

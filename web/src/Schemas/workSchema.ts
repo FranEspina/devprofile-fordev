@@ -17,7 +17,7 @@ export const WorkBaseSchema = z.object(
 )
 
 export const WorkSchema = WorkBaseSchema
-  .refine(p => (!p.endDate || (p.endDate && p.endDate > p.startDate)),
+  .refine(p => (!p.endDate || (p.endDate && p.endDate >= p.startDate)),
     {
       message: "La fecha fin debe ser mayor o igual que la fecha inicio",
       path: ['endDate']
@@ -26,7 +26,7 @@ export const WorkSchema = WorkBaseSchema
 export const WorkResumeSchema = WorkBaseSchema.extend({
   highlights: z.string().array().optional(),
 })
-  .refine(p => (!p.endDate || (p.endDate && p.endDate > p.startDate)),
+  .refine(p => (!p.endDate || (p.endDate && p.endDate >= p.startDate)),
     {
       message: "La fecha fin debe ser mayor o igual que la fecha inicio",
       path: ['endDate']
@@ -34,7 +34,7 @@ export const WorkResumeSchema = WorkBaseSchema.extend({
 
 export const WorkCreateSchema = WorkBaseSchema.omit({
   id: true,
-}).refine(p => (!p.endDate || (p.endDate && p.endDate > p.startDate)),
+}).refine(p => (!p.endDate || (p.endDate && p.endDate >= p.startDate)),
   {
     message: "La fecha fin debe ser mayor o igual que la fecha inicio",
     path: ['endDate']

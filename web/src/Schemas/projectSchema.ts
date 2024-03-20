@@ -18,7 +18,7 @@ const ProjectBaseSchema = z.object(
 )
 
 export const ProjectSchema = ProjectBaseSchema
-  .refine(p => (!p.endDate || (p.endDate && p.endDate > p.startDate)),
+  .refine(p => (!p.endDate || (p.endDate && p.endDate >= p.startDate)),
     {
       message: "La fecha fin debe ser mayor o igual que la fecha inicio",
       path: ['endDate']
@@ -26,7 +26,7 @@ export const ProjectSchema = ProjectBaseSchema
 
 export const ProjectCreateSchema = ProjectBaseSchema.omit({
   id: true,
-}).refine(p => (!p.endDate || (p.endDate && p.endDate > p.startDate)),
+}).refine(p => (!p.endDate || (p.endDate && p.endDate >= p.startDate)),
   {
     message: "La fecha fin debe ser mayor o igual que la fecha inicio",
     path: ['endDate']
@@ -50,7 +50,7 @@ export const ProjectResumeSchema = ProjectBaseSchema.extend({
   roles: z.string().array().optional(),
   highlights: z.string().array().optional(),
 })
-  .refine(p => (!p.endDate || (p.endDate && p.endDate > p.startDate)),
+  .refine(p => (!p.endDate || (p.endDate && p.endDate >= p.startDate)),
     {
       message: "La fecha fin debe ser mayor o igual que la fecha inicio",
       path: ['endDate']

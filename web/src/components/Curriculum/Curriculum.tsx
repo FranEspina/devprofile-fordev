@@ -1,6 +1,6 @@
 import { BasicSection } from '@/components/Curriculum/Basic/BasicSection'
 
-import { CreateProfileDialog } from "@/components/Curriculum/Profile/CreateProfileDialog";
+import { ProfileDialog } from './Profile/ProfileDialog';
 import { ProfileList } from "@/components/Curriculum/Profile/ProfileList";
 
 import { CreateWorkDialog } from "@/components/Curriculum/Work/CreateWorkDialog";
@@ -39,6 +39,7 @@ import { EducationList } from '@/components/Curriculum/Education/EducationList'
 import { VolunteerDialog } from '@/components/Curriculum/Volunteer/VolunteerDialog'
 import { VolunteerList } from '@/components/Curriculum/Volunteer/VolunteerList'
 
+
 export function CurriculumView() {
 
 
@@ -58,7 +59,7 @@ export function CurriculumView() {
     < div className="mt-2 w-full flex flex-col md:grid md:grid-cols-2 gap-4" >
 
       <div className="flex flex-col justify-start gap-1">
-        <CreateProfileDialog />
+        <ProfileDialog editMode={false} />
         <ProfileList />
       </div>
       <div className="flex flex-col justify-start gap-1">

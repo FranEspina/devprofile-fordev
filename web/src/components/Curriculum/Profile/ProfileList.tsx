@@ -7,7 +7,7 @@ import { deleteUserSection, type UserSection, getUserSection } from '@/services/
 import { Button } from "@/components/ui/button"
 import { Edit, Moon, Trash } from 'lucide-react'
 import { useRefreshStore } from "@/store/refreshStore"
-import { EditProfileDialog } from '@/components/Curriculum/Profile/EditProfileDialog'
+import { ProfileDialog } from '@/components/Curriculum/Profile/ProfileDialog'
 import { LoadIndicator } from '@/components/LoadIndicator'
 import { AlertDialogPrompt } from '@/components/AlertDialogPrompt'
 
@@ -100,15 +100,15 @@ export function ProfileList() {
       <div className="w-full flex items-center justify-center">
         <LoadIndicator loading={loading} />
       </div>
-      {!loading && <ul>{profiles.map(p =>
-        <li key={p.id} className="flex flex-row w-full gap-2 items-center">
+      {!loading && <ul>{profiles.map(model =>
+        <li key={model.id} className="flex flex-row w-full gap-2 items-center">
 
-          <p className="flex-1 text-start text-xs md:text-sm">{p.network}</p>
-          <Button variant={"outline"} onClick={() => alertDelete(p.id)}>
+          <p className="flex-1 text-start text-xs md:text-sm">{model.network}</p>
+          <Button variant={"outline"} onClick={() => alertDelete(model.id)}>
             <Trash className="h-3 w-3" />
             <span className="sr-only">Eliminar perfil</span>
           </Button>
-          <EditProfileDialog profile={p} />
+          <ProfileDialog editMode={true} initialState={model} />
         </li>
       )}</ul>}
       <AlertDialogPrompt open={isOpenAlert} setOpen={setIsOpenAlert} onActionClick={deleteRef.current} />

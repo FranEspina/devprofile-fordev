@@ -128,7 +128,7 @@ export function CreateBasicDialog() {
       </DialogTrigger>
       <DialogContent className="max-w-[75%]" onInteractOutside={(e) => { e.preventDefault() }}>
         <DialogHeader>
-          <DialogTitle>Añadir proyecto de trabajo</DialogTitle>
+          <DialogTitle>Añadir proyecto</DialogTitle>
           <DialogDescription>
             Añade un nuevo proyecto y guarda cambios cuando finalices.
           </DialogDescription>

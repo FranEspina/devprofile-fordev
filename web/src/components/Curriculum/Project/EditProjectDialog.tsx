@@ -147,7 +147,7 @@ export function EditProjectDialog({ project }: { project: Project }) {
       </DialogTrigger>
       <DialogContent className="max-w-[75%]" onInteractOutside={(e) => { e.preventDefault() }}>
         <DialogHeader>
-          <DialogTitle>Editar proyecto de trabajo</DialogTitle>
+          <DialogTitle>Editar proyecto</DialogTitle>
           <DialogDescription>
             Modifica proyecto y guarda cambios cuando finalices.
           </DialogDescription>
@@ -187,7 +187,7 @@ export function EditProjectDialog({ project }: { project: Project }) {
             <Label htmlFor="description" className="text-right text-xs md:text-sm">
               Descripción
             </Label>
-            <Textarea value={projectState.description} onChange={handleChange} id="description" placeholder="Descripción del proyecto de trabajo" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Textarea value={projectState.description} onChange={handleChange} id="description" placeholder="Descripción del proyecto" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['description'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['description']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">

@@ -142,11 +142,11 @@ export function CreateProjectDialog() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen} modal defaultOpen={isOpen}>
       <DialogTrigger asChild>
-        <Button className="text-xs md:text-sm" variant="outline"><Plus className="mr-1 text-blue-500" />proyecto de trabajo</Button>
+        <Button className="text-xs md:text-sm" variant="outline"><Plus className="mr-1 text-blue-500" />proyecto</Button>
       </DialogTrigger>
       <DialogContent className="max-w-[75%]" onInteractOutside={(e) => { e.preventDefault() }}>
         <DialogHeader>
-          <DialogTitle>Añadir proyecto de trabajo</DialogTitle>
+          <DialogTitle>Añadir proyecto</DialogTitle>
           <DialogDescription>
             Añade un nuevo proyecto y guarda cambios cuando finalices.
           </DialogDescription>
@@ -185,7 +185,7 @@ export function CreateProjectDialog() {
             <Label htmlFor="description" className="text-right text-xs md:text-sm">
               Descripción
             </Label>
-            <Textarea ref={descriptioncInputRef} id="description" placeholder="Descripción del proyecto de trabajo" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Textarea ref={descriptioncInputRef} id="description" placeholder="Descripción del proyecto" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['description'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['description']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">

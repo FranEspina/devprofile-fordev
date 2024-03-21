@@ -51,7 +51,7 @@ export const SignInModal = ({ text = 'Iniciar sesión' }) => {
       var { success, message, token, data } = await login(userForm)
       if (success) {
         setUser(data)
-        setToken(token || '')
+        setToken(token ?? '')
         notifySuccess(message)
         setErrors([])
         setShow(false)

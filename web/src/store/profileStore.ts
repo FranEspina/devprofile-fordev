@@ -21,7 +21,7 @@ export const useProfileStore = create<profileState>()(
       theme: 'not-loaded',
       setUser: (user: apiUserDto | undefined) => {
         set({ user })
-        Cookies.set('id', user?.id?.toString() || '', { secure: true, expires: 7 });
+        Cookies.set('id', user?.id?.toString() ?? '', { secure: true, expires: 7 });
       },
       setToken: (token: string) => {
         set({ token })

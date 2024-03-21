@@ -5,9 +5,9 @@ import { useNotify } from "@/hooks/useNotify"
 import { navigate } from "astro/virtual-modules/transitions-router.js"
 import { getUserSection, deleteUserSection, type UserSection } from '@/services/apiService'
 import { Button } from "@/components/ui/button"
-import { Edit, Moon, Trash } from 'lucide-react'
+import { Trash } from 'lucide-react'
 import { useRefreshStore } from "@/store/refreshStore"
-import { EditProjectDialog } from '@/components/Curriculum/Project/EditProjectDialog'
+import { ProjectDialog } from '@/components/Curriculum/Project/ProjectDialog'
 import { LoadIndicator } from "@/components/LoadIndicator"
 import { AlertDialogPrompt } from '@/components/AlertDialogPrompt'
 
@@ -99,14 +99,14 @@ export function ProjectList() {
       <div className="w-full flex items-center justify-center">
         <LoadIndicator loading={loading} />
       </div>
-      {!loading && <ul>{projects.map(w =>
-        <li key={w.id} className="flex flex-row w-full gap-2 items-center">
-          <p className="flex-1 text-start text-xs md:text-sm">{w.name}</p>
-          <Button variant={"outline"} onClick={() => alertDelete(w.id)}>
+      {!loading && <ul>{projects.map(model =>
+        <li key={model.id} className="flex flex-row w-full gap-2 items-center">
+          <p className="flex-1 text-start text-xs md:text-sm">{model.name}</p>
+          <Button variant={"outline"} onClick={() => alertDelete(model.id)}>
             <Trash className="h-3 w-3" />
             <span className="sr-only">Eliminar proyecto</span>
           </Button>
-          <EditProjectDialog project={w} />
+          <ProjectDialog editMode={true} initialState={model} />
         </li>
       )}</ul>}
       <AlertDialogPrompt open={isOpenAlert} setOpen={setIsOpenAlert} onActionClick={deleteRef.current} />

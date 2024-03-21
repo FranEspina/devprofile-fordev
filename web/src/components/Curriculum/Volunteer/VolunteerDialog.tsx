@@ -46,33 +46,18 @@ export function VolunteerDialog({ editMode = false, initialState = undefined }: 
   const { setVolunteerStamp } = useRefreshStore(state => state)
 
   useEffect(() => {
-    setLoading(false)
-    setErrors({})
-    setValidateOnBlur(false)
-  }, [])
-
-  useEffect(() => {
     const userId = (user) ? user.id : -1
     const newVolunteer = { ...volunteerState, userId }
     setVolunteerState(newVolunteer);
   }, [user])
 
-  useEffect(() => {
-    if (editMode === true) {
-      if (initialState?.highlights) {
-        setHighlights(JSON.parse(initialState.highlights))
-      }
-      if (initialState) {
-        setVolunteerState(initialState)
-      } else {
-        throw new Error("El estado inicial es necesario en modo edición del componente")
-      }
-    }
-  }, [])
 
   useEffect(() => {
     if (editMode === true) {
       if (initialState) {
+        if (initialState?.highlights) {
+          setHighlights(JSON.parse(initialState.highlights))
+        }
         setVolunteerState(initialState)
       } else {
         throw new Error("El estado inicial es necesario en modo edición del componente")
@@ -254,7 +239,7 @@ export function VolunteerDialog({ editMode = false, initialState = undefined }: 
             <Label htmlFor="url" className="text-right text-xs md:text-sm">
               Url
             </Label>
-            <Input id="url" value={volunteerState.url || ''} onChange={handleChange} onBlur={handleBlur} placeholder="https://..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Input id="url" value={volunteerState.url ?? ''} onChange={handleChange} onBlur={handleBlur} placeholder="https://..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['url'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['url']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">

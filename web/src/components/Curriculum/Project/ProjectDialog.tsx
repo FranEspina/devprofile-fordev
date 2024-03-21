@@ -10,52 +10,79 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Textarea } from '@/components/ui/textarea'
-import { DatePicker } from "../../ui/DatePicker"
-import { Edit } from 'lucide-react'
-import { useRef, useState, useEffect, type ChangeEvent } from 'react'
+import { Plus, Edit } from 'lucide-react'
+import { useState, useEffect } from 'react'
 import { useProfileStore } from '@/store/profileStore'
-import { type Project, ProjectSchema } from '@/Schemas/projectSchema'
+import { type ProjectCreate, ProjectSchema, ProjectCreateSchema, type Project, ProjectBaseSchema } from '@/Schemas/projectSchema'
 import { navigate } from "astro/virtual-modules/transitions-router.js"
 import { useNotify } from '@/hooks/useNotify'
 import { validateSchemaAsync } from '@/lib/validations'
-import { updateUserSection } from '@/services/apiService'
+import { createUserSection, updateUserSection } from '@/services/apiService'
 import { useRefreshStore } from '@/store/refreshStore'
-import { type SelectSingleEventHandler } from 'react-day-picker'
 import { LoadIndicator } from '@/components/LoadIndicator'
-import MultipleSelector, { type Option } from '@/components/ui/multiple-selector';
+import { type ChangeEvent } from "react"
+import { DatePicker } from '@/components/ui/DatePicker'
+import { type SelectSingleEventHandler } from 'react-day-picker'
+import MultipleSelector, { type Option } from "@/components/ui/multiple-selector"
+import { Textarea } from "@/components/ui/textarea"
 import { dateUtcToIso8601, localIso8601ToUtcDate } from '@/lib/dates'
 import { InputDate } from "@/components/ui/InputDate"
+import { z } from 'astro/zod'
 
-export function EditProjectDialog({ project }: { project: Project }) {
+interface ProjectDialogProps {
+  editMode: boolean,
+  initialState?: Project
+}
+
+export function ProjectDialog({ editMode = false, initialState = undefined }: ProjectDialogProps) {
   const [loading, setLoading] = useState(false)
   const [isOpen, setIsOpen] = useState<boolean>()
   const { user, token } = useProfileStore(state => state)
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
   const { notifyError, notifySuccess } = useNotify()
+  const [projectState, setProjectState] = useState<Project>({} as Project)
+  const [highlights, setHighlights] = useState<Option[]>([])
+  const [roles, setRoles] = useState<Option[]>([])
+  const [keywords, setKeywords] = useState<Option[]>([])
+
+  const [validateOnBlur, setValidateOnBlur] = useState(false)
   const { setProjectStamp } = useRefreshStore(state => state)
 
-  const [projectState, setProjectState] = useState(project)
+  useEffect(() => {
+    const userId = (user) ? user.id : -1
+    const newProject = { ...projectState, userId }
+    setProjectState(newProject);
+  }, [user])
 
-  const [keywords, setKeywords] = useState<Option[]>([])
-  const [roles, setRoles] = useState<Option[]>([])
-  const [highlights, setHighlights] = useState<Option[]>([])
+  useEffect(() => {
+    if (editMode === true) {
+      if (initialState) {
+        if (initialState?.highlights) {
+          setHighlights(JSON.parse(initialState.highlights))
+        }
+        if (initialState?.roles) {
+          setRoles(JSON.parse(initialState.roles))
+        }
+        if (initialState?.keywords) {
+          setKeywords(JSON.parse(initialState.keywords))
+        }
+        setProjectState(initialState)
+      } else {
+        throw new Error("El estado inicial es necesario en modo edición del componente")
+      }
+    }
+    else {
+      setProjectState({ userId: user?.id } as Project)
+      setHighlights([])
+      setRoles([])
+      setKeywords([])
+    }
+  }, [isOpen])
 
   useEffect(() => {
     setLoading(false)
     setErrors({})
-    setProjectState(project);
-
-    if (project.keywords) {
-      setKeywords(JSON.parse(project.keywords))
-    }
-    if (project.roles) {
-      setRoles(JSON.parse(project.roles))
-    }
-    if (project.highlights) {
-      setHighlights(JSON.parse(project.highlights))
-    }
-
+    setValidateOnBlur(false)
   }, [isOpen])
 
   const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -63,20 +90,90 @@ export function EditProjectDialog({ project }: { project: Project }) {
     setProjectState(newProject);
   }
 
-  const handleSelectStart = (date: Date | undefined) => {
+  const handleSelectStartDate = (date: Date | undefined) => {
     const newProject = structuredClone(projectState)
-    newProject.startDate = (date) ? dateUtcToIso8601(date) : ''
+    newProject.startDate = date ? dateUtcToIso8601(date) : ''
     setProjectState(newProject);
+    if (validateOnBlur) {
+      validateField("startDate", newProject.startDate)
+    }
   }
 
-  const handleSelectEnd = (date: Date | undefined) => {
+  const handleSelectEndDate = (date: Date | undefined) => {
     const newProject = structuredClone(projectState)
-    newProject.endDate = (date) ? dateUtcToIso8601(date) : ''
+    newProject.endDate = date ? dateUtcToIso8601(date) : ''
     setProjectState(newProject);
+    if (validateOnBlur) {
+      validateField("endDate", newProject.endDate)
+    }
+  }
+
+  const validateField = (field: string, value: unknown) => {
+    const newErrors = { ...errors }
+
+    const partialSchema = ProjectBaseSchema.pick({ [field]: ProjectBaseSchema.shape[field as keyof typeof ProjectBaseSchema.shape] });
+
+    // Realiza la validación con Zod
+    partialSchema.parseAsync({ [field]: value })
+      .then(() => {
+        if (newErrors[field] !== '') {
+          newErrors[field] = '';
+          setErrors(newErrors)
+        }
+      })
+      .catch((error) => {
+        if (error instanceof z.ZodError) {
+          error.errors.forEach((err) => {
+            newErrors[err.path[0]] = err.message;
+          });
+        } else {
+          newErrors['generic'] = error
+        }
+        setErrors(newErrors)
+      })
+  }
+
+  const handleBlur: React.FocusEventHandler<HTMLInputElement | HTMLTextAreaElement> = (event) => {
+    if (!validateOnBlur) return
+    const { id, name, value } = event.target;
+    const field = (id) ? id : (name ? name : '')
+    validateField(field, value)
+  }
+
+
+  async function createAsync(model: unknown) {
+    const validated = await validateSchemaAsync<ProjectCreate>(ProjectCreateSchema, model)
+    if (!validated.success || !validated.data) {
+      setErrors(validated.errors)
+      return false
+    }
+    const { success } = await createUserSection<ProjectCreate>("project", validated.data, user?.id || 0, token)
+    if (!success) {
+      const errors: { [key: string]: string } = {}
+      errors['generic'] = 'Error inesperado guardando cambios'
+      setErrors(errors)
+    }
+    return success
+  }
+
+  async function editAsync(model: unknown) {
+    const validated = await validateSchemaAsync<Project>(ProjectSchema, model)
+    if (!validated.success || !validated.data) {
+      setErrors(validated.errors)
+      return false
+    }
+    const { success } = await updateUserSection<Project>("project", validated.data, token)
+    if (!success) {
+      const errors: { [key: string]: string } = {}
+      errors['generic'] = 'Error inesperado guardando cambios'
+      setErrors(errors)
+    }
+    return success
   }
 
   const handleSave = async () => {
     setLoading(true)
+    setValidateOnBlur(true)
 
     if (token === 'not-loaded')
       return
@@ -87,67 +184,50 @@ export function EditProjectDialog({ project }: { project: Project }) {
       )
       return
     }
-
     let project: Project | undefined = structuredClone(projectState)
-    project.keywords = JSON.stringify(keywords)
-    project.roles = JSON.stringify(roles)
     project.highlights = JSON.stringify(highlights)
+    project.roles = JSON.stringify(roles)
+    project.keywords = JSON.stringify(keywords)
 
     try {
+      const success = (editMode === true)
+        ? await editAsync(project)
+        : await createAsync(project)
 
-      const validated = await validateSchemaAsync<Project>(ProjectSchema, project)
-      if (!validated.success) {
-        setErrors(validated.errors)
-        setLoading(false)
-        return
-      }
-
-      setErrors({})
-
-    } catch (error) {
-      const errors: { [key: string]: string } = {}
-      errors['generic'] = 'Error inesperado guardando cambios'
-      setLoading(false)
-      setErrors(errors)
-    }
-
-    try {
-      var { success, message, data } = await updateUserSection<Project>("project", project, token)
       if (success) {
-        notifySuccess(message)
+        notifySuccess('Datos actualizados correctamente')
         setErrors({})
         setProjectStamp(Date.now())
         setIsOpen(false)
         return
       }
-      else {
-        const errors: { [key: string]: string } = {}
-        errors['generic'] = message
-        setErrors(errors)
-      }
-    }
-    catch (error) {
-      console.log(error)
+    } catch (error) {
       const errors: { [key: string]: string } = {}
-      errors['generic'] = "Error inesperado actualizando proyecto"
+      errors['generic'] = 'Error inesperado validando cambios'
       setErrors(errors)
     }
     finally {
       setLoading(false)
     }
+
   }
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen} modal defaultOpen={isOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">
-          <Edit className="h-3 w-3" />
-          <span className="sr-only">Editar perfil</span>
-        </Button>
+        {(editMode === true)
+          ? <Button variant="outline">
+            <Edit className="h-3 w-3" />
+            <span className="sr-only">Editar</span>
+          </Button>
+          : <Button className="text-xs md:text-sm" variant="outline">
+            <Plus className="mr-1 text-blue-500" />Voluntariado
+          </Button>
+        }
       </DialogTrigger>
       <DialogContent className="max-w-[75%]" onInteractOutside={(e) => { e.preventDefault() }}>
         <DialogHeader>
-          <DialogTitle>Editar proyecto</DialogTitle>
+          <DialogTitle>{(editMode === true) ? 'Editar' : 'Añadir'} proyecto</DialogTitle>
           <DialogDescription>
             Modifica proyecto y guarda cambios cuando finalices.
           </DialogDescription>
@@ -157,21 +237,21 @@ export function EditProjectDialog({ project }: { project: Project }) {
             <Label htmlFor="name" className="text-right text-xs md:text-sm">
               Proyecto
             </Label>
-            <Input id="name" value={projectState.name} onChange={handleChange} placeholder="Título del proyecto" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Input id="name" value={projectState.name} onChange={handleChange} onBlur={handleBlur} placeholder="Título del proyecto" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['name'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['name']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="url" className="text-right text-xs md:text-sm">
               Url
             </Label>
-            <Input value={projectState.url} onChange={handleChange} id="url" placeholder="https://..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Input value={projectState.url ?? ''} onChange={handleChange} onBlur={handleBlur} id="url" placeholder="https://..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['url'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['url']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-right text-xs md:text-sm">
               Desde
             </Label>
-            <InputDate date={localIso8601ToUtcDate(projectState.startDate)} onSelect={handleSelectStart} />
+            <InputDate date={localIso8601ToUtcDate(projectState.startDate)} onSelect={handleSelectStartDate} />
             {errors['startDate'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['startDate']}</p>}
 
           </div>
@@ -179,7 +259,7 @@ export function EditProjectDialog({ project }: { project: Project }) {
             <Label className="text-right text-xs md:text-sm">
               Hasta
             </Label>
-            <InputDate date={localIso8601ToUtcDate(projectState.endDate)} onSelect={handleSelectEnd} />
+            <InputDate date={localIso8601ToUtcDate(projectState.endDate)} onSelect={handleSelectEndDate} />
             {errors['endDate'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['endDate']}</p>}
 
           </div>
@@ -187,21 +267,21 @@ export function EditProjectDialog({ project }: { project: Project }) {
             <Label htmlFor="description" className="text-right text-xs md:text-sm">
               Descripción
             </Label>
-            <Textarea value={projectState.description} onChange={handleChange} id="description" placeholder="Descripción del proyecto" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Textarea value={projectState.description} onChange={handleChange} onBlur={handleBlur} id="description" placeholder="Descripción del proyecto" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['description'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['description']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="entity" className="text-right text-xs md:text-sm">
               Entidad
             </Label>
-            <Input value={projectState.entity} onChange={handleChange} id="entity" placeholder="entidad, empresa, ..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Input value={projectState.entity} onChange={handleChange} onBlur={handleBlur} id="entity" placeholder="entidad, empresa, ..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['entity'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['entity']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="type" className="text-right text-xs md:text-sm">
               Tipo
             </Label>
-            <Input value={projectState.type} onChange={handleChange} id="type" placeholder="desarrollo, conferencia, charla,..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Input value={projectState.type} onChange={handleChange} onBlur={handleBlur} id="type" placeholder="desarrollo, conferencia, charla,..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['type'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['type']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
@@ -241,7 +321,7 @@ export function EditProjectDialog({ project }: { project: Project }) {
         <DialogFooter className="flex flex-row items-center justify-end gap-2">
           {errors['generic'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['generic']}</p>}
           <LoadIndicator loading={loading} />
-          <Button className="text-xs md:text-sm" variant="outline" type="submit" onClick={handleSave} disabled={loading}>Guardar</Button>
+          <Button className="text-xs md:text-sm" variant="outline" type="submit" onClick={handleSave} disabled={loading}>{(editMode === true) ? 'Guardar' : 'Crear'}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

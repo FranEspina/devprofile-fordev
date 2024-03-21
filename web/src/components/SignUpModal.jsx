@@ -54,7 +54,7 @@ export const SignUpModal = ({ text = 'Registrar' }) => {
       var { success, message, token, data } = await register(userForm)
       if (success) {
         setUser(data)
-        setToken(token || '')
+        setToken(token ?? '')
         notifySuccess(message)
         setErrors([])
         setShow(false)

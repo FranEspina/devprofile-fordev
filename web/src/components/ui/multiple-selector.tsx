@@ -102,7 +102,7 @@ function transToGroupOption(options: Option[], groupBy?: string) {
 
   const groupOption: GroupOption = {};
   options.forEach((option) => {
-    const key = (option[groupBy] as string) || '';
+    const key = (option[groupBy] as string) ?? '';
     if (!groupOption[key]) {
       groupOption[key] = [];
     }

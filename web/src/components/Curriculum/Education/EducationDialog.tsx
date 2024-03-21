@@ -230,7 +230,7 @@ export function EducationDialog({ editMode = false, initialState = undefined }: 
             <Label htmlFor="url" className="text-right text-xs md:text-sm">
               Url
             </Label>
-            <Input id="url" value={educationState.url || ''} onChange={handleChange} onBlur={handleBlur} placeholder="https://..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Input id="url" value={educationState.url ?? ''} onChange={handleChange} onBlur={handleBlur} placeholder="https://..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['url'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['url']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
@@ -265,7 +265,7 @@ export function EducationDialog({ editMode = false, initialState = undefined }: 
             <Label htmlFor="score" className="text-right text-xs md:text-sm">
               Calificación
             </Label>
-            <Input id="score" value={educationState.score || ''} onChange={handleChange} onBlur={handleBlur} placeholder="p.ej: 3.5/4.0, Sobresaliente, ..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Input id="score" value={educationState.score ?? ''} onChange={handleChange} onBlur={handleBlur} placeholder="p.ej: 3.5/4.0, Sobresaliente, ..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['score'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['score']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">

@@ -111,7 +111,7 @@ export function BasicSection() {
             </ul>
           </div>
           <div className="block flex-row self-start">
-            <Button variant={"outline"} onClick={() => alertDelete(basics.id)}>
+            <Button className="mr-2" variant={"outline"} onClick={() => alertDelete(basics.id)}>
               <Trash className="h-3 w-3" />
               <span className="sr-only">Eliminar</span>
             </Button>

@@ -3,10 +3,10 @@ import { BasicSection } from '@/components/Curriculum/Basic/BasicSection'
 import { ProfileDialog } from './Profile/ProfileDialog';
 import { ProfileList } from "@/components/Curriculum/Profile/ProfileList";
 
-import { CreateWorkDialog } from "@/components/Curriculum/Work/CreateWorkDialog";
+import { WorkDialog } from "@/components/Curriculum/Work/WorkDialog";
 import { WorkList } from '@/components/Curriculum/Work/WorkList'
 
-import { CreateProjectDialog } from "@/components/Curriculum/Project/CreateProjectDialog";
+import { ProjectDialog } from "@/components/Curriculum/Project/ProjectDialog";
 import { ProjectList } from '@/components/Curriculum/Project/ProjectList'
 
 import { SkillDialog } from "@/components/Curriculum/Skill/SkillDialog";
@@ -63,11 +63,11 @@ export function CurriculumView() {
         <ProfileList />
       </div>
       <div className="flex flex-col justify-start gap-1">
-        <CreateWorkDialog />
+        <WorkDialog editMode={false} />
         <WorkList />
       </div>
       <div className="flex flex-col justify-start gap-1">
-        <CreateProjectDialog />
+        <ProjectDialog editMode={false} />
         <ProjectList />
       </div>
       <div className="flex flex-col justify-start gap-1">

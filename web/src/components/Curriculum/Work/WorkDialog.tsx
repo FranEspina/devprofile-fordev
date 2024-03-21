@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label"
 import { Plus, Edit } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useProfileStore } from '@/store/profileStore'
-import { type PublicationCreate, PublicationSchema, PublicationCreateSchema, type Publication } from '@/Schemas/publicationSchema'
+import { type WorkCreate, WorkSchema, WorkCreateSchema, type Work, WorkBaseSchema } from '@/Schemas/workSchema'
 import { navigate } from "astro/virtual-modules/transitions-router.js"
 import { useNotify } from '@/hooks/useNotify'
 import { validateSchemaAsync } from '@/lib/validations'
@@ -21,62 +21,50 @@ import { createUserSection, updateUserSection } from '@/services/apiService'
 import { useRefreshStore } from '@/store/refreshStore'
 import { LoadIndicator } from '@/components/LoadIndicator'
 import { type ChangeEvent } from "react"
-import { Textarea } from "@/components/ui/textarea"
 import { DatePicker } from '@/components/ui/DatePicker'
 import { type SelectSingleEventHandler } from 'react-day-picker'
+import MultipleSelector, { type Option } from "@/components/ui/multiple-selector"
+import { Textarea } from "@/components/ui/textarea"
 import { dateUtcToIso8601, localIso8601ToUtcDate } from '@/lib/dates'
 import { InputDate } from "@/components/ui/InputDate"
 import { z } from 'astro/zod'
 
-
-interface PublicationDialogProps {
+interface WorkDialogProps {
   editMode: boolean,
-  initialState?: Publication
+  initialState?: Work
 }
 
-export function PublicationDialog({ editMode = false, initialState = undefined }: PublicationDialogProps) {
+export function WorkDialog({ editMode = false, initialState = undefined }: WorkDialogProps) {
   const [loading, setLoading] = useState(false)
   const [isOpen, setIsOpen] = useState<boolean>()
   const { user, token } = useProfileStore(state => state)
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
   const { notifyError, notifySuccess } = useNotify()
-  const [publicationState, setPublicationState] = useState<Publication>({} as Publication)
+  const [workState, setworkState] = useState<Work>({} as Work)
+  const [highlights, setHighlights] = useState<Option[]>([])
   const [validateOnBlur, setValidateOnBlur] = useState(false)
-
-  const { setPublicationStamp } = useRefreshStore(state => state)
-
-  useEffect(() => {
-    setLoading(false)
-    setErrors({})
-    setValidateOnBlur(false)
-  }, [])
+  const { setWorkStamp } = useRefreshStore(state => state)
 
   useEffect(() => {
     const userId = (user) ? user.id : -1
-    const newPublication = { ...publicationState, userId }
-    setPublicationState(newPublication);
+    const newWork = { ...workState, userId }
+    setworkState(newWork);
   }, [user])
 
   useEffect(() => {
     if (editMode === true) {
       if (initialState) {
-        setPublicationState(initialState)
-      } else {
-        throw new Error("El estado inicial es necesario en modo edición del componente")
-      }
-    }
-  }, [])
-
-  useEffect(() => {
-    if (editMode === true) {
-      if (initialState) {
-        setPublicationState(initialState)
+        if (initialState?.highlights) {
+          setHighlights(JSON.parse(initialState.highlights))
+        }
+        setworkState(initialState)
       } else {
         throw new Error("El estado inicial es necesario en modo edición del componente")
       }
     }
     else {
-      setPublicationState({ userId: user?.id } as Publication)
+      setworkState({ userId: user?.id } as Work)
+      setHighlights([])
     }
   }, [isOpen])
 
@@ -87,23 +75,32 @@ export function PublicationDialog({ editMode = false, initialState = undefined }
   }, [isOpen])
 
   const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const newPublication = { ...publicationState, [event.target.id]: event.target.value }
-    setPublicationState(newPublication);
+    const newWork = { ...workState, [event.target.id]: event.target.value }
+    setworkState(newWork);
   }
 
-  const handleSelectDate = (date: Date | undefined) => {
-    const newPublication = structuredClone(publicationState)
-    newPublication.releaseDate = date ? dateUtcToIso8601(date) : ''
-    setPublicationState(newPublication);
+  const handleSelectStartDate = (date: Date | undefined) => {
+    const newWork = structuredClone(workState)
+    newWork.startDate = date ? dateUtcToIso8601(date) : ''
+    setworkState(newWork);
     if (validateOnBlur) {
-      validateField("releaseDate", newPublication.releaseDate)
+      validateField("startDate", newWork.startDate)
+    }
+  }
+
+  const handleSelectEndDate = (date: Date | undefined) => {
+    const newWork = structuredClone(workState)
+    newWork.endDate = date ? dateUtcToIso8601(date) : ''
+    setworkState(newWork);
+    if (validateOnBlur) {
+      validateField("endDate", newWork.endDate)
     }
   }
 
   const validateField = (field: string, value: unknown) => {
     const newErrors = { ...errors }
 
-    const partialSchema = PublicationSchema.pick({ [field]: PublicationSchema.shape[field as keyof typeof PublicationSchema.shape] });
+    const partialSchema = WorkBaseSchema.pick({ [field]: WorkBaseSchema.shape[field as keyof typeof WorkBaseSchema.shape] });
 
     // Realiza la validación con Zod
     partialSchema.parseAsync({ [field]: value })
@@ -132,13 +129,14 @@ export function PublicationDialog({ editMode = false, initialState = undefined }
     validateField(field, value)
   }
 
+
   async function createAsync(model: unknown) {
-    const validated = await validateSchemaAsync<PublicationCreate>(PublicationCreateSchema, model)
+    const validated = await validateSchemaAsync<WorkCreate>(WorkCreateSchema, model)
     if (!validated.success || !validated.data) {
       setErrors(validated.errors)
       return false
     }
-    const { success } = await createUserSection<PublicationCreate>("publication", validated.data, user?.id || 0, token)
+    const { success } = await createUserSection<WorkCreate>("Work", validated.data, user?.id || 0, token)
     if (!success) {
       const errors: { [key: string]: string } = {}
       errors['generic'] = 'Error inesperado guardando cambios'
@@ -148,12 +146,12 @@ export function PublicationDialog({ editMode = false, initialState = undefined }
   }
 
   async function editAsync(model: unknown) {
-    const validated = await validateSchemaAsync<Publication>(PublicationSchema, model)
+    const validated = await validateSchemaAsync<Work>(WorkSchema, model)
     if (!validated.success || !validated.data) {
       setErrors(validated.errors)
       return false
     }
-    const { success } = await updateUserSection<Publication>("publication", validated.data, token)
+    const { success } = await updateUserSection<Work>("Work", validated.data, token)
     if (!success) {
       const errors: { [key: string]: string } = {}
       errors['generic'] = 'Error inesperado guardando cambios'
@@ -175,16 +173,18 @@ export function PublicationDialog({ editMode = false, initialState = undefined }
       )
       return
     }
+    let Work: Work | undefined = structuredClone(workState)
+    Work.highlights = JSON.stringify(highlights)
 
     try {
       const success = (editMode === true)
-        ? await editAsync(publicationState)
-        : await createAsync(publicationState)
+        ? await editAsync(Work)
+        : await createAsync(Work)
 
       if (success) {
         notifySuccess('Datos actualizados correctamente')
         setErrors({})
-        setPublicationStamp(Date.now())
+        setWorkStamp(Date.now())
         setIsOpen(false)
         return
       }
@@ -208,15 +208,15 @@ export function PublicationDialog({ editMode = false, initialState = undefined }
             <span className="sr-only">Editar</span>
           </Button>
           : <Button className="text-xs md:text-sm" variant="outline">
-            <Plus className="mr-1 text-blue-500" />Publicación
+            <Plus className="mr-1 text-blue-500" />Puesto de trabajo
           </Button>
         }
       </DialogTrigger>
       <DialogContent className="max-w-[75%]" onInteractOutside={(e) => { e.preventDefault() }}>
         <DialogHeader>
-          <DialogTitle>{(editMode === true) ? 'Editar' : 'Añadir'} Publicación</DialogTitle>
+          <DialogTitle>{(editMode === true) ? 'Editar' : 'Añadir'} puesto de trabajo</DialogTitle>
           <DialogDescription>
-            Rellena la información y guarda cambios cuando finalices.
+            Modifica puesto y guarda cambios cuando finalices.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
@@ -224,39 +224,73 @@ export function PublicationDialog({ editMode = false, initialState = undefined }
             <Label htmlFor="name" className="text-right text-xs md:text-sm">
               Nombre
             </Label>
-            <Input id="name" value={publicationState.name} onChange={handleChange} onBlur={handleBlur} placeholder="Nombre publicación" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Input value={workState.name} onChange={handleChange} onBlur={handleBlur} id="name" placeholder="Nombre de la posición" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['name'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['name']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="publisher" className="text-right text-xs md:text-sm">
-              Editorial
+            <Label htmlFor="location" className="text-right text-xs md:text-sm">
+              Lugar
             </Label>
-            <Input id="publisher" value={publicationState.publisher} onChange={handleChange} onBlur={handleBlur} placeholder="Nombre editorial" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
-            {errors['publisher'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['publisher']}</p>}
+            <Input value={workState.location} onChange={handleChange} onBlur={handleBlur} id="location" placeholder="Lugar de la posición" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            {errors['location'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['location']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right text-xs md:text-sm">
-              Fecha
+            <Label htmlFor="description" className="text-right text-xs md:text-sm">
+              Descripción
             </Label>
-            <InputDate date={localIso8601ToUtcDate(publicationState.releaseDate)} onSelect={handleSelectDate} />
-            {errors['releaseDate'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['releaseDate']}</p>}
+            <Textarea value={workState.description} onChange={handleChange} onBlur={handleBlur} id="description" placeholder="Descripción del puesto de trabajo" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            {errors['description'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['description']}</p>}
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="position" className="text-right text-xs md:text-sm">
+              Puesto
+            </Label>
+            <Input value={workState.position} onChange={handleChange} onBlur={handleBlur} id="position" placeholder="posición / puesto" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            {errors['position'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['position']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="url" className="text-right text-xs md:text-sm">
               Url
             </Label>
-            <Input id="url" value={publicationState.url ?? ''} onChange={handleChange} onBlur={handleBlur} placeholder="https://..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Input value={workState.url ?? ''} onChange={handleChange} onBlur={handleBlur} id="url" placeholder="https://..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['url'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['url']}</p>}
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label className="text-right text-xs md:text-sm">
+              Desde
+            </Label>
+            <InputDate date={localIso8601ToUtcDate(workState.startDate)} onSelect={handleSelectStartDate} />
+            {errors['startDate'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['startDate']}</p>}
+
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label className="text-right text-xs md:text-sm">
+              Hasta
+            </Label>
+            <InputDate date={localIso8601ToUtcDate(workState.endDate)} onSelect={handleSelectEndDate} />
+            {errors['endDate'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['endDate']}</p>}
+
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="summary" className="text-right text-xs md:text-sm">
               Resumen
             </Label>
-            <Textarea id="summary" value={publicationState.summary} onChange={handleChange} onBlur={handleBlur} placeholder="Resumen de la publicación" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
+            <Textarea value={workState.summary} onChange={handleChange} onBlur={handleBlur} id="summary" placeholder="Resumen" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['summary'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['summary']}</p>}
           </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="highlights" className="text-right text-xs md:text-sm">
+              Destacado(s)
+            </Label>
+            <div className="col-span-3 text-xs md:text-sm">
+              <MultipleSelector value={highlights} onChange={setHighlights} placeholder="escriba y pulse ENTER"
+                creatable
+              />
+            </div>
+            {errors['highlights'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['highlights']}</p>}
+          </div>
         </div>
-        <DialogFooter className="flex flex-row items-center gap-2 justify-end">
+        <DialogFooter className="flex flex-row items-center justify-end gap-2">
           {errors['generic'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['generic']}</p>}
           <LoadIndicator loading={loading} />
           <Button className="text-xs md:text-sm" variant="outline" type="submit" onClick={handleSave} disabled={loading}>{(editMode === true) ? 'Guardar' : 'Crear'}</Button>

@@ -9,10 +9,10 @@ export function Wellcome() {
       <div className='text-xs md:text-base  '>
         {(token && user)
           ?
-          <div className='flex flex-col items-end'>
+          <div className='flex flex-col items-center ms:items-end'>
             <p>Bienvenido <span className='text-lg md:text-xl text-blue-500'>{user.firstName}</span></p>
             <a className="hover:text-blue-400 hover:cursor-pointer hover:shadow-lg transition-colors duration-300  text-xs md:text-base" href="/curriculum/">
-              Edita tu <span className='text-xl uppercase'>Curriculum</span>
+              Edita tu <span className='text-lg md:text-xl uppercase'>Curriculum</span>
             </a>
           </div>
           :

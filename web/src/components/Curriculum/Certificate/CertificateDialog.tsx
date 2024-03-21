@@ -44,27 +44,12 @@ export function CertificateDialog({ editMode = false, initialState = undefined }
 
   const { setCertificateStamp } = useRefreshStore(state => state)
 
-  useEffect(() => {
-    setLoading(false)
-    setErrors({})
-    setValidateOnBlur(false)
-  }, [])
 
   useEffect(() => {
     const userId = (user) ? user.id : -1
     const newCertificate = { ...certificateState, userId }
     setCertificateState(newCertificate);
   }, [user])
-
-  useEffect(() => {
-    if (editMode === true) {
-      if (initialState) {
-        setCertificateState(initialState)
-      } else {
-        throw new Error("El estado inicial es necesario en modo edición del componente")
-      }
-    }
-  }, [])
 
   useEffect(() => {
     if (editMode === true) {

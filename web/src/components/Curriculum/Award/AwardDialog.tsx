@@ -45,25 +45,10 @@ export function AwardDialog({ editMode = false, initialState = undefined }: Awar
   const { setAwardStamp } = useRefreshStore(state => state)
 
   useEffect(() => {
-    setLoading(false)
-    setErrors({})
-  }, [])
-
-  useEffect(() => {
     const userId = (user) ? user.id : -1
     const newAward = { ...awardState, userId }
     setAwardState(newAward);
   }, [user])
-
-  useEffect(() => {
-    if (editMode === true) {
-      if (initialState) {
-        setAwardState(initialState)
-      } else {
-        throw new Error("El estado inicial es necesario en modo edición del componente")
-      }
-    }
-  }, [])
 
   useEffect(() => {
     if (editMode === true) {

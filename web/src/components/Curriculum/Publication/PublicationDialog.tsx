@@ -46,26 +46,10 @@ export function PublicationDialog({ editMode = false, initialState = undefined }
   const { setPublicationStamp } = useRefreshStore(state => state)
 
   useEffect(() => {
-    setLoading(false)
-    setErrors({})
-    setValidateOnBlur(false)
-  }, [])
-
-  useEffect(() => {
     const userId = (user) ? user.id : -1
     const newPublication = { ...publicationState, userId }
     setPublicationState(newPublication);
   }, [user])
-
-  useEffect(() => {
-    if (editMode === true) {
-      if (initialState) {
-        setPublicationState(initialState)
-      } else {
-        throw new Error("El estado inicial es necesario en modo edición del componente")
-      }
-    }
-  }, [])
 
   useEffect(() => {
     if (editMode === true) {

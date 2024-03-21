@@ -41,7 +41,6 @@ export function ReferenceDialog({ editMode = false, initialState = undefined }: 
 
   const { setReferenceStamp } = useRefreshStore(state => state)
 
-
   useEffect(() => {
     const userId = (user) ? user.id : -1
     const newReference = { ...referenceState, userId }

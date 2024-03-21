@@ -2,9 +2,13 @@
 import { defineMiddleware } from "astro/middleware";
 import { TOKEN, ID, PUBLIC_ROUTES } from "./constant";
 
-const secret = new TextEncoder().encode(import.meta.env.JWT_SECRET_KEY);
+interface authorizatioResult {
+  status: "authorized" | "unauthorized" | "error",
+  payload?: unknown,
+  msg: string,
+}
 
-const verifyAuth = async (token?: string) => {
+const verifyAuth = async (token?: string): Promise<authorizatioResult> => {
   if (!token) {
     return {
       status: "unauthorized",
@@ -43,6 +47,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     token: ''
   }
 
+
   let token = ''
   if (context.cookies.has(TOKEN)) {
     token = context.cookies.get(TOKEN).value
@@ -58,6 +63,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     context.locals.user.id = userId;
     return next();
   }
+
   const validationResult = await verifyAuth(token);
 
   switch (validationResult.status) {

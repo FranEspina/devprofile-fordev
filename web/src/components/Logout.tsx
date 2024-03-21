@@ -14,10 +14,12 @@ export function Logout({ authRequired, children }: LogoutProps) {
   const { notifySuccess } = useNotify()
 
   const handleClick = () => {
-    setUser(undefined)
-    setToken('')
-    notifySuccess('Sesión cerrada')
-    navigate('/')
+    //Navegamos primero para evitar validaciones de los componentes con autorización
+    navigate('/').then(() => {
+      setUser(undefined)
+      setToken('')
+      notifySuccess('Sesión cerrada')
+    })
   }
 
   return <ItemListNav hoverStyled={true} authRequired={authRequired} onClick={handleClick}>{children}</ItemListNav>

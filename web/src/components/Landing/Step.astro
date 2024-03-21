@@ -1,0 +1,22 @@
+---
+const step = Astro.props.step;
+const title = Astro.props.title;
+const description = Astro.props.description;
+---
+
+<article class="w-64 hover:scale-105 transition-transform">
+  <header class="flex flex-col items-center justify-center">
+    <div
+      class="h-28 w-28 bg-blue-500 rounded-full flex items-center justify-center"
+    >
+      <span class="text-5xl font-extrabold text-gray-50">{step}</span>
+    </div>
+    <h1 class="text-xl font-bold mt-2">{title}</h1>
+  </header>
+  <main class="mt-2 flex flex-col items-center">
+    <p class="text-sm text-center text-gray-400 pb-2">
+      {description}
+    </p>
+    <slot />
+  </main>
+</article>

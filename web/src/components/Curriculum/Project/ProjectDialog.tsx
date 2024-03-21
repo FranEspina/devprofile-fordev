@@ -175,15 +175,6 @@ export function ProjectDialog({ editMode = false, initialState = undefined }: Pr
     setLoading(true)
     setValidateOnBlur(true)
 
-    if (token === 'not-loaded')
-      return
-
-    if (!user || !token) {
-      navigate('/').then(() =>
-        notifyError('Usuario no autorizado')
-      )
-      return
-    }
     let project: Project | undefined = structuredClone(projectState)
     project.highlights = JSON.stringify(highlights)
     project.roles = JSON.stringify(roles)

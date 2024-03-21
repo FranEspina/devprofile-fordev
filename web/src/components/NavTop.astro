@@ -8,7 +8,7 @@ import { ModeToggle } from "@/components/ModeToggle";
 ---
 
 <section
-  class="flex flex-row justify-between items-center h-14- min-h-14 gap-1"
+  class="flex flex-row justify-between items-center h-14- min-h-14 gap-1 mx-5"
 >
   <div class="">
     <ul class="flex flex-row text-xs">
@@ -22,9 +22,6 @@ import { ModeToggle } from "@/components/ModeToggle";
 
   <div class="">
     <ul class="flex flex-row gap-3">
-      <ItemListNav hoverStyled={true} authRequired={true} client:load>
-        <a class="uppercase" href="/">Inicio</a>
-      </ItemListNav>
       <ItemListNav hoverStyled={true} authRequired={true} client:load>
         <a class="uppercase" href="/curriculum/">CV</a>
       </ItemListNav>

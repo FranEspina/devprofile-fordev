@@ -141,16 +141,6 @@ export function InterestDialog({ editMode = false, initialState = undefined }: I
     setLoading(true)
     setValidateOnBlur(true)
 
-    if (token === 'not-loaded')
-      return
-
-    if (!user || !token) {
-      navigate('/').then(() =>
-        notifyError('Usuario no autorizado')
-      )
-      return
-    }
-
     let interest: Interest | undefined = structuredClone(interestState)
     interest.keywords = JSON.stringify(keywords)
 

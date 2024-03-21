@@ -163,15 +163,6 @@ export function EducationDialog({ editMode = false, initialState = undefined }: 
     setLoading(true)
     setValidateOnBlur(true)
 
-    if (token === 'not-loaded')
-      return
-
-    if (!user || !token) {
-      navigate('/').then(() =>
-        notifyError('Usuario no autorizado')
-      )
-      return
-    }
     let education: Education | undefined = structuredClone(educationState)
     education.courses = JSON.stringify(courses)
 

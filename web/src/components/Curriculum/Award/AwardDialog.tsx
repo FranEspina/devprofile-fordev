@@ -150,16 +150,6 @@ export function AwardDialog({ editMode = false, initialState = undefined }: Awar
     setLoading(true)
     setValidateOnBlur(true)
 
-    if (token === 'not-loaded')
-      return
-
-    if (!user || !token) {
-      navigate('/').then(() =>
-        notifyError('Usuario no autorizado')
-      )
-      return
-    }
-
     try {
       const success = (editMode === true)
         ? await editAsync(awardState)

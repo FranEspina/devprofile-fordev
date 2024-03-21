@@ -141,16 +141,6 @@ export function SkillDialog({ editMode = false, initialState = undefined }: Skil
     setLoading(true)
     setValidateOnBlur(true)
 
-    if (token === 'not-loaded')
-      return
-
-    if (!user || !token) {
-      navigate('/').then(() =>
-        notifyError('Usuario no autorizado')
-      )
-      return
-    }
-
     let skill: Skill | undefined = structuredClone(skillState)
     skill.keywords = JSON.stringify(keywords)
 

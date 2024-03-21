@@ -5,6 +5,7 @@ import { login } from '@/services/apiService'
 import { useProfileStore } from '@/store/profileStore'
 import { UserLoginFormSchema } from '@/Schemas/userSchema';
 import { z } from 'astro/zod'
+import { navigate } from 'astro/virtual-modules/transitions-router.js'
 
 export const SignInModal = ({ text = 'Iniciar sesión' }) => {
   const [show, setShow] = useState(false);
@@ -55,6 +56,7 @@ export const SignInModal = ({ text = 'Iniciar sesión' }) => {
         notifySuccess(message)
         setErrors([])
         setShow(false)
+        navigate('/curriculum')
         return
       }
       else {

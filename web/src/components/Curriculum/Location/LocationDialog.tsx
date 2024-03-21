@@ -135,16 +135,6 @@ export function LocationDialog({ editMode = false, initialState = undefined }: L
     setLoading(true)
     setValidateOnBlur(true)
 
-    if (token === 'not-loaded')
-      return
-
-    if (!user || !token) {
-      navigate('/').then(() =>
-        notifyError('Usuario no autorizado')
-      )
-      return
-    }
-
     try {
       const success = (editMode === true)
         ? await editAsync(locationState)

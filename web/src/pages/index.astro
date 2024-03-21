@@ -1,18 +1,55 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { Wellcome } from "@/components/Wellcome.tsx";
+import Step from "@/components/Landing/Step.astro";
+import { SignInModal } from "@/components/SignInModal";
+import { Wellcome } from "@/components/Wellcome";
 ---
 
 <Layout title="dev profile for dev ">
   <main
-    class="flex flex-col justify-center items-center content-center text-center max-w-[800px] mx-auto"
+    class="flex flex-col justify-center items-center content-start text-center md:text-start"
   >
-    <h1 class="text-3xl md:text-5xl mb-6 mt-10 text-blue-500">
-      CV para desarroladores
-    </h1>
-    <p class="text-xs md:text-base">
-      Rellena la información de tu curriculum y comparte tu perfil público
-    </p>
-    <Wellcome client:load />
+    <header
+      class="flex flex-col items-center bg-gray-200 dark:bg-gray-900 pt-8 pb-10 md:pb-16 px-10 md:px-60 flex-grow"
+    >
+      <h1
+        class="text-4xl sm:text-6xl md:text-8xl mb-6 mt-10 text-blue-500 dark:text-gray-100"
+      >
+        <span class="text-gray-950 dark:text-blue-500">Comparte</span> tu trayectoria
+      </h1>
+      <p class="text-sm sm:text-lg md:text-xl text-gray-500 dark:text-gray-300">
+        Rellena la información de tu curriculum y comparte tu perfil público con
+        el resto de la comunidad
+      </p>
+      <div class="flex flex-col md:flex-row gap-4 items-center self-end">
+        <Wellcome client:load />
+      </div>
+    </header>
+    <body>
+      <div
+        class="relative top-[-20px] flex flex-col md:flex-row gap-6 items-center md:items-start justify-center flex-wrap"
+      >
+        <Step
+          step="1"
+          title="Regístrate"
+          description="Crea tu cuenta de usuario o inicia sesión para poder comenzar a usar la plataforma"
+        />
+        <Step
+          step="2"
+          title="Documenta"
+          description="Complementa las diferentes secciones de tu curriculum usando un esquema de información estándar"
+        />
+        <Step
+          step="3"
+          title="Publica"
+          description="Decide que secciones y que información deseas compartir en tu perfil público de usuario"
+        />
+        <Step
+          step="4"
+          title="Comparte"
+          description="Selecciona una plantilla y utiliza tu perfil público para compartir tu curriculo con la comunidad"
+        />
+      </div>
+    </body>
   </main>
 </Layout>

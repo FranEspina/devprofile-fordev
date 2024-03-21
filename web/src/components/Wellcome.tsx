@@ -6,16 +6,23 @@ export function Wellcome() {
   const { user, token } = useProfileStore(state => state)
   return (
     <>
-      <div className='m-4 text-xs md:text-base '>
-        {token && user && <p>Bienvenido <span className='text-lg md:text-xl text-blue-500'>{user.firstName}</span></p>}
-        {!(token && user) &&
-          <div className='flex flex-col'>
-            <div className='flex flex-row'>
-              <p className='columns-1'>Para continuar ➡️</p>
+      <div className='text-xs md:text-base  '>
+        {(token && user)
+          ?
+          <div className='flex flex-col items-end'>
+            <p>Bienvenido <span className='text-lg md:text-xl text-blue-500'>{user.firstName}</span></p>
+            <a className="hover:text-blue-400 hover:cursor-pointer hover:shadow-lg transition-colors duration-300  text-xs md:text-base" href="/curriculum/">
+              Edita tu <span className='text-xl uppercase'>Curriculum</span>
+            </a>
+          </div>
+          :
+          <div className='flex flex-row gap-4 '>
+            <div className='flex flex-row gap-2'>
+              <p >➡️</p>
               <SignInModal text='Inicia sesión' />
             </div>
-            <div className='flex flex-row'>
-              <p className='columns-1'>También puedes ➡️</p>
+            <div className='flex flex-row gap-2'>
+              <p >➡️</p>
               <SignUpModal text='Crear cuenta' />
             </div >
           </div >

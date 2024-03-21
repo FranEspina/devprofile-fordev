@@ -23,6 +23,7 @@ Web que permite a los usuario logarse y crear una cuenta de desarrollador donde 
 
 # TODO
 - [ ] Validaciones de tamaños máximos en zod
+- [x] Mostrar visualmente los datos opcionales en los formularios 
 - [x] Las validaciones deberían estar al perder el foco los campos del formulario no sólo al grabar
 - [x] Validaciones de fecha inicio y fin pendientes en algunos esquemas
 - [x] FIX: al eliminar el último elemento de una sección lo borra en bd pero sigue en pantalla

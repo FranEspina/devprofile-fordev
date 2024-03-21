@@ -41,21 +41,21 @@ const verifyAuth = async (token?: string): Promise<authorizatioResult> => {
 
 export const onRequest = defineMiddleware(async (context, next) => {
   // Ignore auth validation for public routes
-
   context.locals.user = {
     id: '',
     token: ''
   }
 
-
   let token = ''
-  if (context.cookies.has(TOKEN)) {
-    token = context.cookies.get(TOKEN).value
-  }
-
   let userId = ''
-  if (context.cookies.has(ID)) {
-    userId = context.cookies.get(ID).value
+  if (context && context.cookies) {
+    if (context.cookies.has(TOKEN)) {
+      token = context.cookies.get(TOKEN)?.value ?? ''
+    }
+    if (context.cookies.has(ID)) {
+      userId = context.cookies.get(ID)?.value ?? ''
+    }
+
   }
 
   if (PUBLIC_ROUTES.includes(context.url.pathname)) {

@@ -228,7 +228,7 @@ export const dropCreateAndSeedTables = async () => {
         keywords TEXT,
         start_date VARCHAR(10) NOT NULL,
         end_date VARCHAR(10),
-        url VARCHAR(250) NOT NULL,
+        url VARCHAR(250),
         roles TEXT,
         entity VARCHAR(250),
         type VARCHAR(250),

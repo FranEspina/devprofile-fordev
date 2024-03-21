@@ -221,42 +221,42 @@ export function WorkDialog({ editMode = false, initialState = undefined }: WorkD
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right text-xs md:text-sm">
+            <Label htmlFor="name" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Nombre
             </Label>
             <Input value={workState.name} onChange={handleChange} onBlur={handleBlur} id="name" placeholder="Nombre de la posición" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['name'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['name']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="location" className="text-right text-xs md:text-sm">
+            <Label htmlFor="location" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Lugar
             </Label>
             <Input value={workState.location} onChange={handleChange} onBlur={handleBlur} id="location" placeholder="Lugar de la posición" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['location'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['location']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="description" className="text-right text-xs md:text-sm">
+            <Label htmlFor="description" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Descripción
             </Label>
             <Textarea value={workState.description} onChange={handleChange} onBlur={handleBlur} id="description" placeholder="Descripción del puesto de trabajo" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['description'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['description']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="position" className="text-right text-xs md:text-sm">
+            <Label htmlFor="position" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Puesto
             </Label>
             <Input value={workState.position} onChange={handleChange} onBlur={handleBlur} id="position" placeholder="posición / puesto" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['position'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['position']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="url" className="text-right text-xs md:text-sm">
+            <Label data-optional htmlFor="url" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Url
             </Label>
             <Input value={workState.url ?? ''} onChange={handleChange} onBlur={handleBlur} id="url" placeholder="https://..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['url'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['url']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right text-xs md:text-sm">
+            <Label className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Desde
             </Label>
             <InputDate date={localIso8601ToUtcDate(workState.startDate)} onSelect={handleSelectStartDate} />
@@ -264,7 +264,7 @@ export function WorkDialog({ editMode = false, initialState = undefined }: WorkD
 
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right text-xs md:text-sm">
+            <Label data-optional className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Hasta
             </Label>
             <InputDate date={localIso8601ToUtcDate(workState.endDate)} onSelect={handleSelectEndDate} />
@@ -272,14 +272,14 @@ export function WorkDialog({ editMode = false, initialState = undefined }: WorkD
 
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="summary" className="text-right text-xs md:text-sm">
+            <Label data-optional htmlFor="summary" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Resumen
             </Label>
             <Textarea value={workState.summary} onChange={handleChange} onBlur={handleBlur} id="summary" placeholder="Resumen" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['summary'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['summary']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="highlights" className="text-right text-xs md:text-sm">
+            <Label data-optional htmlFor="highlights" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Destacado(s)
             </Label>
             <div className="col-span-3 text-xs md:text-sm">

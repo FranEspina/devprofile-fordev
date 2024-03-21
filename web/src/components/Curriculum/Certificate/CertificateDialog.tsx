@@ -205,28 +205,28 @@ export function CertificateDialog({ editMode = false, initialState = undefined }
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right text-xs md:text-sm">
+            <Label htmlFor="name" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Nombre
             </Label>
             <Input id="name" value={certificateState.name} onChange={handleChange} onBlur={handleBlur} placeholder="Nombre certificado" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['name'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['name']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right text-xs md:text-sm">
+            <Label className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Fecha
             </Label>
             <InputDate date={localIso8601ToUtcDate(certificateState.date)} onSelect={handleSelectDate} />
             {errors['date'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['date']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="url" className="text-right text-xs md:text-sm">
+            <Label data-optional htmlFor="url" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Url
             </Label>
             <Input id="url" value={certificateState.url ?? ''} onChange={handleChange} onBlur={handleBlur} placeholder="https://..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['url'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['url']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="issuer" className="text-right text-xs md:text-sm">
+            <Label htmlFor="issuer" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Entidad
             </Label>
             <Input id="issuer" value={certificateState.issuer} onChange={handleChange} onBlur={handleBlur} placeholder="Entidad certificadora" className="col-span-3 text-xs md:text-sm" autoComplete="off" />

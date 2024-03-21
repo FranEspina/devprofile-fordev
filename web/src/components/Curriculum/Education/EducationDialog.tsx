@@ -220,56 +220,56 @@ export function EducationDialog({ editMode = false, initialState = undefined }: 
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="institution" className="text-right text-xs md:text-sm">
+            <Label htmlFor="institution" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Institución
             </Label>
             <Input id="institution" value={educationState.institution} onChange={handleChange} onBlur={handleBlur} placeholder="Universidad de ..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['institution'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['institution']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="url" className="text-right text-xs md:text-sm">
+            <Label data-optional htmlFor="url" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Url
             </Label>
             <Input id="url" value={educationState.url ?? ''} onChange={handleChange} onBlur={handleBlur} placeholder="https://..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['url'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['url']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="area" className="text-right text-xs md:text-sm">
+            <Label htmlFor="area" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Área
             </Label>
             <Input id="area" value={educationState.area} onChange={handleChange} onBlur={handleBlur} placeholder="Matemáticas, Informática, ..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['area'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['area']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="studyType" className="text-right text-xs md:text-sm">
+            <Label htmlFor="studyType" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Tipo
             </Label>
             <Input id="studyType" value={educationState.studyType} onChange={handleChange} onBlur={handleBlur} placeholder="Licenciado en matemáticas, Ingeniero ..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['studyType'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['studyType']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right text-xs md:text-sm">
+            <Label className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Desde
             </Label>
             <InputDate date={localIso8601ToUtcDate(educationState.startDate)} onSelect={handleSelectStartDate} />
             {errors['startDate'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['startDate']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right text-xs md:text-sm">
+            <Label data-optional className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Hasta
             </Label>
             <InputDate date={localIso8601ToUtcDate(educationState.endDate)} onSelect={handleSelectEndDate} />
             {errors['endDate'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['endDate']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="score" className="text-right text-xs md:text-sm">
+            <Label data-optional htmlFor="score" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Calificación
             </Label>
             <Input id="score" value={educationState.score ?? ''} onChange={handleChange} onBlur={handleBlur} placeholder="p.ej: 3.5/4.0, Sobresaliente, ..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['score'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['score']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="courses" className="text-right text-xs md:text-sm">
+            <Label data-optional htmlFor="courses" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Curso(s)
             </Label>
             <div className="col-span-3 text-xs md:text-sm">

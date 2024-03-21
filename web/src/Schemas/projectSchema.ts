@@ -1,6 +1,6 @@
 import { z } from 'astro/zod'
 
-const ProjectBaseSchema = z.object(
+export const ProjectBaseSchema = z.object(
   {
     id: z.number({ required_error: 'Identificador del perfil obligatorio' }),
     userId: z.number({ required_error: 'Identificador del usuario obligatorio' }),

@@ -190,35 +190,35 @@ export function LocationDialog({ editMode = false, initialState = undefined }: L
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="address" className="text-right text-xs md:text-sm">
+            <Label htmlFor="address" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Dirección
             </Label>
             <Input id="address" value={locationState.address} onChange={handleChange} onBlur={handleBlur} placeholder="Dirección" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['address'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['address']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="postalCode" className="text-right text-xs md:text-sm">
+            <Label htmlFor="postalCode" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               C.Postal
             </Label>
             <Input id="postalCode" value={locationState.postalCode} onChange={handleChange} onBlur={handleBlur} placeholder="Código postal" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['postalCode'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['postalCode']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="city" className="text-right text-xs md:text-sm">
+            <Label htmlFor="city" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Ciudad
             </Label>
             <Input id="city" value={locationState.city} onChange={handleChange} onBlur={handleBlur} placeholder="Ciudad" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['city'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['city']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="countryCode" className="text-right text-xs md:text-sm">
+            <Label htmlFor="countryCode" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Pais
             </Label>
             <Input id="countryCode" value={locationState.countryCode} onChange={handleChange} onBlur={handleBlur} placeholder="por ejemplo: ES, US, IT, ..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['countryCode'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['countryCode']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="region" className="text-right text-xs md:text-sm">
+            <Label htmlFor="region" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Region
             </Label>
             <Input id="region" value={locationState.region} onChange={handleChange} onBlur={handleBlur} placeholder="Región" className="col-span-3 text-xs md:text-sm" autoComplete="off" />

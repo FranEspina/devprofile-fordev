@@ -199,21 +199,21 @@ export function SkillDialog({ editMode = false, initialState = undefined }: Skil
         </DialogHeader>
         <div className="grid gap-4 py-4 ">
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right text-xs md:text-sm">
+            <Label htmlFor="name" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Competencia
             </Label>
             <Input value={skillState.name} onChange={handleChange} onBlur={handleBlur} id="name" placeholder="Competencia" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['name'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['name']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="level" className="text-right text-xs md:text-sm">
+            <Label htmlFor="level" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Nivel
             </Label>
             <Input value={skillState.level} onChange={handleChange} onBlur={handleBlur} id="level" placeholder="Nivel" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['level'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['level']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="keywords" className="text-right text-xs md:text-s">
+            <Label data-optional htmlFor="keywords" className="text-right text-xs md:text-sm  data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Palabra(s) clave
             </Label>
             <div className="col-span-3 text-xs md:text-sm">

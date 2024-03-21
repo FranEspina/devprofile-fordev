@@ -190,22 +190,22 @@ export function ProfileDialog({ editMode = false, initialState = undefined }: Pr
         </DialogHeader>
         <div className="grid gap-4 py-4 ">
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="network" className="text-right text-xs md:text-sm">
+            <Label htmlFor="network" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Red Social
             </Label>
             <Input value={profileState.network} onChange={handleChange} onBlur={handleBlur} id="network" placeholder="nombre" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['network'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['network']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="username" className="text-right text-xs md:text-sm">
+            <Label htmlFor="username" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Usuario
             </Label>
             <Input value={profileState.username} onChange={handleChange} onBlur={handleBlur} id="username" placeholder="username" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['username'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['username']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="link" className="text-right text-xs md:text-s">
-              Usuario
+            <Label htmlFor="link" className="text-right text-xs md:text-sm  data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
+              Pérfil público
             </Label>
             <Input value={profileState.url} onChange={handleChange} onBlur={handleBlur} id="url" placeholder="https://..." className="col-span-3 text-xs md:text-sm" />
             {errors['url'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['url']}</p>}

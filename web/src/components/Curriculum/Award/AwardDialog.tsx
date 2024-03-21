@@ -205,28 +205,28 @@ export function AwardDialog({ editMode = false, initialState = undefined }: Awar
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="title" className="text-right text-xs md:text-sm">
+            <Label htmlFor="title" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Logro
             </Label>
             <Input id="title" value={awardState.title} onChange={handleChange} onBlur={handleBlur} placeholder="Logro" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['title'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['title']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right text-xs md:text-sm">
+            <Label className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Fecha
             </Label>
             <InputDate id="date" date={localIso8601ToUtcDate(awardState.date)} onSelect={handleSelectDate} />
             {errors['date'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['date']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="awarder" className="text-right text-xs md:text-sm">
+            <Label htmlFor="awarder" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Entidad
             </Label>
             <Input id="awarder" value={awardState.awarder} onChange={handleChange} onBlur={handleBlur} placeholder="Entidad relacionada" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['awarder'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['awarder']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="summary" className="text-right text-xs md:text-sm">
+            <Label htmlFor="summary" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Resumen
             </Label>
             <Textarea id="summary" value={awardState.summary} onChange={handleChange} onBlur={handleBlur} placeholder="Resumen de la logro" className="col-span-3 text-xs md:text-sm" autoComplete="off" />

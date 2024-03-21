@@ -190,14 +190,14 @@ export function LanguageDialog({ editMode = false, initialState = undefined }: L
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="language" className="text-right text-xs md:text-sm">
+            <Label htmlFor="language" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Idioma
             </Label>
             <Input id="language" value={languageState.language} onChange={handleChange} onBlur={handleBlur} placeholder="Español, Inglés, ..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['language'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['language']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="fluency" className="text-right text-xs md:text-sm">
+            <Label htmlFor="fluency" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Nivel
             </Label>
             <Input id="fluency" value={languageState.fluency} onChange={handleChange} onBlur={handleBlur} placeholder="Alto, nativo, fluido, ..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />

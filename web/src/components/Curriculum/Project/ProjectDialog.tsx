@@ -221,7 +221,7 @@ export function ProjectDialog({ editMode = false, initialState = undefined }: Pr
             <span className="sr-only">Editar</span>
           </Button>
           : <Button className="text-xs md:text-sm" variant="outline">
-            <Plus className="mr-1 text-blue-500" />Voluntariado
+            <Plus className="mr-1 text-blue-500" />Proyecto
           </Button>
         }
       </DialogTrigger>
@@ -234,21 +234,21 @@ export function ProjectDialog({ editMode = false, initialState = undefined }: Pr
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right text-xs md:text-sm">
+            <Label htmlFor="name" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Proyecto
             </Label>
             <Input id="name" value={projectState.name} onChange={handleChange} onBlur={handleBlur} placeholder="Título del proyecto" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['name'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['name']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="url" className="text-right text-xs md:text-sm">
+            <Label data-optional htmlFor="url" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Url
             </Label>
             <Input value={projectState.url ?? ''} onChange={handleChange} onBlur={handleBlur} id="url" placeholder="https://..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['url'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['url']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right text-xs md:text-sm">
+            <Label className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Desde
             </Label>
             <InputDate date={localIso8601ToUtcDate(projectState.startDate)} onSelect={handleSelectStartDate} />
@@ -256,7 +256,7 @@ export function ProjectDialog({ editMode = false, initialState = undefined }: Pr
 
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right text-xs md:text-sm">
+            <Label data-optional className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Hasta
             </Label>
             <InputDate date={localIso8601ToUtcDate(projectState.endDate)} onSelect={handleSelectEndDate} />
@@ -264,28 +264,28 @@ export function ProjectDialog({ editMode = false, initialState = undefined }: Pr
 
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="description" className="text-right text-xs md:text-sm">
+            <Label htmlFor="description" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Descripción
             </Label>
             <Textarea value={projectState.description} onChange={handleChange} onBlur={handleBlur} id="description" placeholder="Descripción del proyecto" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['description'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['description']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="entity" className="text-right text-xs md:text-sm">
+            <Label data-optional htmlFor="entity" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Entidad
             </Label>
             <Input value={projectState.entity} onChange={handleChange} onBlur={handleBlur} id="entity" placeholder="entidad, empresa, ..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['entity'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['entity']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="type" className="text-right text-xs md:text-sm">
+            <Label data-optional htmlFor="type" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Tipo
             </Label>
             <Input value={projectState.type} onChange={handleChange} onBlur={handleBlur} id="type" placeholder="desarrollo, conferencia, charla,..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['type'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['type']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="highlights" className="text-right text-xs md:text-sm">
+            <Label data-optional htmlFor="highlights" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Lo más destacable
             </Label>
             <div className="col-span-3 text-xs md:text-sm">
@@ -296,7 +296,7 @@ export function ProjectDialog({ editMode = false, initialState = undefined }: Pr
             {errors['highlights'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['highlights']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="keywords" className="text-right text-xs md:text-sm">
+            <Label data-optional htmlFor="keywords" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Palabra(s) clave
             </Label>
             <div className="col-span-3 text-xs md:text-sm">
@@ -307,7 +307,7 @@ export function ProjectDialog({ editMode = false, initialState = undefined }: Pr
             {errors['keywords'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['keywords']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="roles" className="text-right text-xs md:text-sm">
+            <Label data-optional htmlFor="roles" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Rol(es)
             </Label>
             <div className="col-span-3 text-xs md:text-sm">

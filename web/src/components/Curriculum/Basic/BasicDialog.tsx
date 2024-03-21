@@ -191,49 +191,49 @@ export function BasicDialog({ editMode = false, initialState = undefined }: Basi
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right text-xs md:text-sm">
+            <Label htmlFor="name" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Nombre
             </Label>
             <Input value={basicState.name} onChange={handleChange} onBlur={handleBlur} id="name" placeholder="Nombre público" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['name'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['name']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="label" className="text-right text-xs md:text-sm">
+            <Label htmlFor="label" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Resumen
             </Label>
             <Textarea value={basicState.label} onChange={handleChange} onBlur={handleBlur} id="label" placeholder="Breve resumen o frase destacable ..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['label'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['label']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="email" className="text-right text-xs md:text-sm">
+            <Label htmlFor="email" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Email
             </Label>
             <Input value={basicState.email} onChange={handleChange} onBlur={handleBlur} id="email" placeholder="correo@electronico.es" className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['email'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['email']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="phone" className="text-right text-xs md:text-sm">
+            <Label htmlFor="phone" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Teléfono
             </Label>
             <Input value={basicState.phone} onChange={handleChange} onBlur={handleBlur} id="phone" placeholder="Con el formato que quieras ..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['phone'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['phone']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="image" className="text-right text-xs md:text-sm">
+            <Label htmlFor="image" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Imagen
             </Label>
             <Input value={basicState.image} onChange={handleChange} onBlur={handleBlur} id="image" placeholder="http://..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['image'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['image']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="image" className="text-right text-xs md:text-sm">
+            <Label htmlFor="image" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Url
             </Label>
             <Input value={basicState.url} onChange={handleChange} onBlur={handleBlur} id="url" placeholder="http://..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />
             {errors['url'] && <p className="col-start-2 col-span-3 text-blue-500 text-xs">{errors['url']}</p>}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="summary" className="text-right text-xs md:text-sm">
+            <Label htmlFor="summary" className="text-right text-xs md:text-sm data-[optional]:text-gray-500 data-[optional]:dark:text-gray-400 ">
               Resumen
             </Label>
             <Textarea value={basicState.summary} onChange={handleChange} onBlur={handleBlur} id="summary" placeholder="Un par de párrafos sobre tí ..." className="col-span-3 text-xs md:text-sm" autoComplete="off" />

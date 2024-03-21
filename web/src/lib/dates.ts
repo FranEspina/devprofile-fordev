@@ -1,7 +1,7 @@
 export const formatDate = (dateString: string) => {
   if (!dateString) return "";
   const date = new Date(dateString);
-  const options = { year: "numeric", month: "short" };
+  const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "short" };
   const fechaFormateada = date
     .toLocaleDateString("es-es", options)
     .toUpperCase();
@@ -11,7 +11,7 @@ export const formatDate = (dateString: string) => {
 export const yearDate = (dateString: string) => {
   if (!dateString) return "";
   const date = new Date(dateString);
-  const options = { year: "numeric" };
+  const options: Intl.DateTimeFormatOptions = { year: "numeric" };
   const fechaFormateada = date
     .toLocaleDateString("es-es", options)
     .toUpperCase();

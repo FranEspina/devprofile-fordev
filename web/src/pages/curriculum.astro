@@ -31,7 +31,7 @@ const { user } = Astro.locals;
                 className="ml-2 text-blue-500"
               /></a
             >
-            <SaveResume userId={user.id} client:load />
+            <SaveResume userId={Number(user.id)} client:load />
           </li>
           <li>
             <ViewPublicCV client:load userId={user.id} />

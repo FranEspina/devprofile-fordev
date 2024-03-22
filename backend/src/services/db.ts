@@ -1,11 +1,9 @@
 import { Pool } from 'pg'
 import { UserHashPassword, UserDTO, UserCreate } from '../models/user'
-import { UserDeleteSection, SectionData } from '../models/modelSchemas'
+import { UserDeleteSection, SectionData, WorkResume, LocationResume, ProfileResume, VolunteerResume, EducationResume, AwardResume, CertificateResume, PublicationResume, SkillResume, LanguageResume, InterestResume, ReferenceResume, ProjectResume } from '../models/modelSchemas'
 import { camelToSnakeCase, snakeToCamelCase } from '../services/strings'
 
 import { Work, Project, Skill, Profile, Basic, Location, Volunteer, Education, Award, Certificate, Publication, Language, Interest, Reference } from '../models/modelSchemas'
-import { unknown } from 'zod'
-
 
 const pool = new Pool({
   user: process.env.POSTGRES_USER,
@@ -17,19 +15,19 @@ const pool = new Pool({
 });
 
 const SECTION_FIELDS = [
-  { section: 'works', table: 'works', field: 'name', description: 'Puesto' },
-  { section: 'profiles', table: 'profiles', field: 'network', description: 'Perfil' },
-  { section: 'projects', table: 'projects', field: 'name', description: 'Proyecto' },
-  { section: 'skills', table: 'skills', field: 'name', description: 'Competencia' },
-  { section: 'locations', table: 'locations', field: 'address', description: 'Dirección' },
-  { section: 'volunteers', table: 'volunteers', field: 'organization', description: 'Voluntariado' },
-  { section: 'educations', table: 'educations', field: 'institution', description: 'Estudio' },
-  { section: 'awards', table: 'awards', field: 'title', description: 'Logro' },
-  { section: 'certificates', table: 'certificates', field: 'name', description: 'Certificado' },
-  { section: 'publications', table: 'publications', field: 'name', description: 'Publicación' },
-  { section: 'languages', table: 'languages', field: 'language', description: 'Idioma' },
-  { section: 'interests', table: 'interests', field: 'name', description: 'Interés' },
-  { section: 'references', table: 'user_references', field: 'name', description: 'Referencia' },
+  { section: 'works', table: 'works', schema: 'work', field: 'name', description: 'Puesto' },
+  { section: 'profiles', table: 'profiles', schema: 'profiles', field: 'network', description: 'Perfil' },
+  { section: 'projects', table: 'projects', schema: 'projects', field: 'name', description: 'Proyecto' },
+  { section: 'skills', table: 'skills', schema: 'skills', field: 'name', description: 'Competencia' },
+  { section: 'locations', table: 'locations', schema: 'location', field: 'address', description: 'Dirección' },
+  { section: 'volunteers', table: 'volunteers', schema: 'volunteer', field: 'organization', description: 'Voluntariado' },
+  { section: 'educations', table: 'educations', schema: 'education', field: 'institution', description: 'Estudio' },
+  { section: 'awards', table: 'awards', schema: 'awards', field: 'title', description: 'Logro' },
+  { section: 'certificates', table: 'certificates', schema: 'certificates', field: 'name', description: 'Certificado' },
+  { section: 'publications', table: 'publications', schema: 'publications', field: 'name', description: 'Publicación' },
+  { section: 'languages', table: 'languages', schema: 'languages', field: 'language', description: 'Idioma' },
+  { section: 'interests', table: 'interests', schema: 'interests', field: 'name', description: 'Interés' },
+  { section: 'references', table: 'user_references', schema: 'references', field: 'name', description: 'Referencia' },
 ]
 
 export const getUserByEmailAsync = async (email: string): Promise<UserHashPassword | null> => {
@@ -135,10 +133,16 @@ export async function dbUpdateUserSectionAsync<T>(tablename: string, model: T): 
   }
 }
 
-export async function dbCreateUserSectionAsync<T>(tablename: string, model: T): Promise<number> {
+
+interface sectionQuery<T> {
+  query: string,
+  params: T[Extract<keyof T, string>][]
+}
+
+function getUserSectionQuery<T>(tablename: string, model: T): sectionQuery<T> {
   try {
 
-    const queryParams = []
+    const params = []
     const fieldsClause: string[] = []
     const valuesClause: string[] = []
     let index = 1
@@ -146,15 +150,27 @@ export async function dbCreateUserSectionAsync<T>(tablename: string, model: T): 
     for (const fieldName in model) {
       fieldsClause.push(`${camelToSnakeCase(fieldName)}`)
       valuesClause.push(`$${index}${(model[fieldName] instanceof Date) ? '::timestamptz' : ''}`)
-      queryParams.push(model[fieldName])
+      params.push(model[fieldName])
       index++
     }
 
-    const queryInsert = `
+    const query = `
       INSERT INTO ${tablename}(${fieldsClause.join(', ')})
       VALUES (${valuesClause.join(', ')}) RETURNING id; `
 
-    const result = await pool.query(queryInsert, queryParams)
+    return { query, params }
+  }
+  catch (error) {
+    console.log('Error inesperado creando puesto de trabajo de usuario', error)
+    throw error
+  }
+}
+
+
+export async function dbCreateUserSectionAsync<T>(tablename: string, model: T): Promise<number> {
+  try {
+    const { query, params } = getUserSectionQuery<T>(tablename, model)
+    const result = await pool.query(query, params)
     return result.rows[0].id
   }
   catch (error) {
@@ -199,57 +215,6 @@ export async function dbGetUserSectionByUserAsync<T extends { [key: string]: unk
     throw error
   }
 }
-
-// export async function dbGetUserResumeSectionByUserAsync<T extends { [key: string]: unknown }>(tablename: string, userId: number): Promise<T[]> {
-
-//   const sectionFields = SECTION_FIELDS.find(s => s.table === tablename)
-//   if (!sectionFields) {
-//     return []
-//   }
-
-//   //TODO: pasar a un array las secciones y realizar con un bucle forEach
-//   const userSectionQuery = `
-//     SELECT ${sectionFields.table}.*
-//     FROM ${sectionFields.table} 
-//       inner join sections  
-//         on (sections.user_id = $1  
-//           and sections.section_name = $2
-//           and sections.section_id = ${sectionFields.table}.id)
-//     WHERE ${sectionFields.table}.user_id = $1
-//     order by ${sectionFields.table}.id asc;
-//   `
-//   console.log(userSectionQuery)
-
-//   try {
-
-//     //TODO: Crear todos los modelos tanto de BBDD como de los DTO de la API
-//     //No queremos tener dos clases, una para los controladores (camelCase) y otra para la bbdd (snake_case)
-//     //const result = await pool.query<T>(userSectionQuery, [userId])
-//     const result = await pool.query(userSectionQuery, [userId, tablename])
-//     if (!result || !result.rowCount) {
-//       return []
-//     }
-
-//     //TODO eliminar cuando existan los modelos
-//     const sections: T[] = []
-//     for (let indexRow = 0; indexRow < result.rows.length; indexRow++) {
-//       const row = result.rows[indexRow]
-//       let section: T = {} as T
-
-//       for (let index = 0; index < result.fields.length; index++) {
-//         const field = result.fields[index];
-//         const name: string = field['name']
-//         section = updateObject(section, snakeToCamelCase(name), row[name])
-//       }
-//       sections.push(section)
-//     }
-//     return sections
-//   }
-//   catch (error) {
-//     console.log(`Error inesperado recuperando sección públic de usuario: '${tablename}'`, error)
-//     throw error
-//   }
-// }
 
 export async function dbGetUserSectionDataAsync(userId: number): Promise<SectionData[]> {
 
@@ -572,4 +537,129 @@ function validateOptionalFields(tablename: string, fieldname: string, value: unk
 function parseArray(value: string) {
   const object: [{ value: string, label: string }] = JSON.parse(value)
   return Object.values(object).map((e) => e.value)
+}
+
+export interface ResumeJson {
+  userId: number,
+  json: string,
+  delete: boolean,
+}
+
+export interface Resume {
+  basics: {
+    name: string,
+    label: string,
+    image: string,
+    email: string,
+    phone: string,
+    url: string,
+    summary: string,
+    location: LocationResume
+    profiles: ProfileResume[]
+  }
+  work: WorkResume[],
+  volunteer: VolunteerResume[],
+  education: EducationResume[],
+  awards: AwardResume[],
+  certificates: CertificateResume[],
+  publications: PublicationResume[],
+  skills: SkillResume[],
+  languages: LanguageResume[],
+  interests: InterestResume[],
+  references: ReferenceResume[],
+  projects: ProjectResume[],
+
+}
+
+function addUserInfoToModel(userId: number, model: { [key: string]: string }) {
+  return {
+    ...model,
+    userId: userId
+  }
+}
+
+function getDeleteAllUserSectionQuery(userId: number, tablename: string) {
+  try {
+    const params = [userId]
+    const query = `DELETE FROM ${tablename} WHERE user_id = $1;`
+    return { query, params }
+  }
+  catch (error) {
+    console.log(`Error inesperado eliminando sección completa: ${tablename}`, error)
+    throw error
+  }
+}
+
+export async function dbSetUserResumeJsonAsync(resumeJson: ResumeJson): Promise<number> {
+  let transactionOpen = false
+  try {
+
+    let count = 0;
+    const resume: Resume = JSON.parse(resumeJson.json)
+
+    await pool.query('BEGIN')
+    transactionOpen = true
+
+    const basics = resume.basics
+
+    if (basics) {
+
+      const { location, profiles, ...basic } = basics
+
+      if (basic) {
+        const { query: queryDelete, params: paramsDelete } = getDeleteAllUserSectionQuery(resumeJson.userId, 'basics')
+        await pool.query(queryDelete, paramsDelete)
+        const { query, params } = getUserSectionQuery('basics', addUserInfoToModel(resumeJson.userId, basic))
+        await pool.query(query, params)
+        count++
+      }
+
+      if (location) {
+        if (resumeJson.delete) {
+          const { query, params } = getDeleteAllUserSectionQuery(resumeJson.userId, 'locations')
+          await pool.query(query, params)
+        }
+        const { query, params } = getUserSectionQuery('locations', addUserInfoToModel(resumeJson.userId, location))
+        await pool.query(query, params)
+        count++
+      }
+      if (profiles) {
+        if (resumeJson.delete && profiles.length !== 0) {
+          const { query, params } = getDeleteAllUserSectionQuery(resumeJson.userId, 'profiles')
+          await pool.query(query, params)
+        }
+        profiles.forEach(async profile => {
+          const { query, params } = getUserSectionQuery('profiles', addUserInfoToModel(resumeJson.userId, profile))
+          await pool.query(query, params)
+          count++
+        })
+      }
+    }
+
+    SECTION_FIELDS.filter(s => s.schema !== 'basics' && s.schema !== 'location' && s.schema !== 'profiles')
+      .forEach(async resumeSection => {
+        const sectionSchema = resumeSection.schema as keyof Resume
+        if (resumeJson.delete && (resume[sectionSchema] as []).length !== 0) {
+          const { query, params } = getDeleteAllUserSectionQuery(resumeJson.userId, resumeSection.table)
+          await pool.query(query, params)
+        }
+        if (resume[sectionSchema]) {
+          (resume[sectionSchema] as []).forEach(async model => {
+            const { query, params } = getUserSectionQuery(resumeSection.table, addUserInfoToModel(resumeJson.userId, model))
+            await pool.query(query, params)
+            count++
+          });
+        }
+      })
+
+    await pool.query('COMMIT');
+    return count
+  }
+  catch (error) {
+    if (transactionOpen) {
+      await pool.query('ROLLBACK');
+    }
+    console.log('Error inesperado importando resumen del usuario', error)
+    throw error
+  }
 }

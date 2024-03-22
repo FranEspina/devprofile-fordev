@@ -28,6 +28,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { dateUtcToIso8601, localIso8601ToUtcDate } from '@/lib/dates'
 import { InputDate } from "@/components/ui/InputDate"
 import { z } from 'astro/zod'
+import { arrayToOptions, optionsToArray } from '@/lib/selectOption'
 
 interface VolunteerDialogProps {
   editMode: boolean,
@@ -56,7 +57,7 @@ export function VolunteerDialog({ editMode = false, initialState = undefined }: 
     if (editMode === true) {
       if (initialState) {
         if (initialState?.highlights) {
-          setHighlights(JSON.parse(initialState.highlights))
+          setHighlights(arrayToOptions(JSON.parse(initialState.highlights)))
         }
         setVolunteerState(initialState)
       } else {
@@ -166,7 +167,7 @@ export function VolunteerDialog({ editMode = false, initialState = undefined }: 
     setValidateOnBlur(true)
 
     let volunteer: Volunteer | undefined = structuredClone(volunteerState)
-    volunteer.highlights = JSON.stringify(highlights)
+    volunteer.highlights = JSON.stringify(optionsToArray(highlights))
 
     try {
       const success = (editMode === true)

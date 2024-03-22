@@ -23,6 +23,7 @@ import { LoadIndicator } from '@/components/LoadIndicator'
 import { type ChangeEvent } from "react"
 import MultipleSelector, { type Option } from "@/components/ui/multiple-selector"
 import { z } from 'astro/zod'
+import { arrayToOptions, optionsToArray } from '@/lib/selectOption'
 
 interface InterestDialogProps {
   editMode: boolean,
@@ -50,7 +51,7 @@ export function InterestDialog({ editMode = false, initialState = undefined }: I
   useEffect(() => {
     if (editMode === true) {
       if (interestState.keywords) {
-        setKeywords(JSON.parse(interestState.keywords))
+        setKeywords(arrayToOptions(JSON.parse(interestState.keywords)))
       }
       if (initialState) {
         setInterestState(initialState)
@@ -142,7 +143,7 @@ export function InterestDialog({ editMode = false, initialState = undefined }: I
     setValidateOnBlur(true)
 
     let interest: Interest | undefined = structuredClone(interestState)
-    interest.keywords = JSON.stringify(keywords)
+    interest.keywords = JSON.stringify(optionsToArray(keywords))
 
     try {
       const success = (editMode === true)

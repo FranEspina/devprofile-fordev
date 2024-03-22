@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { apiRegisterType, apiResultType, apiLoginType, apiResponse, apiUserDto, apiDevResourceDto, IAuthHeader } from '@/types/apiTypes.ts'
+import type { ResumeJson, apiRegisterType, apiResultType, apiLoginType, apiResponse, apiUserDto, apiDevResourceDto, IAuthHeader } from '@/types/apiTypes.ts'
 import type { ResourceRow } from '@/Schemas/resourceSchema'
 import type { ProfileCreate, ProfileDelete } from '@/Schemas/profileSchema'
 
@@ -371,6 +371,42 @@ export async function getUserResume<T>(id: number) {
     }
 
     return { success: false, message: 'Error inesperado recuperando resumen' }
+
+  }
+}
+
+export async function importResumeAsync(resumeFile: ResumeJson, token: string): Promise<apiResultType<number>> {
+
+  const endpoint = `${API_BASE_URL}/user/${resumeFile.userId}/resume/json`
+
+  try {
+    console.log(endpoint)
+    const response = await axios.post(endpoint, resumeFile, authHeader(token))
+    console.log(response)
+
+    const results: apiResponse<number> = response.data
+    if (results.success === true) {
+      return { success: true, message: 'Curriculum importado correctamente' }
+    }
+    return { success: false, message: results.message }
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.log('Error axios:', error.message);
+      if (error.response) {
+        const results: apiResponse<apiUserDto> = error.response.data
+        if (results) {
+          return { success: false, message: 'Error inesperado importando curriculum' }
+        }
+      }
+    } else if (error instanceof Error) {
+      console.log('Exception:', error.message);
+    } else if (typeof error === "string") {
+      console.log('Error:', error);
+    } else {
+      console.log('Unknow error:', error);
+    }
+
+    return { success: false, message: 'Error inesperado importando curriculum' }
 
   }
 }

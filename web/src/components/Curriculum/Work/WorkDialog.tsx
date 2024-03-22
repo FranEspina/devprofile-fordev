@@ -21,13 +21,12 @@ import { createUserSection, updateUserSection } from '@/services/apiService'
 import { useRefreshStore } from '@/store/refreshStore'
 import { LoadIndicator } from '@/components/LoadIndicator'
 import { type ChangeEvent } from "react"
-import { DatePicker } from '@/components/ui/DatePicker'
-import { type SelectSingleEventHandler } from 'react-day-picker'
 import MultipleSelector, { type Option } from "@/components/ui/multiple-selector"
 import { Textarea } from "@/components/ui/textarea"
 import { dateUtcToIso8601, localIso8601ToUtcDate } from '@/lib/dates'
 import { InputDate } from "@/components/ui/InputDate"
 import { z } from 'astro/zod'
+import { arrayToOptions, optionsToArray } from '@/lib/selectOption'
 
 interface WorkDialogProps {
   editMode: boolean,
@@ -54,8 +53,8 @@ export function WorkDialog({ editMode = false, initialState = undefined }: WorkD
   useEffect(() => {
     if (editMode === true) {
       if (initialState) {
-        if (initialState?.highlights) {
-          setHighlights(JSON.parse(initialState.highlights))
+        if (initialState.highlights) {
+          setHighlights(arrayToOptions(JSON.parse(initialState.highlights)))
         }
         setworkState(initialState)
       } else {
@@ -174,7 +173,7 @@ export function WorkDialog({ editMode = false, initialState = undefined }: WorkD
       return
     }
     let Work: Work | undefined = structuredClone(workState)
-    Work.highlights = JSON.stringify(highlights)
+    Work.highlights = JSON.stringify(optionsToArray(highlights))
 
     try {
       const success = (editMode === true)

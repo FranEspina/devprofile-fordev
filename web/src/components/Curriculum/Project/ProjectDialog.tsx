@@ -28,6 +28,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { dateUtcToIso8601, localIso8601ToUtcDate } from '@/lib/dates'
 import { InputDate } from "@/components/ui/InputDate"
 import { z } from 'astro/zod'
+import { arrayToOptions, optionsToArray } from '@/lib/selectOption'
 
 interface ProjectDialogProps {
   editMode: boolean,
@@ -58,13 +59,13 @@ export function ProjectDialog({ editMode = false, initialState = undefined }: Pr
     if (editMode === true) {
       if (initialState) {
         if (initialState?.highlights) {
-          setHighlights(JSON.parse(initialState.highlights))
+          setHighlights(arrayToOptions(JSON.parse(initialState.highlights)))
         }
         if (initialState?.roles) {
-          setRoles(JSON.parse(initialState.roles))
+          setRoles(arrayToOptions(JSON.parse(initialState.roles)))
         }
         if (initialState?.keywords) {
-          setKeywords(JSON.parse(initialState.keywords))
+          setKeywords(arrayToOptions(JSON.parse(initialState.keywords)))
         }
         setProjectState(initialState)
       } else {
@@ -176,9 +177,9 @@ export function ProjectDialog({ editMode = false, initialState = undefined }: Pr
     setValidateOnBlur(true)
 
     let project: Project | undefined = structuredClone(projectState)
-    project.highlights = JSON.stringify(highlights)
-    project.roles = JSON.stringify(roles)
-    project.keywords = JSON.stringify(keywords)
+    project.highlights = JSON.stringify(optionsToArray(highlights))
+    project.roles = JSON.stringify(optionsToArray(roles))
+    project.keywords = JSON.stringify(optionsToArray(keywords))
 
     try {
       const success = (editMode === true)

@@ -27,7 +27,7 @@ import MultipleSelector, { type Option } from "@/components/ui/multiple-selector
 import { dateUtcToIso8601, localIso8601ToUtcDate } from '@/lib/dates'
 import { InputDate } from "@/components/ui/InputDate"
 import { z } from 'astro/zod'
-
+import { arrayToOptions, optionsToArray } from '@/lib/selectOption'
 
 interface EducationDialogProps {
   editMode: boolean,
@@ -61,7 +61,7 @@ export function EducationDialog({ editMode = false, initialState = undefined }: 
     if (editMode === true) {
       if (initialState) {
         if (initialState.courses) {
-          setCourses(JSON.parse(initialState.courses))
+          setCourses(arrayToOptions(JSON.parse(initialState.courses)))
         }
         setEducationState(initialState)
       } else {
@@ -164,7 +164,7 @@ export function EducationDialog({ editMode = false, initialState = undefined }: 
     setValidateOnBlur(true)
 
     let education: Education | undefined = structuredClone(educationState)
-    education.courses = JSON.stringify(courses)
+    education.courses = JSON.stringify(optionsToArray(courses))
 
     try {
       const success = (editMode === true)

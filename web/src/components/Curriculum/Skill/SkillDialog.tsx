@@ -23,6 +23,7 @@ import { LoadIndicator } from '@/components/LoadIndicator'
 import { type ChangeEvent } from "react"
 import { z } from 'astro/zod'
 import MultipleSelector, { type Option } from '@/components/ui/multiple-selector'
+import { arrayToOptions, optionsToArray } from '@/lib/selectOption'
 
 interface SkillDialogProps {
   editMode: boolean,
@@ -50,7 +51,7 @@ export function SkillDialog({ editMode = false, initialState = undefined }: Skil
   useEffect(() => {
     if (editMode === true) {
       if (skillState.keywords) {
-        setKeywords(JSON.parse(skillState.keywords))
+        setKeywords(arrayToOptions(JSON.parse(skillState.keywords)))
       }
       if (initialState) {
         setSkillState(initialState)
@@ -142,7 +143,7 @@ export function SkillDialog({ editMode = false, initialState = undefined }: Skil
     setValidateOnBlur(true)
 
     let skill: Skill | undefined = structuredClone(skillState)
-    skill.keywords = JSON.stringify(keywords)
+    skill.keywords = JSON.stringify(optionsToArray(keywords))
 
     try {
       const success = (editMode === true)

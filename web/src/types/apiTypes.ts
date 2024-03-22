@@ -47,3 +47,8 @@ export interface apiDevResourceDto {
   url?: string,
   keywords?: string
 }
+
+export interface ResumeJson {
+  userId: number,
+  json: string
+}

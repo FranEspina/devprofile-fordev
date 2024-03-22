@@ -50,5 +50,6 @@ export interface apiDevResourceDto {
 
 export interface ResumeJson {
   userId: number,
-  json: string
+  json: string,
+  deletePrevious: boolean
 }

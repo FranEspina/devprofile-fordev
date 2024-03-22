@@ -1,66 +1,67 @@
 ---
 import { Button } from "@/components/ui/button";
 const { user } = Astro.locals;
-
-
-
 ---
 
 <input type="file" id="fileInput" style="display: none;" />
 <Button id="selectFileButton" variant="outline">Importar Resumen JSON</Button>
 
 <script>
-  import {importResumeAsync} from '@/services/apiService.ts';
-  import {type ResumeJson} from '@/types/apiTypes.ts';
+  import { importResumeAsync } from "@/services/apiService.ts";
+  import { type ResumeJson } from "@/types/apiTypes.ts";
 
   const $button = document.getElementById("selectFileButton");
-  const $inputFile = document.getElementById("fileInput");
-  const userId = Number(getCookie('id'))
-  const token = getCookie('token')
 
-  const importResume = async (file: string ) => {
+  const $inputFile = document.getElementById("fileInput");
+  const userId = Number(getCookie("id"));
+  const token = getCookie("token");
+
+  const importResume = async (file: string) => {
     const resumeJson: ResumeJson = {
-      userId: userId, 
-      json: file
-    }
-    const result = await importResumeAsync(resumeJson, token)
-    alert(result.message)
+      userId: userId,
+      json: file,
+      deletePrevious: true,
+    };
+    const result = await importResumeAsync(resumeJson, token);
+    window.location.reload();
+    alert(result.message);
+  };
+
+  if ($button && $inputFile) {
+    $button.addEventListener("click", () => {
+      $inputFile.click();
+    });
+
+    $inputFile.addEventListener("change", async () => {
+      const fileList: FileList = $inputFile.files; // Aquí obtenemos la lista de archivos
+      if (fileList && fileList[0]) {
+        const file = fileList[0];
+        const contents = await readAsText(file);
+        importResume(contents);
+      }
+    });
   }
 
-  $button.addEventListener("click", () => {
-    $inputFile.click();
-  });
-
-  $inputFile.addEventListener("change", async () => {
-    const fileList: FileList = $inputFile.files; // Aquí obtenemos la lista de archivos
-    if (fileList && fileList[0]){
-      const file = fileList[0]
-      const contents = await readAsText(file);
-      importResume(contents)
-    }
-  });
-
-  function getCookie(name:string) : string {
-    const cookies = document.cookie.split(';')
-    const path = `${name}=`
-    const cookie = cookies.find(cookie => cookie.trim().startsWith(path))
-    return cookie.split('=')[1] 
+  function getCookie(name: string): string {
+    const cookies = document.cookie.split(";");
+    const path = `${name}=`;
+    const cookie = cookies.find((cookie) => cookie.trim().startsWith(path));
+    if (!cookie) return "";
+    return cookie.split("=")[1];
   }
 
   function readAsText(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
-        let reader = new FileReader();
-        reader.onload = function(event) {
-            resolve(event.target.result as string);
-        };
-        reader.onerror = function(event) {
-            reject(new Error("Error reading file: " + event.target.error));
-        };
-        reader.readAsText(file);
+      let reader = new FileReader();
+      reader.onload = function (event) {
+        resolve((event?.target?.result as string) ?? "");
+      };
+      reader.onerror = function (event) {
+        reject(
+          new Error("Error reading file: " + (event?.target?.error ?? "")),
+        );
+      };
+      reader.readAsText(file);
     });
   }
-
-
-  
-
 </script>

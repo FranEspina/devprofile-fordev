@@ -30,6 +30,7 @@ export function SaveResume({ userId }: { userId: number }) {
   useEffect(() => {
     getUserResume<resultData>(userId)
       .then(result => {
+        console.log(result.dta)
         setResume(result.data)
       }
       );
@@ -38,7 +39,7 @@ export function SaveResume({ userId }: { userId: number }) {
 
   const handleSave: React.MouseEventHandler<HTMLButtonElement>
     = useCallback((event) => {
-      saveFile(JSON.stringify(resume, null, 2), "resume.json")
+      saveFile(JSON.stringify(resume, null, 2), "")
     }, [resume])
 
   return (

@@ -2,6 +2,7 @@ import { Pool } from 'pg'
 import { UserHashPassword, UserDTO, UserCreate } from '../models/user'
 import { UserDeleteSection, SectionData, WorkResume, LocationResume, ProfileResume, VolunteerResume, EducationResume, AwardResume, CertificateResume, PublicationResume, SkillResume, LanguageResume, InterestResume, ReferenceResume, ProjectResume } from '../models/modelSchemas'
 import { camelToSnakeCase, snakeToCamelCase } from '../services/strings'
+import { type JSonResume } from '../schemas/jsonSchema'
 
 import { Work, Project, Skill, Profile, Basic, Location, Volunteer, Education, Award, Certificate, Publication, Language, Interest, Reference } from '../models/modelSchemas'
 
@@ -136,7 +137,7 @@ export async function dbUpdateUserSectionAsync<T>(tablename: string, model: T): 
 
 interface sectionQuery<T> {
   query: string,
-  params: T[Extract<keyof T, string>][]
+  params: (string | T[Extract<keyof T, string>])[]
 }
 
 function getUserSectionQuery<T>(tablename: string, model: T): sectionQuery<T> {
@@ -150,7 +151,11 @@ function getUserSectionQuery<T>(tablename: string, model: T): sectionQuery<T> {
     for (const fieldName in model) {
       fieldsClause.push(`${camelToSnakeCase(fieldName)}`)
       valuesClause.push(`$${index}${(model[fieldName] instanceof Date) ? '::timestamptz' : ''}`)
-      params.push(model[fieldName])
+      if (Array.isArray(model[fieldName])) {
+        params.push(JSON.stringify(model[fieldName]) ?? '')
+      } else {
+        params.push(model[fieldName])
+      }
       index++
     }
 
@@ -171,6 +176,8 @@ export async function dbCreateUserSectionAsync<T>(tablename: string, model: T): 
   try {
     const { query, params } = getUserSectionQuery<T>(tablename, model)
     const result = await pool.query(query, params)
+    console.log(model)
+    console.log(params)
     return result.rows[0].id
   }
   catch (error) {
@@ -307,7 +314,6 @@ export async function dbGetUserBasicResumeAsync({ userId, includeIds, arrayParse
 }
 
 export async function dbGetUserResumeAsync({ userId, includeIds, arrayParsed }: { userId: number, includeIds: boolean, arrayParsed: boolean }): Promise<{ [key: string]: unknown }> {
-
   const resume: { [key: string]: unknown } = {}
   resume['$schema'] = 'https://raw.githubusercontent.com/jsonresume/resume-schema/v1.0.0/schema.json'
 
@@ -539,38 +545,6 @@ function parseArray(value: string) {
   return Object.values(object).map((e) => e.value)
 }
 
-export interface ResumeJson {
-  userId: number,
-  json: string,
-  delete: boolean,
-}
-
-export interface Resume {
-  basics: {
-    name: string,
-    label: string,
-    image: string,
-    email: string,
-    phone: string,
-    url: string,
-    summary: string,
-    location: LocationResume
-    profiles: ProfileResume[]
-  }
-  work: WorkResume[],
-  volunteer: VolunteerResume[],
-  education: EducationResume[],
-  awards: AwardResume[],
-  certificates: CertificateResume[],
-  publications: PublicationResume[],
-  skills: SkillResume[],
-  languages: LanguageResume[],
-  interests: InterestResume[],
-  references: ReferenceResume[],
-  projects: ProjectResume[],
-
-}
-
 function addUserInfoToModel(userId: number, model: { [key: string]: string }) {
   return {
     ...model,
@@ -590,12 +564,11 @@ function getDeleteAllUserSectionQuery(userId: number, tablename: string) {
   }
 }
 
-export async function dbSetUserResumeJsonAsync(resumeJson: ResumeJson): Promise<number> {
+export async function dbSetUserResumeJsonAsync({ userId, resume, deletePrevious }: { userId: number, resume: JSonResume, deletePrevious: boolean }): Promise<number> {
   let transactionOpen = false
   try {
 
     let count = 0;
-    const resume: Resume = JSON.parse(resumeJson.json)
 
     await pool.query('BEGIN')
     transactionOpen = true
@@ -607,29 +580,29 @@ export async function dbSetUserResumeJsonAsync(resumeJson: ResumeJson): Promise<
       const { location, profiles, ...basic } = basics
 
       if (basic) {
-        const { query: queryDelete, params: paramsDelete } = getDeleteAllUserSectionQuery(resumeJson.userId, 'basics')
+        const { query: queryDelete, params: paramsDelete } = getDeleteAllUserSectionQuery(userId, 'basics')
         await pool.query(queryDelete, paramsDelete)
-        const { query, params } = getUserSectionQuery('basics', addUserInfoToModel(resumeJson.userId, basic))
+        const { query, params } = getUserSectionQuery('basics', addUserInfoToModel(userId, basic))
         await pool.query(query, params)
         count++
       }
 
       if (location) {
-        if (resumeJson.delete) {
-          const { query, params } = getDeleteAllUserSectionQuery(resumeJson.userId, 'locations')
+        if (deletePrevious) {
+          const { query, params } = getDeleteAllUserSectionQuery(userId, 'locations')
           await pool.query(query, params)
         }
-        const { query, params } = getUserSectionQuery('locations', addUserInfoToModel(resumeJson.userId, location))
+        const { query, params } = getUserSectionQuery('locations', addUserInfoToModel(userId, location))
         await pool.query(query, params)
         count++
       }
       if (profiles) {
-        if (resumeJson.delete && profiles.length !== 0) {
-          const { query, params } = getDeleteAllUserSectionQuery(resumeJson.userId, 'profiles')
+        if (deletePrevious && profiles.length !== 0) {
+          const { query, params } = getDeleteAllUserSectionQuery(userId, 'profiles')
           await pool.query(query, params)
         }
         profiles.forEach(async profile => {
-          const { query, params } = getUserSectionQuery('profiles', addUserInfoToModel(resumeJson.userId, profile))
+          const { query, params } = getUserSectionQuery('profiles', addUserInfoToModel(userId, profile))
           await pool.query(query, params)
           count++
         })
@@ -638,14 +611,15 @@ export async function dbSetUserResumeJsonAsync(resumeJson: ResumeJson): Promise<
 
     SECTION_FIELDS.filter(s => s.schema !== 'basics' && s.schema !== 'location' && s.schema !== 'profiles')
       .forEach(async resumeSection => {
-        const sectionSchema = resumeSection.schema as keyof Resume
-        if (resumeJson.delete && (resume[sectionSchema] as []).length !== 0) {
-          const { query, params } = getDeleteAllUserSectionQuery(resumeJson.userId, resumeSection.table)
+        const sectionSchema = resumeSection.schema as keyof JSonResume
+        if (deletePrevious && (resume[sectionSchema] as []).length !== 0) {
+          const { query, params } = getDeleteAllUserSectionQuery(userId, resumeSection.table)
           await pool.query(query, params)
         }
         if (resume[sectionSchema]) {
+
           (resume[sectionSchema] as []).forEach(async model => {
-            const { query, params } = getUserSectionQuery(resumeSection.table, addUserInfoToModel(resumeJson.userId, model))
+            const { query, params } = getUserSectionQuery(resumeSection.table, addUserInfoToModel(userId, model))
             await pool.query(query, params)
             count++
           });

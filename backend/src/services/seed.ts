@@ -29,7 +29,7 @@ export const dropCreateAndSeedTables = async () => {
       DROP TABLE IF EXISTS skills;
       DROP TABLE IF EXISTS languages;
       DROP TABLE IF EXISTS interests;
-      DROP TABLE IF EXISTS references;
+      DROP TABLE IF EXISTS user_references;
       DROP TABLE IF EXISTS resources;
       DROP TABLE IF EXISTS users;
     `

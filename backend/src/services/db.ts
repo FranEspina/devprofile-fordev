@@ -349,6 +349,7 @@ export async function dbGetUserResumeAsync({ userId, includeIds, arrayParsed }: 
     const work = await dbGetUserSectionResumeAsync<Work>({ tablename: 'works', userId, includeIds, arrayParsed })
     if (work && work.length !== 0) {
       resume['work'] = work
+      console.log(work)
     }
 
     const volunteer = await dbGetUserSectionResumeAsync<Volunteer>({ tablename: 'volunteers', userId, includeIds, arrayParsed })

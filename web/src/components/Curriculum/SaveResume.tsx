@@ -30,7 +30,6 @@ export function SaveResume({ userId }: { userId: number }) {
   useEffect(() => {
     getUserResume<resultData>(userId)
       .then(result => {
-        console.log(result.data)
         setResume(result.data)
       }
       );

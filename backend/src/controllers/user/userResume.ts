@@ -6,9 +6,7 @@ import { JsonResumeSchema, type JSonResume } from '../../schemas/jsonSchema'
 export async function getUserResumeAsync(req: Request, res: Response) {
   try {
     const userId = Number(req.params.userId)
-
     const resume = await dbGetUserResumeAsync({ userId, includeIds: false, arrayParsed: true })
-
     return res.status(200).json({
       status: 200,
       success: true,

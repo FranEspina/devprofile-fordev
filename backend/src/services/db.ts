@@ -441,7 +441,10 @@ export async function dbGetUserSectionResumeAsync<T>({ tablename, userId, includ
             let value = row[name]
             if (validateOptionalFields(tablename, name, value)) {
               if (arrayParsed && isArrayField(tablename, name)) {
-                value = parseArray(value)
+                console.log(value)
+                //value = parseArray(value)
+                value = JSON.parse(value)
+                console.log(value)
               }
               const camelCaseName = snakeToCamelCase(name) as keyof T
               model = updateObject<T>(model, camelCaseName, value)

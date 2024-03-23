@@ -1,16 +1,22 @@
 ---
 import { Button } from "@/components/ui/button";
+import { LoadIndicator } from "@/components/LoadIndicator";
 const { user } = Astro.locals;
+const loading = false;
 ---
 
 <input type="file" id="fileInput" style="display: none;" />
-<Button id="selectFileButton" variant="outline">Importar Resumen JSON</Button>
+<Button id="selectFileButton" variant="outline">
+  Importar Resumen JSON <span id="loadIndicator" class="ml-2">
+    <LoadIndicator loading={true} />
+  </span>
+</Button>
 
 <script>
   import { type ResumeJson } from "@/types/apiTypes.ts";
   import { EVENTS_UPDATE } from "@/components/ZustandStoreProvider";
 
-  const { importResumeAsync } = await import("@/services/apiService.ts");
+  import { importResumeAsync } from "@/services/apiService.ts";
   const { useNotify } = await import("@/hooks/useNotify");
 
   const { notifySuccess, notifyError } = useNotify();
@@ -18,27 +24,33 @@ const { user } = Astro.locals;
   const $inputFile = document.getElementById("fileInput");
   const userId = Number(getCookie("id"));
   const token = getCookie("token");
+  const $loadIndicator = document.getElementById("loadIndicator");
+  if ($loadIndicator) {
+    console.log("hola");
+    $loadIndicator.classList.add("hidden");
+  }
 
-  const importResume = async (file: string) => {
+  const importResume = (file: string) => {
     const resumeJson = {
       userId: userId,
       json: file,
       deletePrevious: true,
     };
 
-    try {
-      const result = await importResumeAsync(resumeJson, token);
-      if (result.success) {
-        window.dispatchEvent(new Event(EVENTS_UPDATE.RefreshAll));
-        notifySuccess(result.message);
-      } else {
-        console.log(result);
-        notifyError(result.message);
-      }
-    } catch (error) {
-      console.log(error);
-      notifyError("Error inesperado importando resumen");
-    }
+    importResumeAsync(resumeJson, token)
+      .then((result) => {
+        if (result.success) {
+          window.dispatchEvent(new Event(EVENTS_UPDATE.RefreshAll));
+          notifySuccess(result.message);
+        } else {
+          console.log(result);
+          notifyError(result.message);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        notifyError("Error inesperado importando resumen");
+      });
   };
 
   if ($button && $inputFile) {
@@ -46,16 +58,26 @@ const { user } = Astro.locals;
       $inputFile.click();
     });
 
-    $inputFile.addEventListener("change", async () => {
+    $inputFile.addEventListener("change", () => {
       const fileList: FileList = $inputFile.files; // Aquí obtenemos la lista de archivos
       if (fileList && fileList[0]) {
         const file = fileList[0];
-        try {
-          const contents = await readAsText(file);
-          await importResume(contents);
-        } catch (error) {
-          notifyError("Error inesperado importando fichero");
+        if ($loadIndicator) {
+          $loadIndicator.classList.remove("hidden");
         }
+
+        readAsText(file).then((contents) => {
+          importResume(contents)
+            .catch((error) => {
+              console.log(error);
+              notifyError("Error inesperado importando fichero");
+            })
+            .finally(() => {
+              if ($loadIndicator) {
+                $loadIndicator.classList.add("hidden");
+              }
+            });
+        });
       }
     });
   }

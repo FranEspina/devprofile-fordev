@@ -7,7 +7,12 @@ declare global {
         id: string
       },
     }
+
+    interface Window {
+      updatePublicationStamp: () => void;
+    }
   }
+
 }
 
 export type SocialIcon = Record<string, string | any>

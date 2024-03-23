@@ -28,7 +28,8 @@ interface refreshState {
   interestStamp: number,
   setInterestStamp: (interestStamp: number) => void
   referenceStamp: number,
-  setReferenceStamp: (referenceStamp: number) => void
+  setReferenceStamp: (referenceStamp: number) => void,
+  setAllStamp: () => void,
 }
 
 export const useRefreshStore = create<refreshState>()(
@@ -62,6 +63,23 @@ export const useRefreshStore = create<refreshState>()(
       setInterestStamp: (interestStamp: number) => set({ interestStamp }),
       referenceStamp: 0,
       setReferenceStamp: (referenceStamp: number) => set({ referenceStamp }),
+      setAllStamp: () => set({
+        profileStamp: Date.now(),
+        workStamp: Date.now(),
+        projectStamp: Date.now(),
+        skillStamp: Date.now(),
+        basicStamp: Date.now(),
+        locationStamp: Date.now(),
+        volunteerStamp: Date.now(),
+        educationStamp: Date.now(),
+        awardStamp: Date.now(),
+        certificateStamp: Date.now(),
+        publicationStamp: Date.now(),
+        languageStamp: Date.now(),
+        interestStamp: Date.now(),
+        referenceStamp: Date.now(),
+      }),
+
     }
   }
 )

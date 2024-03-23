@@ -176,8 +176,6 @@ export async function dbCreateUserSectionAsync<T>(tablename: string, model: T): 
   try {
     const { query, params } = getUserSectionQuery<T>(tablename, model)
     const result = await pool.query(query, params)
-    console.log(model)
-    console.log(params)
     return result.rows[0].id
   }
   catch (error) {
@@ -349,7 +347,6 @@ export async function dbGetUserResumeAsync({ userId, includeIds, arrayParsed }: 
     const work = await dbGetUserSectionResumeAsync<Work>({ tablename: 'works', userId, includeIds, arrayParsed })
     if (work && work.length !== 0) {
       resume['work'] = work
-      console.log(work)
     }
 
     const volunteer = await dbGetUserSectionResumeAsync<Volunteer>({ tablename: 'volunteers', userId, includeIds, arrayParsed })

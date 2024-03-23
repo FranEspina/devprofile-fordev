@@ -7,24 +7,38 @@ const { user } = Astro.locals;
 <Button id="selectFileButton" variant="outline">Importar Resumen JSON</Button>
 
 <script>
-  import { importResumeAsync } from "@/services/apiService.ts";
   import { type ResumeJson } from "@/types/apiTypes.ts";
+  import { EVENTS_UPDATE } from "@/components/ZustandStoreProvider";
 
+  const { importResumeAsync } = await import("@/services/apiService.ts");
+  const { useNotify } = await import("@/hooks/useNotify");
+
+  const { notifySuccess, notifyError } = useNotify();
   const $button = document.getElementById("selectFileButton");
-
   const $inputFile = document.getElementById("fileInput");
   const userId = Number(getCookie("id"));
   const token = getCookie("token");
 
   const importResume = async (file: string) => {
-    const resumeJson: ResumeJson = {
+    const resumeJson = {
       userId: userId,
       json: file,
       deletePrevious: true,
     };
-    const result = await importResumeAsync(resumeJson, token);
-    window.location.reload();
-    alert(result.message);
+
+    try {
+      const result = await importResumeAsync(resumeJson, token);
+      if (result.success) {
+        window.dispatchEvent(new Event(EVENTS_UPDATE.RefreshAll));
+        notifySuccess(result.message);
+      } else {
+        console.log(result);
+        notifyError(result.message);
+      }
+    } catch (error) {
+      console.log(error);
+      notifyError("Error inesperado importando resumen");
+    }
   };
 
   if ($button && $inputFile) {
@@ -36,8 +50,12 @@ const { user } = Astro.locals;
       const fileList: FileList = $inputFile.files; // Aquí obtenemos la lista de archivos
       if (fileList && fileList[0]) {
         const file = fileList[0];
-        const contents = await readAsText(file);
-        importResume(contents);
+        try {
+          const contents = await readAsText(file);
+          await importResume(contents);
+        } catch (error) {
+          notifyError("Error inesperado importando fichero");
+        }
       }
     });
   }

@@ -11,6 +11,7 @@ export const saveFile = async (blob, suggestedName) => {
         return false;
       }
     })();
+
   // If the File System Access API is supported…
   if (supportsFileSystemAccess) {
     try {
@@ -32,11 +33,14 @@ export const saveFile = async (blob, suggestedName) => {
     } catch (err) {
       // Fail silently if the user has simply canceled the dialog.
       if (err.name !== 'AbortError') {
+        console.log('Error inesperado guardando fichero');
         console.error(err.name, err.message);
-        return;
+        throw err
       }
+      return
     }
   }
+
 
   // Fallback if the File System Access API is not supported…
   // Create the blob URL.

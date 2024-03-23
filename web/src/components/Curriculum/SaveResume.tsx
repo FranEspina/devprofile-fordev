@@ -11,6 +11,7 @@ import { type Award } from "@/Schemas/awardSchema";
 import { type Interest } from "@/Schemas/interestSchema";
 import { type Reference } from "@/Schemas/referenceSchema";
 import { ArrowRight } from "lucide-react";
+import { useNotify } from '@/hooks/useNotify'
 
 interface resultData {
   work: Work[];
@@ -24,7 +25,7 @@ interface resultData {
 
 
 export function SaveResume({ userId }: { userId: number }) {
-
+  const { notifySuccess, notifyError } = useNotify()
   const [resume, setResume] = useState<unknown>(null)
 
   useEffect(() => {
@@ -32,13 +33,23 @@ export function SaveResume({ userId }: { userId: number }) {
       .then(result => {
         setResume(result.data)
       }
-      );
+      ).catch((error) => {
+        notifyError('Error recuperando información')
+      });
   }
     , [])
 
   const handleSave: React.MouseEventHandler<HTMLButtonElement>
     = useCallback((event) => {
+
       saveFile(JSON.stringify(resume, null, 2), "")
+        .then(() => {
+          notifySuccess('Fichero exportado correctamente')
+        })
+        .catch((error) => {
+          notifyError('Error inesperado guardando fichero')
+        })
+
     }, [resume])
 
   return (

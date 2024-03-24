@@ -35,7 +35,7 @@ export class UserSectionBaseController<T extends { id: number } & Record<string,
       console.log(error)
       return res.status(500).json({
         status: 500,
-        success: true,
+        success: false,
         code: `UNEXPECTED_ERROR_GET_USER_${this.tableName.toUpperCase()}`,
         message: `Error inesperado recuperando ${this.tableDesc}`,
         data: null,
@@ -100,7 +100,7 @@ export class UserSectionBaseController<T extends { id: number } & Record<string,
       console.log(error)
       return res.status(500).json({
         status: 500,
-        success: true,
+        success: false,
         code: 'UNEXPECTED_ERROR_CREATE_USER_WORKS',
         message: 'Error inesperado creando puesto de usuario',
         data: null,
@@ -173,7 +173,7 @@ export class UserSectionBaseController<T extends { id: number } & Record<string,
       console.log(error)
       return res.status(500).json({
         status: 500,
-        success: true,
+        success: false,
         code: `UNEXPECTED_ERROR_UPDATE_USER_${this.tableName.toUpperCase()}`,
         message: `Error inesperado actualizando sección: ${this.tableDesc}`,
         data: null,
@@ -220,7 +220,7 @@ export class UserSectionBaseController<T extends { id: number } & Record<string,
       console.log(error)
       return res.status(500).json({
         status: 500,
-        success: true,
+        success: false,
         code: `UNEXPECTED_ERROR_DELETE_USER_${this.tableName.toUpperCase()}`,
         message: `Error inesperado eliminando sección de usuario: ${this.tableDesc}`,
         data: null,
@@ -234,7 +234,7 @@ export class UserSectionBaseController<T extends { id: number } & Record<string,
       if (!this.IsResumeSection) {
         return res.status(500).json({
           status: 500,
-          success: true,
+          success: false,
           code: `UNEXPECTED_ERROR_SECTION_RESUME_${this.tableName.toUpperCase()}`,
           message: `La sección ${this.tableDesc} no es de tipo resumen`,
           data: null,
@@ -255,7 +255,7 @@ export class UserSectionBaseController<T extends { id: number } & Record<string,
       console.log(error)
       return res.status(500).json({
         status: 500,
-        success: true,
+        success: false,
         code: `UNEXPECTED_ERROR_GET_USER_RESUME_${this.tableName.toUpperCase()}`,
         message: `Error inesperado recuperando ${this.tableDesc}`,
         data: null,

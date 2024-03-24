@@ -42,7 +42,7 @@ export async function getUserSectionDataAsync(req: Request, res: Response) {
     console.log(error)
     return res.status(500).json({
       status: 500,
-      success: true,
+      success: false,
       code: 'UNEXPECTED_ERROR_GET_USER_SECTIONDATA',
       message: 'Error inesperado recuperando datos de secciones',
       data: null,

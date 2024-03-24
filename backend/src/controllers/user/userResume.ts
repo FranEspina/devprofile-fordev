@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { dbGetUserResumeAsync, dbGetUserBasicResumeAsync, dbSetUserResumeJsonAsync } from '../../services/db'
+import { dbGetUserResumeAsync, dbGetUserBasicResumeAsync, dbSetUserResumeJsonAsync, dbDeleteResumeAsync } from '../../services/db'
 import { validateSchemaAsync } from '../../services/validationService'
 import { JsonResumeSchema, type JSonResume } from '../../schemas/jsonSchema'
 
@@ -19,7 +19,7 @@ export async function getUserResumeAsync(req: Request, res: Response) {
     console.log(error)
     return res.status(500).json({
       status: 500,
-      success: true,
+      success: false,
       code: 'UNEXPECTED_ERROR_GET_USER_RESUME',
       message: 'Error inesperado recuperando cv público',
       data: null,
@@ -45,7 +45,7 @@ export async function getUserBasicResumeAsync(req: Request, res: Response) {
     console.log(error)
     return res.status(500).json({
       status: 500,
-      success: true,
+      success: false,
       code: 'UNEXPECTED_ERROR_GET_USER_RESUME_BASIC',
       message: 'Error inesperado recuperando datos básicos',
       data: null,
@@ -87,9 +87,33 @@ export async function postUserResumeJsonAsync(req: Request, res: Response) {
     console.log(error)
     return res.status(500).json({
       status: 500,
-      success: true,
+      success: false,
       code: 'UNEXPECTED_ERROR_POST_USER_RESUME_JSON',
       message: 'Error inesperado insertando resumen del usuario',
+      data: null,
+    })
+  }
+}
+
+export async function deleteResumeAsync(req: Request, res: Response) {
+  try {
+    const userId = Number(req.params.userId)
+    const rowsaffected = await dbDeleteResumeAsync(userId)
+    return res.status(200).json({
+      status: 200,
+      success: true,
+      code: 'OK',
+      message: 'Operación realizada correctamente',
+      data: rowsaffected,
+    })
+
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({
+      status: 500,
+      success: false,
+      code: 'UNEXPECTED_ERROR_DELETE_USER_RESUME',
+      message: 'Error inesperado eliminando resumen del usuario',
       data: null,
     })
   }

@@ -441,10 +441,7 @@ export async function dbGetUserSectionResumeAsync<T>({ tablename, userId, includ
             let value = row[name]
             if (validateOptionalFields(tablename, name, value)) {
               if (arrayParsed && isArrayField(tablename, name)) {
-                console.log(value)
-                //value = parseArray(value)
                 value = JSON.parse(value)
-                console.log(value)
               }
               const camelCaseName = snakeToCamelCase(name) as keyof T
               model = updateObject<T>(model, camelCaseName, value)
@@ -541,11 +538,6 @@ function validateOptionalFields(tablename: string, fieldname: string, value: unk
 
 }
 
-function parseArray(value: string) {
-  const object: [{ value: string, label: string }] = JSON.parse(value)
-  return Object.values(object).map((e) => e.value)
-}
-
 function addUserInfoToModel(userId: number, model: { [key: string]: string }) {
   return {
     ...model,
@@ -635,6 +627,34 @@ export async function dbSetUserResumeJsonAsync({ userId, resume, deletePrevious 
       await pool.query('ROLLBACK');
     }
     console.log('Error inesperado importando resumen del usuario', error)
+    throw error
+  }
+}
+
+export async function dbDeleteResumeAsync(userId: number): Promise<number> {
+  let transactionOpen = false
+  try {
+
+    let count = 0;
+
+    await pool.query('BEGIN')
+    transactionOpen = true
+
+    SECTION_FIELDS.forEach(async resumeSection => {
+      const { query, params } = getDeleteAllUserSectionQuery(userId, resumeSection.table)
+      const result = await pool.query(query, params)
+      console.log(`tabla: ${resumeSection.table}, registros: ${result.rowCount ?? 0}`)
+      count += result.rowCount ?? 0
+    })
+
+    await pool.query('COMMIT');
+    return count
+  }
+  catch (error) {
+    if (transactionOpen) {
+      await pool.query('ROLLBACK');
+    }
+    console.log('Error inesperado eliminando resumen del usuario', error)
     throw error
   }
 }

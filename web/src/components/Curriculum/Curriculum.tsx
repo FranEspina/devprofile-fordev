@@ -39,10 +39,7 @@ import { EducationList } from '@/components/Curriculum/Education/EducationList'
 import { VolunteerDialog } from '@/components/Curriculum/Volunteer/VolunteerDialog'
 import { VolunteerList } from '@/components/Curriculum/Volunteer/VolunteerList'
 
-
 export function CurriculumView() {
-
-
   return (<section className="w-full ">
     <header>
       <h2 className="text-left text-sm md:text-base">Secciones del Curriculum</h2>

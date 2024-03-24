@@ -8,6 +8,8 @@ import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { SaveResume } from "@/components/Curriculum/SaveResume";
 import ImportResume from "@/components/Curriculum/ImportResume.astro";
+import { DeleteAll } from "@/components/Curriculum/DeleteAll";
+
 const { user } = Astro.locals;
 ---
 
@@ -38,7 +40,12 @@ const { user } = Astro.locals;
             <ViewPublicCV client:load userId={user.id} />
           </li>
           <!-- <li><ImportResume client:load /></li> -->
-          <li><ImportResume /></li>
+          <li>
+            <div>
+              <DeleteAll client:load />
+              <ImportResume />
+            </div>
+          </li>
         </ul>
       </body>
     </section>

@@ -13,9 +13,7 @@ const loading = false;
 </Button>
 
 <script>
-  import { type ResumeJson } from "@/types/apiTypes.ts";
   import { EVENTS_UPDATE } from "@/components/ZustandStoreProvider";
-
   import { importResumeAsync } from "@/services/apiService.ts";
   const { useNotify } = await import("@/hooks/useNotify");
 
@@ -55,6 +53,8 @@ const loading = false;
 
   if ($button && $inputFile) {
     $button.addEventListener("click", () => {
+      //Limpiamos la selección para que vuelva a saltar el change
+      ($inputFile as HTMLInputElement).value = "";
       $inputFile.click();
     });
 
@@ -67,16 +67,10 @@ const loading = false;
         }
 
         readAsText(file).then((contents) => {
-          importResume(contents)
-            .catch((error) => {
-              console.log(error);
-              notifyError("Error inesperado importando fichero");
-            })
-            .finally(() => {
-              if ($loadIndicator) {
-                $loadIndicator.classList.add("hidden");
-              }
-            });
+          importResume(contents);
+          if ($loadIndicator) {
+            $loadIndicator.classList.add("hidden");
+          }
         });
       }
     });

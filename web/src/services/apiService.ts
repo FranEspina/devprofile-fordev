@@ -410,3 +410,26 @@ export async function importResumeAsync(resumeFile: ResumeJson, token: string): 
 
   }
 }
+
+export async function deleteResume(userId: number, token: string): Promise<apiResultType<number>> {
+
+  const endpoint = `${API_BASE_URL}/user/${userId}/resume`
+  try {
+    const result = await axios.delete(endpoint, authHeader(token))
+    return { success: true, message: 'Datos eliminados correctamente', data: (result.data.data ?? 0) }
+  } catch (error) {
+    console.log(error)
+    if (axios.isAxiosError(error)) {
+      console.log(error.message);
+    } else if (error instanceof Error) {
+      console.log('Exception:', error.message);
+    } else if (typeof error === "string") {
+      console.log('Error:', error);
+    } else {
+      console.log('Unknow error:', error);
+    }
+
+    return { success: false, message: 'Error inesperado eliminando sección' }
+
+  }
+}

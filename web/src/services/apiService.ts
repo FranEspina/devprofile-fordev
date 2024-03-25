@@ -380,10 +380,7 @@ export async function importResumeAsync(resumeFile: ResumeJson, token: string): 
   const endpoint = `${API_BASE_URL}/user/${resumeFile.userId}/resume/json`
 
   try {
-    console.log(endpoint)
     const response = await axios.post(endpoint, resumeFile, authHeader(token))
-    console.log(response)
-
     const results: apiResponse<number> = response.data
     if (results.success === true) {
       return { success: true, message: 'Curriculum importado correctamente' }

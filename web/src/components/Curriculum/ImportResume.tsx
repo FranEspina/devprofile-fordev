@@ -91,7 +91,7 @@ export function ImportResume() {
   return (
     <>
       <input ref={refInputFile} type="file" id="fileInput" className="hidden" onChange={handleChangeFile} />
-      <Button id="selectFileButton" variant="outline" onClick={handleClick}>
+      <Button className="text-xs md:text-sm" variant="outline" onClick={handleClick}>
         Importar Resumen JSON <span id="loadIndicator" className="ml-2">
           <LoadIndicator loading={isLoading} />
         </span>

@@ -13,8 +13,6 @@ export function ImportResume() {
   const { notifySuccess, notifyError } = useNotify();
   const { user, token } = useProfileStore(state => state)
   const refInputFile = useRef<HTMLInputElement>(null)
-  const changeFileRef = useRef(() => undefined);
-  const clickButtonRef = useRef(() => undefined);
 
   const readAsText = useCallback((file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -31,16 +29,14 @@ export function ImportResume() {
     });
   }, [])
 
-  useEffect(() => {
-    clickButtonRef.current = () => {
-      if (refInputFile.current) {
-        refInputFile.current.value = ""
-        refInputFile.current.click()
-      }
+  const handleClick = useCallback(() => {
+    if (refInputFile.current) {
+      refInputFile.current.value = ""
+      refInputFile.current.click()
     }
   }, [refInputFile])
 
-  changeFileRef.current = () => {
+  const handleChangeFile = useCallback(() => {
 
     if (token === 'not-loaded')
       return
@@ -90,12 +86,12 @@ export function ImportResume() {
         setIsLoading(false)
         console.log(error)
       })
-  }
+  }, [token, user, readAsText, notifyError, notifySuccess, refInputFile])
 
   return (
     <>
-      <input ref={refInputFile} type="file" id="fileInput" className="hidden" onChange={changeFileRef.current} />
-      <Button id="selectFileButton" variant="outline" onClick={clickButtonRef.current}>
+      <input ref={refInputFile} type="file" id="fileInput" className="hidden" onChange={handleChangeFile} />
+      <Button id="selectFileButton" variant="outline" onClick={handleClick}>
         Importar Resumen JSON <span id="loadIndicator" className="ml-2">
           <LoadIndicator loading={isLoading} />
         </span>

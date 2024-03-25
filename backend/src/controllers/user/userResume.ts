@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { dbGetUserResumeAsync, dbGetUserBasicResumeAsync, dbSetUserResumeJsonAsync, dbDeleteResumeAsync } from '../../services/db'
+import { dbGetUserResumeAsync, dbGetUserBasicResumeAsync, dbImportUserResumeAsync, dbDeleteResumeWithPoolAsync } from '../../services/db'
 import { validateSchemaAsync } from '../../services/validationService'
 import { JsonResumeSchema, type JSonResume } from '../../schemas/jsonSchema'
 
@@ -73,14 +73,17 @@ export async function postUserResumeJsonAsync(req: Request, res: Response) {
       return
     }
 
-    const rowsaffected = await dbSetUserResumeJsonAsync({ userId, resume: data, deletePrevious })
+    if (deletePrevious) {
+      await dbDeleteResumeWithPoolAsync(userId)
+    }
+    await dbImportUserResumeAsync({ userId, resume: data })
 
-    return res.status((rowsaffected === 0) ? 404 : 200).json({
-      status: (rowsaffected === 0) ? 404 : 200,
+    return res.status(200).json({
+      status: 200,
       success: true,
-      code: (rowsaffected === 0) ? 'NOT_FOUND_POST_USER_RESUME_JSON' : 'OK',
-      message: (rowsaffected === 0) ? 'No se insertaron datos' : 'Operación realizada correctamente',
-      data: rowsaffected,
+      code: 'OK',
+      message: 'Operación realizada correctamente',
+      data: null,
     })
 
   } catch (error) {
@@ -98,13 +101,13 @@ export async function postUserResumeJsonAsync(req: Request, res: Response) {
 export async function deleteResumeAsync(req: Request, res: Response) {
   try {
     const userId = Number(req.params.userId)
-    const rowsaffected = await dbDeleteResumeAsync(userId)
+    await dbDeleteResumeWithPoolAsync(userId)
     return res.status(200).json({
       status: 200,
       success: true,
       code: 'OK',
       message: 'Operación realizada correctamente',
-      data: rowsaffected,
+      data: null,
     })
 
   } catch (error) {

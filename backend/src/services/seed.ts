@@ -32,6 +32,7 @@ export const dropCreateAndSeedTables = async () => {
       DROP TABLE IF EXISTS user_references;
       DROP TABLE IF EXISTS resources;
       DROP TABLE IF EXISTS users;
+      DROP TABLE IF EXISTS error_log;
     `
     await pool.query(dropTables)
       .then(() => {
@@ -346,22 +347,51 @@ export const dropCreateAndSeedTables = async () => {
       console.log(err);
     });
 
+  const logTrigger = `
+  CREATE TABLE IF NOT EXISTS error_log  (
+  error_timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  error_message TEXT
+  );
+
+  CREATE OR REPLACE FUNCTION log_error(error_text TEXT) RETURNS VOID AS $$
+  BEGIN
+    INSERT INTO error_log (error_message) VALUES (error_text);
+  END;
+  $$ LANGUAGE plpgsql;
+  `
+  await pool.query(logTrigger)
+    .then(() => {
+      console.log('- Log de triggers creados');
+    })
+    .catch((err) => {
+      console.log('Error inesperado creando log de triggers')
+      console.log(err);
+    });
+
   //La tabla 'references' se llama 'user_references' porque 'references' es una palabra protegida 
   const tableNames = ['works', 'profiles', 'locations', 'projects', 'skills', 'volunteers', 'educations', 'awards', 'certificates', 'publications', 'languages', 'interests', 'user_references']
   const triggers = tableNames.map(table => (
     `
     CREATE OR REPLACE FUNCTION delete_public_${table}() RETURNS TRIGGER AS $$
     BEGIN
-      DELETE FROM sections WHERE sections.section_name = '${table}' AND sections.section_id = OLD.id;
+      DELETE FROM sections WHERE sections.section_name = '${table.replace('user_', '')}' AND sections.section_id = OLD.id;
       RETURN NULL;
+    EXCEPTION
+      WHEN OTHERS THEN
+      PERFORM log_error('Error en delete_public_${table}: ' || SQLERRM);
+      RAISE;  
     END;
     $$ LANGUAGE plpgsql;
 
     CREATE OR REPLACE FUNCTION insert_public_${table}() RETURNS TRIGGER AS $$
     BEGIN
       INSERT INTO sections(section_name, user_id, section_id, is_public)
-      VALUES('${table}', NEW.user_id, NEW.id, TRUE);
+      VALUES('${table.replace('user_', '')}', NEW.user_id, NEW.id, TRUE);
       RETURN NULL;
+    EXCEPTION
+      WHEN OTHERS THEN
+      PERFORM log_error('Error en delete_public_${table}: ' || SQLERRM);
+      RAISE;
     END;
     $$ LANGUAGE plpgsql;
 

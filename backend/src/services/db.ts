@@ -1,4 +1,4 @@
-import { Pool } from 'pg'
+import { Pool, QueryResult } from 'pg'
 import { UserHashPassword, UserDTO, UserCreate } from '../models/user'
 import { UserDeleteSection, SectionData, WorkResume, LocationResume, ProfileResume, VolunteerResume, EducationResume, AwardResume, CertificateResume, PublicationResume, SkillResume, LanguageResume, InterestResume, ReferenceResume, ProjectResume } from '../models/modelSchemas'
 import { camelToSnakeCase, snakeToCamelCase } from '../services/strings'
@@ -15,6 +15,7 @@ const pool = new Pool({
   ssl: process.env.POSTGRES_SSL === 'true'
 });
 
+const BASIC_SECTION_FIELDS = { section: 'basics', table: 'basics', schema: 'basic', field: '', description: 'Datos básicos' }
 const SECTION_FIELDS = [
   { section: 'works', table: 'works', schema: 'work', field: 'name', description: 'Puesto' },
   { section: 'profiles', table: 'profiles', schema: 'profiles', field: 'network', description: 'Perfil' },
@@ -33,6 +34,7 @@ const SECTION_FIELDS = [
 
 export const getUserByEmailAsync = async (email: string): Promise<UserHashPassword | null> => {
 
+
   try {
     const result = await pool.query('SELECT id, first_name, last_name, password FROM users WHERE email = $1', [email])
     if (!result || !result.rowCount) return null
@@ -50,9 +52,11 @@ export const getUserByEmailAsync = async (email: string): Promise<UserHashPasswo
     throw error
   }
 
+
 }
 
 export const getUserByIdAsync = async (id: number): Promise<UserHashPassword | null> => {
+
 
   try {
     const result = await pool.query('SELECT id, first_name, last_name, email, password FROM users WHERE id = $1', [id])
@@ -71,9 +75,11 @@ export const getUserByIdAsync = async (id: number): Promise<UserHashPassword | n
     throw error
   }
 
+
 }
 
 export async function createUserAsync({ email, firstName, lastName, hashPassword }: UserCreate): Promise<UserDTO> {
+
   try {
     const result = await pool.query('INSERT INTO users(EMAIL, FIRST_NAME, LAST_NAME, PASSWORD) VALUES ($1, $2, $3, $4) RETURNING id', [email, firstName, lastName, hashPassword])
     return ({ id: result.rows[0].id, email, firstName, lastName })
@@ -82,10 +88,12 @@ export async function createUserAsync({ email, firstName, lastName, hashPassword
     console.log('Error inesperado creando usuario', error)
     throw error
   }
+
 }
 
 
 export async function dbDeleteUserSectionAsync(userSection: UserDeleteSection) {
+
   try {
     const queryParams = [userSection.id, userSection.userId]
     const queryResources = `DELETE FROM ${userSection.tablename} WHERE id = $1 AND user_id = $2;`
@@ -95,9 +103,12 @@ export async function dbDeleteUserSectionAsync(userSection: UserDeleteSection) {
     console.log(`Error inesperado eliminando sección: ${userSection.tablename}`, error)
     throw error
   }
+
 }
 
 export async function dbUpdateUserSectionAsync<T>(tablename: string, model: T): Promise<number | null> {
+
+
   try {
 
     const queryParams = []
@@ -132,8 +143,8 @@ export async function dbUpdateUserSectionAsync<T>(tablename: string, model: T): 
     console.log('Error inesperado actualizando de usuario', error)
     throw error
   }
-}
 
+}
 
 interface sectionQuery<T> {
   query: string,
@@ -173,6 +184,7 @@ function getUserSectionQuery<T>(tablename: string, model: T): sectionQuery<T> {
 
 
 export async function dbCreateUserSectionAsync<T>(tablename: string, model: T): Promise<number> {
+
   try {
     const { query, params } = getUserSectionQuery<T>(tablename, model)
     const result = await pool.query(query, params)
@@ -182,6 +194,7 @@ export async function dbCreateUserSectionAsync<T>(tablename: string, model: T): 
     console.log('Error inesperado creando puesto de trabajo de usuario', error)
     throw error
   }
+
 }
 
 function updateObject<T>(obj: T, key: keyof T, value: unknown): T {
@@ -190,6 +203,7 @@ function updateObject<T>(obj: T, key: keyof T, value: unknown): T {
 
 export async function dbGetUserSectionByUserAsync<T extends { [key: string]: unknown }>(tablename: string, userId: number): Promise<T[]> {
   const userSectionQuery = `SELECT * FROM ${tablename} WHERE user_id = $1 order by id asc;`
+
   try {
 
     //TODO: Crear todos los modelos tanto de BBDD como de los DTO de la API
@@ -219,10 +233,10 @@ export async function dbGetUserSectionByUserAsync<T extends { [key: string]: unk
     console.log(`Error inesperado recuperando sección de usuario: '${tablename}'`, error)
     throw error
   }
+
 }
 
 export async function dbGetUserSectionDataAsync(userId: number): Promise<SectionData[]> {
-
 
   const casesField = SECTION_FIELDS.map(f => `WHEN '${f.section}' THEN ${f.table}.${f.field}`).join('\r\n')
   const casesDescription = SECTION_FIELDS.map(f => `WHEN '${f.section}' THEN '${f.description}'`).join('\r\n')
@@ -243,8 +257,10 @@ export async function dbGetUserSectionDataAsync(userId: number): Promise<Section
       ${leftJoins}
     WHERE sections.user_id = $1 order by sections.section_name asc, sections.section_id asc;
   `
+    ;
   try {
     const sections: SectionData[] = []
+
 
     //TODO: Crear todos los modelos tanto de BBDD como de los DTO de la API
     //No queremos tener dos clases, una para los controladores (camelCase) y otra para la bbdd (snake_case)
@@ -253,7 +269,6 @@ export async function dbGetUserSectionDataAsync(userId: number): Promise<Section
     if (!result || !result.rowCount) {
       return sections
     }
-    //TODO eliminar cuando existan los modelos
     for (let indexRow = 0; indexRow < result.rows.length; indexRow++) {
       const row = result.rows[indexRow]
 
@@ -271,6 +286,9 @@ export async function dbGetUserSectionDataAsync(userId: number): Promise<Section
   catch (error) {
     console.log('Error inesperado recuperando secciones de usuario', error)
     throw error
+  }
+  finally {
+    ;
   }
 }
 
@@ -325,7 +343,7 @@ export async function dbGetUserResumeAsync({ userId, includeIds, arrayParsed }: 
         basicResume = basic[0]
       }
       else {
-        const { id, userId, ...basicFields } = basic[0]
+        const { id: _, userId: __, ...basicFields } = basic[0]
         basicResume = { ...basicFields }
       }
 
@@ -419,13 +437,14 @@ export async function dbGetUserSectionResumeAsync<T>({ tablename, userId, includ
   const query = `
   SELECT ${tablename}.*
   FROM ${tablename} 
-    inner join sections on (sections.section_name = '${tablename}' 
+    inner join sections on (sections.section_name = '${tablename.replace('user_', '')}' 
                         and sections.section_id = ${tablename}.id
                         and sections.user_id = $1 
                         and sections.is_public = true)
   WHERE sections.user_id = $1 
   order by ${tablename}.id asc;
 `
+
   try {
     const sections: T[] = []
     resume[tablename] = sections
@@ -457,6 +476,7 @@ export async function dbGetUserSectionResumeAsync<T>({ tablename, userId, includ
     console.log('Error inesperado recuperando secciones de usuario', error)
     throw error
   }
+
 }
 
 function isArrayField(tablename: string, fieldname: string) {
@@ -557,14 +577,15 @@ function getDeleteAllUserSectionQuery(userId: number, tablename: string) {
   }
 }
 
-export async function dbSetUserResumeJsonAsync({ userId, resume, deletePrevious }: { userId: number, resume: JSonResume, deletePrevious: boolean }): Promise<number> {
+export async function dbImportUserResumeAsync({ userId, resume }: { userId: number, resume: JSonResume }): Promise<void> {
   let transactionOpen = false
+  const client = await pool.connect()
   try {
 
-    let count = 0;
-
-    await pool.query('BEGIN')
+    await client.query('BEGIN')
     transactionOpen = true
+
+    const promises: Promise<QueryResult>[] = []
 
     const basics = resume.basics
 
@@ -573,88 +594,103 @@ export async function dbSetUserResumeJsonAsync({ userId, resume, deletePrevious 
       const { location, profiles, ...basic } = basics
 
       if (basic) {
-        const { query: queryDelete, params: paramsDelete } = getDeleteAllUserSectionQuery(userId, 'basics')
-        await pool.query(queryDelete, paramsDelete)
+
+        const { query: queryDelete, params: paramsDelete } = getDeleteAllUserSectionQuery(userId, 'basics');
+        const promiseDelete = client.query(queryDelete, paramsDelete)
+        promises.push(promiseDelete)
+
         const { query, params } = getUserSectionQuery('basics', addUserInfoToModel(userId, basic))
-        await pool.query(query, params)
-        count++
+        const promise = client.query(query, params)
+        promises.push(promise)
       }
 
       if (location) {
-        if (deletePrevious) {
-          const { query, params } = getDeleteAllUserSectionQuery(userId, 'locations')
-          await pool.query(query, params)
-        }
         const { query, params } = getUserSectionQuery('locations', addUserInfoToModel(userId, location))
-        await pool.query(query, params)
-        count++
+        const promise = client.query(query, params)
+        promises.push(promise)
       }
+
       if (profiles) {
-        if (deletePrevious && profiles.length !== 0) {
-          const { query, params } = getDeleteAllUserSectionQuery(userId, 'profiles')
-          await pool.query(query, params)
-        }
-        profiles.forEach(async profile => {
+        profiles.forEach(profile => {
           const { query, params } = getUserSectionQuery('profiles', addUserInfoToModel(userId, profile))
-          await pool.query(query, params)
-          count++
+          const promise = client.query(query, params)
+          promises.push(promise)
         })
       }
     }
 
     SECTION_FIELDS.filter(s => s.schema !== 'basics' && s.schema !== 'location' && s.schema !== 'profiles')
-      .forEach(async resumeSection => {
+      .forEach(resumeSection => {
         const sectionSchema = resumeSection.schema as keyof JSonResume
-        if (deletePrevious && (resume[sectionSchema] as []).length !== 0) {
-          const { query, params } = getDeleteAllUserSectionQuery(userId, resumeSection.table)
-          await pool.query(query, params)
-        }
         if (resume[sectionSchema]) {
-
-          (resume[sectionSchema] as []).forEach(async model => {
+          (resume[sectionSchema] as []).forEach(model => {
             const { query, params } = getUserSectionQuery(resumeSection.table, addUserInfoToModel(userId, model))
-            await pool.query(query, params)
-            count++
+            const promise = client.query(query, params)
+            promises.push(promise)
           });
         }
       })
 
-    await pool.query('COMMIT');
-    return count
+    for (const promise of promises) {
+      const tipada: Promise<QueryResult> = promise
+      try {
+        await tipada;
+      } catch (error) {
+        console.log('errores', error);
+        throw error;  // Lanza el error para que pueda ser capturado por el bloque catch de la transacción
+      }
+    }
+    await client.query('COMMIT');
   }
   catch (error) {
     if (transactionOpen) {
-      await pool.query('ROLLBACK');
+      await client.query('ROLLBACK');
     }
     console.log('Error inesperado importando resumen del usuario', error)
     throw error
+
+  } finally {
+    client.release();
   }
 }
 
-export async function dbDeleteResumeAsync(userId: number): Promise<number> {
+
+
+export async function dbDeleteResumeWithPoolAsync(userId: number): Promise<void> {
   let transactionOpen = false
+  const client = await pool.connect()
   try {
 
-    let count = 0;
-
-    await pool.query('BEGIN')
+    await client.query('BEGIN')
     transactionOpen = true
 
-    SECTION_FIELDS.forEach(async resumeSection => {
-      const { query, params } = getDeleteAllUserSectionQuery(userId, resumeSection.table)
-      const result = await pool.query(query, params)
-      console.log(`tabla: ${resumeSection.table}, registros: ${result.rowCount ?? 0}`)
-      count += result.rowCount ?? 0
-    })
+    const DeleteSections = structuredClone(SECTION_FIELDS)
+    DeleteSections.push(structuredClone(BASIC_SECTION_FIELDS))
 
-    await pool.query('COMMIT');
-    return count
+    const promises = DeleteSections.map(resumeSection => {
+      const { query, params } = getDeleteAllUserSectionQuery(userId, resumeSection.table);
+      return client.query(query, params)
+    });
+
+    for (const promise in promises) {
+      try {
+        await promise;
+      } catch (error) {
+        console.log('errores', error);
+        throw error;  // Lanza el error para que pueda ser capturado por el bloque catch de la transacción
+      }
+    }
+    await client.query('COMMIT');
   }
   catch (error) {
     if (transactionOpen) {
-      await pool.query('ROLLBACK');
+      await client.query('ROLLBACK');
     }
     console.log('Error inesperado eliminando resumen del usuario', error)
     throw error
   }
+  finally {
+    client.release()
+  }
+
 }

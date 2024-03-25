@@ -38,12 +38,7 @@ export function DeleteAll() {
         .then((result) => {
           if (result.success) {
             setAllStamp()
-            if (result.data) {
-              notifySuccess(`${result.data} registros elimiminados`)
-            }
-            else {
-              notifySuccess('No había datos que borrar')
-            }
+            notifySuccess('Datos eliminados correctamente')
           }
           else {
             notifyError('Error eliminando datos')

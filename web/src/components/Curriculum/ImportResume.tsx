@@ -16,6 +16,21 @@ export function ImportResume() {
   const changeFileRef = useRef(() => undefined);
   const clickButtonRef = useRef(() => undefined);
 
+  const readAsText = useCallback((file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      let reader = new FileReader();
+      reader.onload = function (event) {
+        resolve((event?.target?.result as string) ?? "");
+      };
+      reader.onerror = function (event) {
+        reject(
+          new Error("Error reading file: " + (event?.target?.error ?? "")),
+        );
+      };
+      reader.readAsText(file);
+    });
+  }, [])
+
   useEffect(() => {
     clickButtonRef.current = () => {
       if (refInputFile.current) {
@@ -43,24 +58,6 @@ export function ImportResume() {
     if (!fileList || fileList.length === 0) return
 
     const file = fileList[0];
-
-
-    const readAsText = (file: File): Promise<string> => {
-      return new Promise((resolve, reject) => {
-        let reader = new FileReader();
-        reader.onload = function (event) {
-          resolve((event?.target?.result as string) ?? "");
-        };
-        reader.onerror = function (event) {
-          reject(
-            new Error("Error reading file: " + (event?.target?.error ?? "")),
-          );
-        };
-        reader.readAsText(file);
-      });
-    }
-
-
 
     setIsLoading(true)
     readAsText(file)

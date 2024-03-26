@@ -79,6 +79,7 @@ const authHeader = (token: string): IAuthHeader => {
   return {
     headers: {
       Authorization: "Bearer " + token,
+      'Cache-Control': 'no-cache'
     },
   }
 }

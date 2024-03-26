@@ -12,6 +12,7 @@ import { type Interest } from "@/Schemas/interestSchema";
 import { type Reference } from "@/Schemas/referenceSchema";
 import { ArrowRight } from "lucide-react";
 import { useNotify } from '@/hooks/useNotify'
+import { LoadIndicator } from "../LoadIndicator";
 
 interface resultData {
   work: Work[];
@@ -26,39 +27,41 @@ interface resultData {
 
 export function SaveResume({ userId }: { userId: number }) {
   const { notifySuccess, notifyError } = useNotify()
-  const [resume, setResume] = useState<unknown>(null)
-
-  useEffect(() => {
-    getUserResume<resultData>(userId)
-      .then(result => {
-        setResume(result.data)
-      }
-      ).catch((error) => {
-        notifyError('Error recuperando información')
-      });
-  }
-    , [])
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleSave: React.MouseEventHandler<HTMLButtonElement>
     = useCallback((event) => {
+      setIsLoading(true)
 
-      saveFile(JSON.stringify(resume, null, 2), "")
-        .then(() => {
-          notifySuccess('Fichero exportado correctamente')
-        })
-        .catch((error) => {
-          notifyError('Error inesperado guardando fichero')
-        })
-
-    }, [resume])
+      getUserResume<resultData>(userId)
+        .then(result => {
+          saveFile(JSON.stringify(result.data, null, 2), "")
+            .then((result) => {
+              if (result) {
+                notifySuccess('Fichero exportado correctamente')
+              }
+            })
+            .catch((error) => {
+              throw error
+            })
+        }
+        ).catch((error) => {
+          console.log('dentro')
+          notifyError('Error recuperando información')
+        }).finally(
+          () => setIsLoading(false))
+    }, [])
 
   return (
     <Button variant={"outline"} onClick={handleSave}>
       <Save className="h-3 w-3 mr-2" />
       <span className="text-xs md:text-sm" >Exportar JSON Público</span>
-      <ArrowRight
-        className="ml-2 text-blue-500"
-      />
+
+      <span className="ml-2">
+        {!isLoading && <ArrowRight className="text-blue-500" />}
+        <LoadIndicator loading={isLoading} />
+      </span>
+
     </Button>
   )
 }

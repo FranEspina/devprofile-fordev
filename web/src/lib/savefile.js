@@ -29,7 +29,7 @@ export const saveFile = async (blob, suggestedName) => {
       const writable = await handle.createWritable();
       await writable.write(blob);
       await writable.close();
-      return;
+      return true;
     } catch (err) {
       // Fail silently if the user has simply canceled the dialog.
       if (err.name !== 'AbortError') {
@@ -37,7 +37,7 @@ export const saveFile = async (blob, suggestedName) => {
         console.error(err.name, err.message);
         throw err
       }
-      return
+      return false
     }
   }
 

@@ -1,6 +1,7 @@
 export interface IAuthHeader {
   headers: {
     Authorization: string;
+    'Cache-Control': string;
   }
 }
 

@@ -48,6 +48,8 @@ Web que permite a los usuario logarse y crear una cuenta de desarrollador donde 
 - [ ] Unificar las cookies y el localStorage del token e id de usuario
 - [ ] Que la api devuelva el tiempo de expiración del token y ver si merece la pena tener refreshtoken
 - [x] Hacer la landingpage en el inicio
+- [x] Poder borrar todas las secciones del CV de una vez
+- [x] Poder implementar si al importar se hace un insert o delete/insert
       
 # Créditos
 - [Motomangucode Font](https://www.fontspace.com/Motomang-font-f101909)  by Meyerfonts (Bryndan Meyerholt)

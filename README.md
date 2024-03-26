@@ -37,14 +37,14 @@ Web que permite a los usuario logarse y crear una cuenta de desarrollador donde 
 - [x] Poder seleccionar la plantilla pública del cv (varios templates)
 - [ ] Tener una validación de los campos / secciones que son obligatorios para poder usar una plantilla
 - [ ] Revisar que la(s) plantilla(s) no da(n) un error no controlado cuando le(s) falta un campo
-- [ ] Permitir importar las secciones del cv según el esquema
+- [x] Permitir importar las secciones del cv según el esquema
 - [x] Permitir exportar el cv a formato json segun el esquema
 - [x] FIX. Revisar el esquema, las fechas y arrays se están exportando en un formato que no cumple el esquema
 - [ ] Incluir un username en el registro del usuario y que sea único
 - [ ] poder perdir las secciones públicas por 'username' y no por id de usuario
 - [ ] Crear gestiones de aplicaciones asociadas al usuario para exponer una api_key
 - [ ] Integrar la api con las peticiones por api_key
-- [ ] Verificar el token contra el api del backend en la autorización
+- [x] Verificar el token contra el api del backend en la autorización
 - [ ] Unificar las cookies y el localStorage del token e id de usuario
 - [ ] Que la api devuelva el tiempo de expiración del token y ver si merece la pena tener refreshtoken
 - [x] Hacer la landingpage en el inicio

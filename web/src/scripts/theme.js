@@ -5,6 +5,7 @@ const getThemePreference = () => {
   ) {
     return localStorage.getItem("theme");
   }
+
   return window.matchMedia("(prefers-color-scheme: dark)").matches
     ? "dark"
     : "light";
@@ -12,21 +13,11 @@ const getThemePreference = () => {
 
 const setDarkMode = () => {
   const isDark = getThemePreference() === "dark";
-
   document.documentElement.classList[isDark ? "add" : "remove"]("dark");
-
-  if (typeof localStorage !== "undefined") {
-    const observer = new MutationObserver(() => {
-      const isDark = document.documentElement.classList.contains("dark");
-      localStorage.setItem("theme", isDark ? "dark" : "light");
-    });
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["class"],
-    });
-  }
 }
 
-document.addEventListener('astro:before-swap', () => {
+
+document.addEventListener('astro:after-swap', () => {
+  console.log('dentro')
   setDarkMode();
 });

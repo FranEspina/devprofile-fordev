@@ -6,6 +6,7 @@ import { validateSchemaAsync } from '../../services/validationService'
 import { UserLoginSchema, UserRegisterSchema } from '../../schemas/userSchema'
 import { UserDTO, UserLogin, UserRegister } from '../../models/user'
 import { Schema } from 'zod';
+import { CustomRequest } from '../../services/tokenService';
 
 
 export const register: RequestHandler = async (req, res) => {
@@ -139,3 +140,15 @@ export const login: RequestHandler = async (req, res) => {
 
 }
 
+export const verify: RequestHandler = async (req, res) => {
+
+  const token = (req as CustomRequest).token
+
+  res.status(200).json({
+    status: 200,
+    success: true,
+    message: 'Validación correcta',
+    code: 'OK',
+    token: token
+  })
+}

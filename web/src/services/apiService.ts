@@ -413,7 +413,33 @@ export async function deleteResume(userId: number, token: string): Promise<apiRe
   const endpoint = `${API_BASE_URL}/user/${userId}/resume`
   try {
     const result = await axios.delete(endpoint, authHeader(token))
-    return { success: true, message: 'Datos eliminados correctamente', data: (result.data.data ?? 0) }
+    if (result && result.data && result.data.success) {
+      return { success: true, message: 'Datos eliminados correctamente', data: (result.data.data ?? 0) }
+    }
+    return { success: false, message: 'Error eliminando datos' }
+  } catch (error) {
+    console.log(error)
+    if (axios.isAxiosError(error)) {
+      console.log(error.message);
+    } else if (error instanceof Error) {
+      console.log('Exception:', error.message);
+    } else if (typeof error === "string") {
+      console.log('Error:', error);
+    } else {
+      console.log('Unknow error:', error);
+    }
+    return { success: false, message: 'Error inesperado eliminando datos' }
+  }
+}
+
+export async function jwtVerifyAsync(token: string): Promise<apiResultType<void>> {
+  const endpoint = `${API_BASE_URL}/auth/verify`
+  try {
+    const result = await axios.get(endpoint, authHeader(token))
+    if (result && result.data && result.data.success) {
+      return { success: true, message: 'Autorización correcta' }
+    }
+    return { success: false, message: 'Autorización incorrecta' }
   } catch (error) {
     console.log(error)
     if (axios.isAxiosError(error)) {
@@ -426,7 +452,7 @@ export async function deleteResume(userId: number, token: string): Promise<apiRe
       console.log('Unknow error:', error);
     }
 
-    return { success: false, message: 'Error inesperado eliminando sección' }
+    return { success: false, message: 'Error inesperado verificando autorización' }
 
   }
 }

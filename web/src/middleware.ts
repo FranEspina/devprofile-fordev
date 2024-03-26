@@ -1,10 +1,11 @@
 
 import { defineMiddleware } from "astro/middleware";
 import { TOKEN, ID, PUBLIC_ROUTES } from "./constant";
+import { jwtVerifyAsync } from "./services/apiService";
+import { EVENTS_UPDATE } from "./components/ZustandStoreProvider";
 
 interface authorizatioResult {
   status: "authorized" | "unauthorized" | "error",
-  payload?: unknown,
   msg: string,
 }
 
@@ -18,19 +19,20 @@ const verifyAuth = async (token?: string): Promise<authorizatioResult> => {
 
   try {
 
-    //TODO: Verificar el token contra el api del backend
-    //const jwtVerifyResult = await jwtVerify(token, secret);
-    // return {
-    //   status: "authorized",
-    //   payload: jwtVerifyResult.payload,
-    //   msg: "successfully verified auth token",
-    // } as const;
+    const jwtVerifyResult = await jwtVerifyAsync(token);
+    if (jwtVerifyResult.success) {
+      return {
+        status: "authorized",
+        msg: "successfully verified auth token",
+      } as const;
+    }
 
     return {
-      status: "authorized",
-      payload: null,
-      msg: "successfully verified auth token",
+      status: "unauthorized",
+      msg: "Unverified auth token",
     } as const;
+
+
 
   } catch (err) {
     console.log(err);
@@ -40,7 +42,6 @@ const verifyAuth = async (token?: string): Promise<authorizatioResult> => {
 
 
 export const onRequest = defineMiddleware(async (context, next) => {
-  // Ignore auth validation for public routes
   context.locals.user = {
     id: '',
     token: ''
@@ -55,7 +56,6 @@ export const onRequest = defineMiddleware(async (context, next) => {
     if (context.cookies.has(ID)) {
       userId = context.cookies.get(ID)?.value ?? ''
     }
-
   }
 
   if (PUBLIC_ROUTES.includes(context.url.pathname)) {
@@ -65,11 +65,13 @@ export const onRequest = defineMiddleware(async (context, next) => {
   }
 
   const validationResult = await verifyAuth(token);
-
   switch (validationResult.status) {
     case "authorized":
       context.locals.user.token = token;
       context.locals.user.id = userId;
+      if (context.url.pathname.startsWith("/unauthorized")) {
+        return Response.redirect(new URL("/", context.url));
+      }
       return next();
 
     case "error":
@@ -81,10 +83,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
       }
       // otherwise, redirect to the root page for the user to login
       else {
-        return Response.redirect(new URL("/", context.url));
+        return Response.redirect(new URL("/unauthorized", context.url));
       }
 
     default:
-      return Response.redirect(new URL("/", context.url));
+      return Response.redirect(new URL("/unauthorized", context.url));
   }
 });

@@ -13,23 +13,29 @@ import { Wellcome } from "@/components/Wellcome";
       class="flex flex-col items-center bg-gray-200 dark:bg-gray-900 pt-8 pb-10 md:pb-16 px-10 md:px-60 flex-grow"
     >
       <h1
-        class="text-4xl sm:text-6xl md:text-8xl mb-6 mt-10 text-blue-500 dark:text-gray-100"
+        transition:name="title"
+        class="text-4xl sm:text-6xl md:text-6xl mb-6 mt-10 text-blue-500 dark:text-gray-100 text-center md:text-start max-w-[600px]"
       >
-        <span class="text-gray-950 dark:text-blue-500">Comparte</span> tu trayectoria
+        <span
+          class="text-4xl sm:text-6xl md:text-8xl text-gray-950 dark:text-blue-500"
+          >Comparte</span
+        > tu experiencia
       </h1>
-      <p class="text-sm sm:text-lg md:text-xl text-gray-500 dark:text-gray-300">
+      <p
+        class="text-sm sm:text-base md:text-lg text-gray-500 dark:text-gray-300 text-center mb-4"
+      >
         Rellena la información de tu curriculum y comparte tu perfil público con
         el resto de la comunidad
       </p>
       <div
-        class="flex flex-col md:flex-row gap-4 items-center my-4 md:my-0 self-center md:self-end"
+        class="flex flex-col md:flex-row gap-4 items-center my-4 md:my-0 self-center"
       >
         <Wellcome client:load />
       </div>
     </header>
     <body>
       <div
-        class="relative top-[-20px] flex flex-col md:flex-row gap-6 items-center md:items-start justify-center flex-wrap"
+        class="relative top-[-20px] flex flex-col md:flex-row gap-6 items-center justify-center flex-wrap"
       >
         <Step
           step="1"

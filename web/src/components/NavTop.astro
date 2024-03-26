@@ -40,7 +40,8 @@ import { ModeToggle } from "@/components/ModeToggle";
         <SignInModal text="Iniciar" client:load />
       </ItemListNav>
       <Logout client:load authRequired={true}>Cerrar Sesión</Logout>
-      <ModeToggle client:load />
+      <ModeToggle client:only />
+      <!-- <DarkMode /> -->
     </ul>
   </div>
 </section>

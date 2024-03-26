@@ -11,6 +11,7 @@ import { BasicDialog } from '@/components/Curriculum/Basic/BasicDialog'
 
 import { LoadIndicator } from "@/components/LoadIndicator"
 import { AlertDialogPrompt } from '@/components/AlertDialogPrompt'
+import { BasicSkeleton } from '@/components/Curriculum/Basic/BasicSkeleton'
 
 export function BasicSection() {
 
@@ -94,6 +95,9 @@ export function BasicSection() {
     })
       .finally(() => setLoading(false))
   }
+
+  if (loading)
+    return <BasicSkeleton />
 
   return (
     <section className="my-2">

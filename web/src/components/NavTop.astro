@@ -5,6 +5,7 @@ import { Logout } from "@/components/Logout";
 import { SignInModal } from "@/components/SignInModal";
 import "../styles/globals.css";
 import { ModeToggle } from "@/components/ModeToggle";
+import { Menu } from "lucide-react";
 ---
 
 <section
@@ -20,8 +21,11 @@ import { ModeToggle } from "@/components/ModeToggle";
     </ul>
   </div>
 
-  <div class="">
+  <div class="hidden md:block">
     <ul class="flex flex-row gap-3">
+      <ItemListNav hoverStyled={true} authRequired={true} client:load>
+        <a class="uppercase" href="/">Inicio</a>
+      </ItemListNav>
       <ItemListNav hoverStyled={true} authRequired={true} client:load>
         <a class="uppercase" href="/curriculum/">Perfil</a>
       </ItemListNav>
@@ -31,7 +35,7 @@ import { ModeToggle } from "@/components/ModeToggle";
     </ul>
   </div>
 
-  <div class="">
+  <div class="hidden md:block">
     <ul class="flex flex-row gap-3 items-center">
       <ItemListNav client:load hideLogged={true}>
         <SignUpModal client:load />
@@ -41,7 +45,47 @@ import { ModeToggle } from "@/components/ModeToggle";
       </ItemListNav>
       <Logout client:load authRequired={true}>Cerrar Sesión</Logout>
       <ModeToggle client:only />
-      <!-- <DarkMode /> -->
+    </ul>
+  </div>
+
+  <div class="flex flex-row items-center gap-2 md:hidden">
+    <ModeToggle client:only />
+    <Menu
+      id="menu-button"
+      className="hover:text-blue-500 hover:cursor-pointer transition-colors duration-500 "
+    />
+  </div>
+  <div
+    id="menu-container"
+    class="fixed top-2 right-12 py-5 px-5 bg-gray-50 dark:bg-blue-950 z-10 shadow-lg hidden"
+  >
+    <ul class="flex flex-col gap-4 items-start mr-10">
+      <ItemListNav hoverStyled={true} authRequired={true} client:load>
+        <a class="uppercase" href="/">Inicio</a>
+      </ItemListNav>
+      <ItemListNav hoverStyled={true} authRequired={true} client:load>
+        <a class="uppercase" href="/curriculum/">Perfil</a>
+      </ItemListNav>
+      <ItemListNav hoverStyled={true} authRequired={true} client:load>
+        <a class="uppercase" href="/recursos/">Recursos</a>
+      </ItemListNav>
+      <ItemListNav client:load hideLogged={true}>
+        <SignInModal text="Iniciar" client:load />
+      </ItemListNav>
+      <ItemListNav client:load hideLogged={true} hoverStyled={false}>
+        <SignUpModal client:load />
+      </ItemListNav>
+      <Logout client:load authRequired={true}>Cerrar Sesión</Logout>
     </ul>
   </div>
 </section>
+
+<script>
+  document.addEventListener("astro:page-load", () => {
+    const menuButton = document.getElementById("menu-button");
+    const menuContainer = document.getElementById("menu-container");
+    menuButton?.addEventListener("click", () => {
+      menuContainer?.classList.toggle("hidden");
+    });
+  });
+</script>

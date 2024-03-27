@@ -16,7 +16,7 @@ import { UserResourceController } from '../controllers/user/userResource'
 import { UserProjectController } from '../controllers/user/userProject'
 import { UserProfileController } from '../controllers/user/userProfile'
 import { UserBasicController } from '../controllers/user/userBasic'
-import { getUserResumeAsync, getUserBasicResumeAsync, postUserResumeJsonAsync, deleteResumeAsync } from '../controllers/user/userResume'
+import { getUserResumeAsync, getUserBasicResumeAsync, postUserResumeJsonAsync, deleteResumeAsync, validateUserResumeJsonAsync } from '../controllers/user/userResume'
 
 import { auth } from '../middlewares/auth'
 
@@ -64,5 +64,6 @@ router.get('/:userId/sectiondata', auth, getUserSectionDataAsync)
 router.get('/:userId/resume', getUserResumeAsync)
 router.post('/:userId/resume/json', auth, postUserResumeJsonAsync)
 router.delete('/:userId/resume', auth, deleteResumeAsync)
+router.post('/:userId/resume/validate', auth, validateUserResumeJsonAsync)
 
 export default router

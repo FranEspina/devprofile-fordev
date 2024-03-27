@@ -54,3 +54,8 @@ export interface ResumeJson {
   json: string,
   deletePrevious: boolean
 }
+
+export interface ValidateJson {
+  userId: number,
+  json: string,
+}

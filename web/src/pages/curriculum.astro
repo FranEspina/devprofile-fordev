@@ -1,14 +1,14 @@
 ---
-import Layout from "../layouts/Layout.astro";
-import { CurriculumView } from "../components/Curriculum/Curriculum";
+import Layout from "@/layouts/Layout.astro";
+import { CurriculumView } from "@/components/Curriculum/Curriculum";
 import ViewPublicCV from "@/components/Curriculum/ViewPublicCV";
 import { ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { SaveResume } from "@/components/Curriculum/SaveResume";
-import { ImportResume } from "@/components/Curriculum/ImportResume";
+import { SaveResume } from "@/components/Curriculum/Resume/SaveResume";
+import { ImportResume } from "@/components/Curriculum/Resume/ImportResume";
 import { DeleteAll } from "@/components/Curriculum/DeleteAll";
+import { ValidateJsonResume } from "@/components/Curriculum/Resume/ValidateJsonResume";
 
 const { user } = Astro.locals;
 ---
@@ -46,6 +46,7 @@ const { user } = Astro.locals;
           <li>
             <div class="flex flex-row items-center gap-2 flex-wrap">
               <DeleteAll client:load />
+              <ValidateJsonResume client:load />
               <ImportResume client:load />
             </div>
           </li>
@@ -55,3 +56,4 @@ const { user } = Astro.locals;
     <CurriculumView client:load />
   </main>
 </Layout>
+@/components/Curriculum/Resume/SaveResume@/components/Curriculum/Resume/ImportResume

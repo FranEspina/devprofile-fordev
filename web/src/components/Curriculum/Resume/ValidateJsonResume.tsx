@@ -1,21 +1,22 @@
 import { useCallback, useEffect, useState } from "react"
-import { LoadIndicator } from "../LoadIndicator"
-import { Button } from "../ui/button"
+import { LoadIndicator } from "@/components/LoadIndicator"
+import { Button } from "@/components/ui/button"
 import { useNotify } from "@/hooks/useNotify"
-import { importResumeAsync } from "@/services/apiService"
+import { validateJsonResumeAsync } from "@/services/apiService"
 import { useProfileStore } from "@/store/profileStore"
-import { EVENTS_UPDATE } from "../ZustandStoreProvider"
 import { useRef } from "react"
 import { navigate } from "astro/virtual-modules/transitions-router.js"
-import { ErrorDialog } from "../ErrorDialog"
+import { AlertDialogPrompt } from "@/components/AlertDialogPrompt"
+import type { ValidateJson } from '@/types/apiTypes.ts'
+import { saveFile } from "@/lib/savefile";
 
-export function ImportResume() {
+export function ValidateJsonResume() {
   const [isLoading, setIsLoading] = useState(false)
   const { notifySuccess, notifyError } = useNotify();
   const { user, token } = useProfileStore(state => state)
   const refInputFile = useRef<HTMLInputElement>(null)
-  const [isOpenErrorDialog, setIsOpenErrorDialog] = useState(false)
-  const [errors, setErrors] = useState<{ error: string, count: number }[]>([])
+  const [isOpenAlert, setIsOpenAlert] = useState(false)
+  const saveFileRef = useRef(() => undefined);
 
   const readAsText = useCallback((file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -62,37 +63,38 @@ export function ImportResume() {
     readAsText(file)
       .then((contents) => {
 
-        const resumeJson = {
+        const resumeJson: ValidateJson = {
           userId: user?.id ?? -1,
           json: contents,
-          deletePrevious: true,
         };
 
-        importResumeAsync(resumeJson, token)
+        validateJsonResumeAsync(resumeJson, token)
           .then((result) => {
             if (result.success) {
-              window.dispatchEvent(new Event(EVENTS_UPDATE.RefreshAll));
               notifySuccess(result.message);
             } else {
-              if (result.data) {
-                const errors = new Set(result.data as [])
-                if (errors.size !== 0) {
-                  const details = [...errors].map((error) => {
-                    return {
-                      error: error,
-                      count: (result.data as []).filter(e => e == error).length
-                    }
-                  })
-                  setErrors(details)
-                  setIsOpenErrorDialog(true)
+
+              if (!result.data) {
+                notifyError(result.message);
+              } else {
+                saveFileRef.current = () => {
+                  saveFile(JSON.stringify(result.data, null, 2), "")
+                    .then((result) => {
+                      if (result) {
+                        notifySuccess('Fichero de errores guardado correctamente')
+                      }
+                    })
+                    .catch((error) => {
+                      throw error
+                    })
                 }
+                setIsOpenAlert(true)
               }
-              notifyError(result.message);
             }
           })
           .catch((error) => {
             console.log(error);
-            notifyError("Error inesperado importando resumen");
+            notifyError("Error inesperado validando esquema");
           })
           .finally(() => setIsLoading(false))
 
@@ -107,11 +109,16 @@ export function ImportResume() {
     <>
       <input ref={refInputFile} type="file" id="fileInput" className="hidden" onChange={handleChangeFile} />
       <Button className="text-xs md:text-sm" variant="outline" onClick={handleClick}>
-        Importar Resumen JSON <span id="loadIndicator" className="ml-2">
+        Validar Esquema Fichero <span id="loadIndicator" className="ml-2">
           <LoadIndicator loading={isLoading} />
         </span>
       </Button>
-      <ErrorDialog title='Error importando resumen' description="Revise los problemas y vuelva a importar el archivo" open={isOpenErrorDialog} setOpen={setIsOpenErrorDialog} errors={errors} />
+      <AlertDialogPrompt
+        title='Esquema con errores'
+        message='¿Desea guardar los errores encontrados?'
+        open={isOpenAlert}
+        setOpen={setIsOpenAlert}
+        onActionClick={saveFileRef.current} />
     </>
   )
 }

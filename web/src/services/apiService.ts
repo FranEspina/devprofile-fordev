@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { ResumeJson, apiRegisterType, apiResultType, apiLoginType, apiResponse, apiUserDto, apiDevResourceDto, IAuthHeader } from '@/types/apiTypes.ts'
+import type { ResumeJson, ValidateJson, apiRegisterType, apiResultType, apiLoginType, apiResponse, apiUserDto, apiDevResourceDto, IAuthHeader } from '@/types/apiTypes.ts'
 import type { ResourceRow } from '@/Schemas/resourceSchema'
 import type { ProfileCreate, ProfileDelete } from '@/Schemas/profileSchema'
 
@@ -455,6 +455,40 @@ export async function jwtVerifyAsync(token: string): Promise<apiResultType<void>
     }
 
     return { success: false, message: 'Error inesperado verificando autorización' }
+
+  }
+}
+
+export async function validateJsonResumeAsync(resumeJson: ValidateJson, token: string): Promise<apiResultType<unknown>> {
+
+  const endpoint = `${API_BASE_URL}/user/${resumeJson.userId}/resume/validate`
+
+  try {
+    const response = await axios.post(endpoint, resumeJson, authHeader(token))
+    const results: apiResponse<unknown> = response.data
+    if (results.success === true) {
+      return { success: true, message: 'Esquema validado correctamente' }
+    }
+    console.log(results)
+    return { success: false, message: results.message, data: results.data }
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.log('Error axios:', error.message);
+      if (error.response) {
+        const results: apiResponse<unknown> = error.response.data
+        if (results) {
+          return { success: false, message: 'Error inesperado validando esquema', data: results.data }
+        }
+      }
+    } else if (error instanceof Error) {
+      console.log('Exception:', error.message);
+    } else if (typeof error === "string") {
+      console.log('Error:', error);
+    } else {
+      console.log('Unknow error:', error);
+    }
+
+    return { success: false, message: 'Error inesperado validando esquema' }
 
   }
 }

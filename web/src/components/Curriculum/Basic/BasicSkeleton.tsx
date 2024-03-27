@@ -13,7 +13,7 @@ export function BasicSkeleton() {
       </div>
       <div className="space-y-2 mt-2">
         <Skeleton className="h-5 w-full md:w-[800px]" />
-        <Skeleton className="h-screen w-full md:w-[800px]" />
+        <Skeleton className="h-40 w-full md:w-[800px]" />
       </div>
     </section>
   )

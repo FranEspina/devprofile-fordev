@@ -16,7 +16,7 @@ Web que permite a los usuario logarse y crear una cuenta de desarrollador donde 
 - Backend realizado con express y contra un postgresql. Typescript.
 - Gestión de autentificación y autorización con jwt tokens
 - Modelos de formularios (frontend) y base de datos (backend) validados con zod.
-- Validación de esquemas zod con tipos genéricos (servicio de validación de esquemas)
+- Validación de esquemas JSON
 
 # Capturas
 ## Gestión de usuarios

@@ -1,14 +1,14 @@
 import { z } from 'zod'
 
 export const WorkSchema = z.object({
-  id: z.number({ required_error: 'Identificador del perfil obligatorio' }),
-  userId: z.number({ required_error: 'Identificador del usuario obligatorio' }),
-  name: z.string({ required_error: 'Nombre obligatorio' }).min(1, 'Nombre obligatorio'),
-  location: z.string({ required_error: 'Lugar obligatorio' }).min(1, 'Lugar obligatorio'),
-  description: z.string({ required_error: 'Descripción obligatoria' }).min(1, 'Descripción obligatoria'),
-  position: z.string({ required_error: 'Posición obligatoria' }).min(1, 'Posición obligatoria'),
-  url: z.string().url({ message: 'url inválida' }).nullable().optional().or(z.literal('')),
-  startDate: z.string({ required_error: 'Fecha desde obligatoria' }).min(1, 'Obligatorio'),
+  id: z.number({ required_error: 'Puestos. Identificador del perfil obligatorio' }),
+  userId: z.number({ required_error: 'Puestos. Identificador del usuario obligatorio' }),
+  name: z.string({ required_error: 'Puestos. Nombre obligatorio' }).min(1, 'Puestos. Nombre obligatorio'),
+  location: z.string({ required_error: 'Puestos. Lugar obligatorio' }).min(1, 'Puestos. Lugar obligatorio'),
+  description: z.string({ required_error: 'Puestos. Descripción obligatoria' }).min(1, 'Puestos. Descripción obligatoria'),
+  position: z.string({ required_error: 'Puestos. Posición obligatoria' }).min(1, 'Puestos. Posición obligatoria'),
+  url: z.string().url({ message: 'Puestos. Url inválida' }).nullable().optional().or(z.literal('')),
+  startDate: z.string({ required_error: 'Puestos. Fecha desde obligatoria' }).min(1, 'Puestos. Obligatorio'),
   endDate: z.string().nullable().optional(),
   summary: z.string().optional(),
   highlights: z.string().optional(),

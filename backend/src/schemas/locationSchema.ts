@@ -1,12 +1,12 @@
 import { z } from 'zod'
 
 export const LocationSchema = z.object({
-  id: z.number({ required_error: 'Identificador del perfil obligatorio' }),
-  userId: z.number({ required_error: 'Identificador del usuario obligatorio' }),
-  address: z.string({ required_error: 'Obligatorio' }).min(1, 'Obligatorio'),
-  postalCode: z.string({ required_error: 'Obligatorio' }).min(1, 'Obligatorio'),
-  city: z.string({ required_error: 'Obligatorio' }).min(1, 'Obligatorio'),
-  countryCode: z.string({ required_error: 'Obligatorio' }).min(1, 'Obligatorio'),
+  id: z.number({ required_error: 'Direcciones. Identificador del perfil obligatorio' }),
+  userId: z.number({ required_error: 'Direcciones. Identificador del usuario obligatorio' }),
+  address: z.string({ required_error: 'Direcciones. Vía obligatoria' }).min(1, 'Direcciones. Vía obligatoria'),
+  postalCode: z.string({ required_error: 'Direcciones. Código postal obligatorio' }).min(1, 'Direcciones. Código postal obligatorio'),
+  city: z.string({ required_error: 'Direcciones. Ciudad obligatoria' }).min(1, 'Direcciones. Ciudad obligatoria'),
+  countryCode: z.string({ required_error: 'Direcciones. Región obligatoria' }).min(1, 'Direcciones. Región obligatoria'),
   region: z.string().optional(),
 })
 

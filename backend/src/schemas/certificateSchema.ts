@@ -1,12 +1,12 @@
 import { z } from 'zod'
 
 export const CertificateSchema = z.object({
-  id: z.number({ required_error: 'Identificador del perfil obligatorio' }),
-  userId: z.number({ required_error: 'Identificador del usuario obligatorio' }),
-  name: z.string({ required_error: 'Obligatorio' }).min(1, 'Obligatorio'),
-  date: z.string({ required_error: 'Fecha obligatoria' }).min(1, 'Fecha obligatoria'),
-  url: z.string().url({ message: 'url inválida' }).nullable().optional().or(z.literal('')),
-  issuer: z.string({ required_error: 'Obligatorio' }).min(1, 'Obligatorio'),
+  id: z.number({ required_error: 'Certificados. Identificador del perfil obligatorio' }),
+  userId: z.number({ required_error: 'Certificados. Identificador del usuario obligatorio' }),
+  name: z.string({ required_error: 'Certificados. Nombre obligatorio' }).min(1, 'Certificados. Nombre obligatorio'),
+  date: z.string({ required_error: 'Certificados. Fecha obligatoria' }).min(1, 'Certificados. Fecha obligatoria'),
+  url: z.string().url({ message: 'Certificados. Url inválida' }).nullable().optional().or(z.literal('')),
+  issuer: z.string({ required_error: 'Certificados. Entidad obligatoria' }).min(1, 'Certificados. Entidad obligatoria'),
 })
 
 export const CertificateCreateSchema = CertificateSchema.omit({

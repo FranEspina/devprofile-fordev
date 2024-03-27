@@ -1,10 +1,10 @@
 import { z } from 'zod'
 
 export const ReferenceSchema = z.object({
-  id: z.number({ required_error: 'Identificador del perfil obligatorio' }),
-  userId: z.number({ required_error: 'Identificador del usuario obligatorio' }),
-  name: z.string({ required_error: 'Obligatorio' }).min(1, 'Obligatorio'),
-  reference: z.string({ required_error: 'Obligatorio' }).min(1, 'Obligatorio'),
+  id: z.number({ required_error: 'Referencias. Identificador del perfil obligatorio' }),
+  userId: z.number({ required_error: 'Referencias. Identificador del usuario obligatorio' }),
+  name: z.string({ required_error: 'Referencias. Nombre obligatorio' }).min(1, 'Referencias. Nombre obligatorio'),
+  reference: z.string({ required_error: 'Referencias. Texto obligatorio' }).min(1, 'Referencias. Texto obligatorio'),
 })
 
 export const ReferenceCreateSchema = ReferenceSchema.omit({

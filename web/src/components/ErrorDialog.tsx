@@ -7,7 +7,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 
 export interface ErrorDialogProps {
   errors: { error: string, count: number }[],
@@ -32,13 +32,10 @@ export function ErrorDialog({ errors, title, description, open, setOpen }: Error
               {errors
                 ?
                 <ul className="mt-2">
-                  {errors.map(e => <li className="ml-4 mb-1">💀 {e.error} (x{e.count})</li>)}
+                  {errors.map(e => <li className="ml-4 mb-1">💀 {e.error} (<span className={cn('font-bold ', (e.count > 1) ? 'text-blue-500' : '')}>x{e.count}</span>)</li>)}
                 </ul>
                 : ''
               }
-              <body>
-
-              </body>
             </section>
           </AlertDialogDescription>
         </AlertDialogHeader>

@@ -7,12 +7,15 @@ import { useProfileStore } from "@/store/profileStore"
 import { EVENTS_UPDATE } from "../ZustandStoreProvider"
 import { useRef } from "react"
 import { navigate } from "astro/virtual-modules/transitions-router.js"
+import { ErrorDialog } from "../ErrorDialog"
 
 export function ImportResume() {
   const [isLoading, setIsLoading] = useState(false)
   const { notifySuccess, notifyError } = useNotify();
   const { user, token } = useProfileStore(state => state)
   const refInputFile = useRef<HTMLInputElement>(null)
+  const [isOpenErrorDialog, setIsOpenErrorDialog] = useState(false)
+  const [errors, setErrors] = useState<{ error: string, count: number }[]>([])
 
   const readAsText = useCallback((file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -71,7 +74,19 @@ export function ImportResume() {
               window.dispatchEvent(new Event(EVENTS_UPDATE.RefreshAll));
               notifySuccess(result.message);
             } else {
-              console.log(result);
+              if (result.data) {
+                const errors = new Set(result.data as [])
+                if (errors.size !== 0) {
+                  const details = [...errors].map((error) => {
+                    return {
+                      error: error,
+                      count: (result.data as []).filter(e => e == error).length
+                    }
+                  })
+                  setErrors(details)
+                  setIsOpenErrorDialog(true)
+                }
+              }
               notifyError(result.message);
             }
           })
@@ -96,6 +111,7 @@ export function ImportResume() {
           <LoadIndicator loading={isLoading} />
         </span>
       </Button>
+      <ErrorDialog title='Error importando resumen' description="Revise los problemas y vuelva a importar el archivo" open={isOpenErrorDialog} setOpen={setIsOpenErrorDialog} errors={errors} />
     </>
   )
 }

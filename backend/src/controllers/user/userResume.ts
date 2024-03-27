@@ -68,6 +68,7 @@ export async function postUserResumeJsonAsync(req: Request, res: Response) {
         status: 400,
         success: false,
         code: 'INVALID_BODY',
+        data: errors,
         message: errors?.join('') || 'Error inesesperado validando datos',
       })
       return

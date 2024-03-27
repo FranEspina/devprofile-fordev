@@ -376,24 +376,25 @@ export async function getUserResume<T>(id: number) {
   }
 }
 
-export async function importResumeAsync(resumeFile: ResumeJson, token: string): Promise<apiResultType<number>> {
+export async function importResumeAsync(resumeFile: ResumeJson, token: string): Promise<apiResultType<unknown>> {
 
   const endpoint = `${API_BASE_URL}/user/${resumeFile.userId}/resume/json`
 
   try {
     const response = await axios.post(endpoint, resumeFile, authHeader(token))
-    const results: apiResponse<number> = response.data
+    const results: apiResponse<unknown> = response.data
     if (results.success === true) {
       return { success: true, message: 'Curriculum importado correctamente' }
     }
-    return { success: false, message: results.message }
+    console.log(results)
+    return { success: false, message: results.message, data: results.data }
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.log('Error axios:', error.message);
       if (error.response) {
-        const results: apiResponse<apiUserDto> = error.response.data
+        const results: apiResponse<unknown> = error.response.data
         if (results) {
-          return { success: false, message: 'Error inesperado importando curriculum' }
+          return { success: false, message: 'Error inesperado importando curriculum', data: results.data }
         }
       }
     } else if (error instanceof Error) {

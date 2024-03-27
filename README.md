@@ -1,7 +1,15 @@
 # dev profile for dev [Work in progress]
 ## Funcionalidad
-Web que permite a los usuario logarse y crear una cuenta de desarrollador donde poder mantener aspectos relacionados con el desarrollo: 
+Web que permite a los usuario logarse y crear una cuenta de desarrollador donde poder mantener aspectos relacionados con el curriculum del desarrollador: 
+ - Uso del Formato estándar de curriculum [JSON Resume](https://jsonresume.org/)
+ - Creación de cuenta de usuario y gestión de autorización.
+ - Crear manualmente todas las secciones de su curriculum.
+ - Importar ficheros JSON con un curriculum
+ - Validar fichros JSON para ver si cumplen el esquema estándar
  - Enlaces a recursos / tips / imágenes
+ - Posibilidad de publicar tu curriculum en diferentes plantillas de CV
+ - Posibilidad de compartir tus urls públicas a tu CV con las diferentes plantillas
+ - Decidir que campos son públicos y cuales no
 
 ## Detalles técnicos
 - Web realizada en Astro y con algún componente React. Estilada con tailwindCSS. Typescript.

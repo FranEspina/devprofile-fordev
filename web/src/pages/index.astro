@@ -3,6 +3,7 @@ import Layout from "../layouts/Layout.astro";
 import Step from "@/components/Landing/Step.astro";
 import { SignInModal } from "@/components/SignInModal";
 import { Wellcome } from "@/components/Wellcome";
+const { id } = Astro.locals.user;
 ---
 
 <Layout title="dev profile for dev ">
@@ -21,12 +22,14 @@ import { Wellcome } from "@/components/Wellcome";
           >Comparte</span
         > tu experiencia
       </h1>
-      <p
-        class="text-sm sm:text-base md:text-lg text-gray-500 dark:text-gray-300 text-center mb-4"
-      >
-        Rellena la información de tu curriculum y comparte tu perfil público con
-        el resto de la comunidad
-      </p>
+      {
+        id === "" && (
+          <p class="text-sm sm:text-base md:text-lg text-gray-500 dark:text-gray-300 text-center mb-4">
+            Rellena la información de tu curriculum y comparte tu perfil público
+            con el resto de la comunidad
+          </p>
+        )
+      }
       <div
         class="flex flex-col md:flex-row gap-4 items-center my-4 md:my-0 self-center"
       >

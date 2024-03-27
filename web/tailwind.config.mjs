@@ -1,3 +1,5 @@
+import { transform } from 'typescript';
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
@@ -29,10 +31,16 @@ module.exports = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        "logo-rotate": {
+          '0%': { transform: 'rotate(0deg)' },
+          '70%': { transform: 'rotate(90deg)' },
+          '100%': { transform: 'rotate(90deg) translateX(8px) scale(2.6)' }
+        }
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        'logo-rotate': 'logo-rotate 0.5s ease-out'
       },
     },
   },

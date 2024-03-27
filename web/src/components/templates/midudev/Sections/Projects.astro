@@ -74,7 +74,7 @@ const { success, data: projects } = result;
 
   article {
     border-radius: 8px;
-    border: 1px solid #f2f2f2;
+    border: 1px solid var(--box-shadow);
     gap: 16px;
     display: flex;
     flex-direction: column;
@@ -91,7 +91,7 @@ const { success, data: projects } = result;
   }
 
   article a {
-    color: #111;
+    color: var(--text-primary);
   }
 
   article a:hover {
@@ -121,8 +121,8 @@ const { success, data: projects } = result;
 
   footer span {
     border-radius: 6px;
-    background: #eee;
-    color: #444;
+    background: var(--span-background);
+    color: var(--span-color);
     font-size: 0.6rem;
     font-weight: 500;
     padding: 0.2rem 0.6rem;
@@ -151,7 +151,7 @@ const { success, data: projects } = result;
 
     article {
       border: none;
-      box-shadow: 0 1px 1px #f2f2f2;
+      box-shadow: 0 1px 1px var(--box-shadow);
       padding: 0 0 16px 0;
     }
   }

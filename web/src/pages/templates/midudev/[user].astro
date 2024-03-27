@@ -11,6 +11,8 @@ import Header from "@/components/templates/midudev/Sections/Header.astro";
 import Projects from "@/components/templates/midudev/Sections/Projects.astro";
 import Skills from "@/components/templates/midudev/Sections/Skills.astro";
 
+import { ModeToggle } from "@/components/ModeToggle";
+
 const { title } = Astro.props;
 
 const { user } = Astro.params;
@@ -41,6 +43,9 @@ const basic = result.data[0];
   </head>
   <body>
     <main>
+      <div class="absolute top-5 right-5 no-print">
+        <ModeToggle client:load />
+      </div>
       <Header basic={basic} />
       <Section title="Sobre mí">
         <p>{basic.summary}</p>
@@ -55,6 +60,26 @@ const basic = result.data[0];
 
 <style is:global>
   @tailwind base;
+
+  :root {
+    --text-primary: #111;
+    --text-secondary: #666;
+    --text-third: #222;
+    --span-background: #eee;
+    --span-background-darked: #ddd;
+    --span-color: #444;
+    --box-shadow: #f2f2f2;
+  }
+
+  :is(.dark body) {
+    --text-primary: #eee;
+    --text-secondary: #ddd;
+    --text-third: #aaa;
+    --span-background: #333;
+    --span-background-darked: #444;
+    --span-color: #ddd;
+    --box-shadow: #222;
+  }
 
   html {
     font-family:
@@ -121,7 +146,7 @@ const basic = result.data[0];
   }
 
   p {
-    color: #666;
+    color: var(--text-secondary);
     font-size: 0.9rem;
     line-height: 1.5;
     margin: 0;

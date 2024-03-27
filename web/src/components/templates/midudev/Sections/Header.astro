@@ -121,7 +121,7 @@ const SOCIAL_ICONS: SocialIcon = {
   }
 
   h2 {
-    color: #444;
+    color: var(--span-color);
     font-weight: 500;
     font-size: 1.1rem;
     text-wrap: balance;
@@ -135,7 +135,7 @@ const SOCIAL_ICONS: SocialIcon = {
   }
 
   span {
-    color: #666;
+    color: var(--span-color);
     display: flex;
     align-items: center;
     gap: 0.25rem;
@@ -144,7 +144,7 @@ const SOCIAL_ICONS: SocialIcon = {
   }
 
   footer {
-    color: #555;
+    color: var(--span-color);
     font-size: 0.65rem;
     display: flex;
     gap: 4px;
@@ -152,11 +152,11 @@ const SOCIAL_ICONS: SocialIcon = {
   }
 
   footer a {
-    color: #777;
+    color: var(--span-color);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid #eee;
+    border: 1px solid var(--span-background);
     padding: 4px;
     height: 32px;
     width: 32px;
@@ -165,8 +165,8 @@ const SOCIAL_ICONS: SocialIcon = {
   }
 
   footer a:hover {
-    background: #eee;
-    border: 1px solid #ddd;
+    background: var(--span-background);
+    border: 1px solid var(--span-background-darked);
   }
 
   @media (width <= 700px) {

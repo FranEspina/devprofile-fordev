@@ -68,8 +68,11 @@ Web que permite a los usuario logarse y crear una cuenta de desarrollador donde 
 - [x] Hacer la landingpage en el inicio
 - [x] Poder borrar todas las secciones del CV de una vez
 - [x] Poder implementar si al importar se hace un insert o delete/insert
+- [ ] Implementar otras plantillas de [JSON Resume](https://jsonresume.org/themes/) o alternativas
       
 # Créditos
 - [Motomangucode Font](https://www.fontspace.com/Motomang-font-f101909)  by Meyerfonts (Bryndan Meyerholt)
 - Esquema del JSON de CV de [jsonresume.org](https://jsonresume.org)
-- Basado en el diseño de [Bartosz Jarocki](https://github.com/BartoszJarocki/cv)
+- Plantillas para combinar curriculumns:
+ - Plantilla elegant. Basado en el diseño Elegant desarrollado por [Mudassir](https://github.com/mudassir0909)
+ - Plantilla midudev. Basado en el diseño de [Bartosz Jarocki](https://github.com/BartoszJarocki/cv) y posteriormente implementada por midudev.

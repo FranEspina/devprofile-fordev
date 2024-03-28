@@ -7,8 +7,9 @@
     "start:frontend": "cd ../web && npm run dev",
     "start:backend": "cd ../backend && npm run dev",
     "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
-    "test:e2e": "start-server-and-test start http://localhost:4321 cy:run",
+    "test:e2e": "start-server-and-test start http://localhost:4321 cy:run-no-record",
     "cy:run": "cypress run --record",
+    "cy:run-no-record": "cypress run",
     "cy:open": "cypress open"
   },
   "keywords": [],

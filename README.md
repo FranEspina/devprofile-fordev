@@ -1,4 +1,5 @@
 # dev profile for dev [Work in progress]
+[![Cypress Tests](https://github.com/FranEspina/devprofile-fordev/actions/workflows/main.yml/badge.svg?branch=master)](https://github.com/FranEspina/devprofile-fordev/actions/workflows/main.yml)
 ## Funcionalidad
 Web que permite a los usuario logarse y crear una cuenta de desarrollador donde poder mantener aspectos relacionados con el curriculum del desarrollador: 
  - Uso del Formato estándar de curriculum [JSON Resume](https://jsonresume.org/)
@@ -17,6 +18,7 @@ Web que permite a los usuario logarse y crear una cuenta de desarrollador donde 
 - Gestión de autentificación y autorización con jwt tokens
 - Modelos de formularios (frontend) y base de datos (backend) validados con zod.
 - Validación de esquemas JSON
+- Test e2e con Cypress y GitHub Actions
 
 # Capturas
 

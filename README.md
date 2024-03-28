@@ -18,6 +18,7 @@ Web que permite a los usuario logarse y crear una cuenta de desarrollador donde 
 - Gestión de autentificación y autorización con jwt tokens
 - Modelos de formularios (frontend) y base de datos (backend) validados con zod.
 - Validación de esquemas JSON
+- Test e2e con Cypress
 
 # Capturas
 

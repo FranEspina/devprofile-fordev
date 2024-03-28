@@ -19,16 +19,24 @@ Web que permite a los usuario logarse y crear una cuenta de desarrollador donde 
 - Validación de esquemas JSON
 
 # Capturas
+
 ## Pantalla de inicio
+
 <img src="./resources/home.png" alt="Pantalla de inicio" width="500px">
+
 ## Registro de CV por usuarios
+
 <img src="./resources/cv.png" alt="Secciones del cv" width="500px">
+
 ## Formularios modales
+
 <img src="./resources/modal.png" alt="Modales" width="500px">
-## Modo claro y responsive
-<div style="display: flex;">
-  <img src="./resources/light.png" alt="Modo claro y responsive" height="300px">
-  <img src="./resources/register.png" alt="Registro de usuarios" height="300px">
+
+## Registro, modo claro y responsive
+
+<div style="display: flex; gap:10px; ">
+  <img src="./resources/register.png" alt="Registro de usuarios" height="400px">
+  <img src="./resources/light.png" alt="Modo claro y responsive" height="400px">
 </div>
 
 # TODO

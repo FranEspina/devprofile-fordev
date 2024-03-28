@@ -20,14 +20,14 @@ Web que permite a los usuario logarse y crear una cuenta de desarrollador donde 
 
 # Capturas
 ## Gestión de usuarios
-<img src="./resources/home.png" alt="Pantalla de inicio" width="300px">
+<img src="./resources/home.png" alt="Pantalla de inicio" width="500px">
 <img src="./resources/register.png" alt="Registro de usuarios" height="300px">
 ## Registro de CV por usuarios
-![CV](./resources/cv.png)
+<img src="./resources/cv.png" alt="Secciones del cv" width="500px">
 ## Formularios modales
-![Modales](./resources/modal.png)
+<img src="./resources/modal.png" alt="Modales" width="500px">
 ## Modo claro y responsive
-![Modo claro y responsive](./resources/light.png)
+<img src="./resources/light.png" alt="Modo claro y responsive" height="300px">
 
 # TODO
 - [ ] Validaciones de tamaños máximos en zod

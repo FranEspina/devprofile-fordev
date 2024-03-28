@@ -50,7 +50,7 @@ import Logo from "@/components/Logo.astro";
   </div>
   <div
     id="menu-container"
-    class="fixed top-2 right-12 py-5 px-5 bg-gray-50 dark:bg-blue-950 z-10 shadow-lg hidden"
+    class="fixed top-14 right-4 py-5 px-5 bg-gray-50 dark:bg-blue-950 border border-slate-200 dark:border-blue-800 z-10 shadow-lg hidden"
   >
     <ul class="flex flex-col gap-4 items-start mr-10">
       <ItemListNav hoverStyled={true} authRequired={true} client:load>
@@ -74,11 +74,19 @@ import Logo from "@/components/Logo.astro";
 </section>
 
 <script>
+  import { EVENTS_MENU } from "@/constant";
+
   document.addEventListener("astro:page-load", () => {
     const menuButton = document.getElementById("menu-button");
     const menuContainer = document.getElementById("menu-container");
     menuButton?.addEventListener("click", () => {
       menuContainer?.classList.toggle("hidden");
+    });
+
+    window.addEventListener(EVENTS_MENU.CloseMenu, () => {
+      if (menuContainer?.classList.contains("hidden") === false) {
+        menuContainer?.classList.toggle("hidden");
+      }
     });
   });
 </script>

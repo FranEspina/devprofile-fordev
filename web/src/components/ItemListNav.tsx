@@ -1,5 +1,6 @@
 'use client'
 import { useProfileStore } from "@/store/profileStore";
+import { EVENTS_MENU } from "@/constant";
 
 interface ItemListNavProps {
   authRequired?: boolean,
@@ -29,8 +30,15 @@ export function ItemListNav({ authRequired, hideLogged, children, hoverStyled = 
 
   return (
     <li className={hoverStyled ? 'hover:text-blue-400 hover:cursor-pointer hover:shadow-lg transition-colors duration-300 uppercase text-xs md:text-base' : 'text-xs md:text-base'}
-      onClick={onClick}>
+      onClick={
+        () => {
+          if (onClick) {
+            onClick()
+            window.dispatchEvent(new Event(EVENTS_MENU.CloseMenu));
+          }
+        }
+      }>
       {children}
-    </li>
+    </li >
   )
 }

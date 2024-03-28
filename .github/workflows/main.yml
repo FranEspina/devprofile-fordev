@@ -3,7 +3,7 @@ name: Cypress Tests
 on: push
 env:
   NODE_ENV: $NODE_ENV
-  PORT: $PORT
+  PORT: 3000
   TOKEN_SECRET: ${{ secrets.TOKEN_SECRET }}
   TOKEN_EXPIRES_IN: $TOKEN_EXPIRES_IN
   POSTGRES_USER: ${{ secrets.POSTGRES_USER }}

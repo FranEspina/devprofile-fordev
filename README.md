@@ -19,15 +19,25 @@ Web que permite a los usuario logarse y crear una cuenta de desarrollador donde 
 - Validación de esquemas JSON
 
 # Capturas
-## Gestión de usuarios
-![Pantalla de inicio](./resources/home.png)
-![Registro de usuarios](./resources/register.png)
+
+## Pantalla de inicio
+
+<img src="./resources/home.png" alt="Pantalla de inicio" width="500px">
+
 ## Registro de CV por usuarios
-![CV](./resources/cv.png)
+
+<img src="./resources/cv.png" alt="Secciones del cv" width="500px">
+
 ## Formularios modales
-![Modales](./resources/modal.png)
-## Modo claro y responsive
-![Modo claro y responsive](./resources/light.png)
+
+<img src="./resources/modal.png" alt="Modales" width="500px">
+
+## Registro, modo claro y responsive
+
+<div style="display: flex; gap:10px; ">
+  <img src="./resources/register.png" alt="Registro de usuarios" height="400px">
+  <img src="./resources/light.png" alt="Modo claro y responsive" height="400px">
+</div>
 
 # TODO
 - [ ] Validaciones de tamaños máximos en zod
@@ -58,8 +68,11 @@ Web que permite a los usuario logarse y crear una cuenta de desarrollador donde 
 - [x] Hacer la landingpage en el inicio
 - [x] Poder borrar todas las secciones del CV de una vez
 - [x] Poder implementar si al importar se hace un insert o delete/insert
+- [ ] Implementar otras plantillas de [JSON Resume](https://jsonresume.org/themes/) o alternativas
       
 # Créditos
 - [Motomangucode Font](https://www.fontspace.com/Motomang-font-f101909)  by Meyerfonts (Bryndan Meyerholt)
 - Esquema del JSON de CV de [jsonresume.org](https://jsonresume.org)
-- Basado en el diseño de [Bartosz Jarocki](https://github.com/BartoszJarocki/cv)
+- Plantillas para combinar curriculumns:
+ - Plantilla elegant. Basado en el diseño Elegant desarrollado por [Mudassir](https://github.com/mudassir0909)
+ - Plantilla midudev. Basado en el diseño de [Bartosz Jarocki](https://github.com/BartoszJarocki/cv) y posteriormente implementada por midudev.

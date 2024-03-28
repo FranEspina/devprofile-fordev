@@ -21,26 +21,20 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Test env
-        run: echo 'Hi ${{ env.PORT }}'
-      - name: OTher Test env
-        run: echo 'Hi ${{ env.POSTGRES_PORT }}'  
       - name: Install dependencies for backend project
         run: |
           cd $GITHUB_WORKSPACE/backend
           npm install
-          npm run dev
       - name: Install dependencies for frontend project
         run: |
           cd $GITHUB_WORKSPACE/web
           npm install
-          npm run dev
       # Install npm dependencies, cache them correctly
       # and run all Cypress tests
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
-          start: npm run cy:run
+          start: npm run test:e2e
           working-directory: ./e2e-test
           browser: chrome
-          wait-on: 'http://localhost:3000'
+          

@@ -12,15 +12,19 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/backend
           npm install
+          npm run dev
       - name: Install dependencies for frontend project
         run: |
           cd $GITHUB_WORKSPACE/web
           npm install
+          npm run dev
+          
       # Install npm dependencies, cache them correctly
       # and run all Cypress tests
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
-          start: npm run test:e2e
+          start: npm run cy:run
           working-directory: ./e2e-test
           browser: chrome
+          wait-on: 'http://localhost:3000'

@@ -3,7 +3,7 @@ import morgan from 'morgan'
 import cors from 'cors'
 import authRoute from './routes/authRoute'
 import userRoute from './routes/userRoute'
-
+import testRoute from './routes/testRoute'
 
 const app = express()
 
@@ -22,5 +22,6 @@ app.use(morgan('combined'))
 
 app.use('/auth', authRoute)
 app.use('/user', userRoute)
+app.use('/test', testRoute)
 
 export default app

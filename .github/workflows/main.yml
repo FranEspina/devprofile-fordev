@@ -23,3 +23,4 @@ jobs:
         with:
           start: npm run test:e2e
           working-directory: ./e2e-test
+          browser: chrome

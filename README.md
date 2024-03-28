@@ -19,15 +19,17 @@ Web que permite a los usuario logarse y crear una cuenta de desarrollador donde 
 - Validación de esquemas JSON
 
 # Capturas
-## Gestión de usuarios
+## Pantalla de inicio
 <img src="./resources/home.png" alt="Pantalla de inicio" width="500px">
-<img src="./resources/register.png" alt="Registro de usuarios" height="300px">
 ## Registro de CV por usuarios
 <img src="./resources/cv.png" alt="Secciones del cv" width="500px">
 ## Formularios modales
 <img src="./resources/modal.png" alt="Modales" width="500px">
 ## Modo claro y responsive
-<img src="./resources/light.png" alt="Modo claro y responsive" height="300px">
+<div style="display: flex;">
+  <img src="./resources/light.png" alt="Modo claro y responsive" height="300px">
+  <img src="./resources/register.png" alt="Registro de usuarios" height="300px">
+</div>
 
 # TODO
 - [ ] Validaciones de tamaños máximos en zod

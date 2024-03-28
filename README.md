@@ -22,6 +22,7 @@ Web que permite a los usuario logarse y crear una cuenta de desarrollador donde 
 ## Gestión de usuarios
 ![Pantalla de inicio](./resources/home.png)
 ![Registro de usuarios](./resources/register.png)
+<img src="./resources/register.png" alt="Registro de usuarios" height="100px">
 ## Registro de CV por usuarios
 ![CV](./resources/cv.png)
 ## Formularios modales

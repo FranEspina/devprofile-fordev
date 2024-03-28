@@ -98,6 +98,7 @@ export const SignInModal = ({ text = 'Iniciar sesión' }) => {
 
       <button className='uppercase hover:text-blue-500 hover:cursor-pointer hover:shadow-lg transition-colors duration-300'
         type="button"
+        id="modal-iniciar-sesion"
         onClick={showModal}>
         {text}
       </button>

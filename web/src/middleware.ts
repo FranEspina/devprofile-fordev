@@ -58,13 +58,25 @@ export const onRequest = defineMiddleware(async (context, next) => {
     }
   }
 
+  console.log(context.url.pathname)
+
+  let validationResult: authorizatioResult
   if (PUBLIC_ROUTES.includes(context.url.pathname)) {
     context.locals.user.token = token;
     context.locals.user.id = userId;
     return next();
   }
+  else if (context.url.pathname === "/unauthorized" ||
+    context.url.pathname === "/404") {
+    validationResult = {
+      status: "authorized",
+      msg: "Página autorizada"
+    }
+  }
+  else {
+    validationResult = await verifyAuth(token);
+  }
 
-  const validationResult = await verifyAuth(token);
   switch (validationResult.status) {
     case "authorized":
       context.locals.user.token = token;

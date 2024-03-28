@@ -8,6 +8,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Install dependencies for backend project
+        run: |
+          cd $GITHUB_WORKSPACE/backend
+          npm install
+      - name: Install dependencies for frontend project
+        run: |
+          cd $GITHUB_WORKSPACE/web
+          npm install
       # Install npm dependencies, cache them correctly
       # and run all Cypress tests
       - name: Cypress run

@@ -4,12 +4,16 @@ const title = Astro.props.title;
 const description = Astro.props.description;
 ---
 
-<div class="w-64 hover:scale-105 transition-transform">
+<div
+  class="mt-6 md:mt-2 w-64 [&>header>div]:hover:scale-110 [&>header>div>span]:hover:opacity-80 [&>header>h1]:hover:text-blue-500"
+>
   <header class="flex flex-col items-center justify-center">
     <div
-      class="h-28 w-28 bg-blue-500 rounded-full flex items-center justify-center"
+      class="h-28 w-28 bg-blue-500 rounded-full flex items-center justify-center transition-all duration-300"
     >
-      <span class="text-4xl font-extrabold text-gray-50">{step}</span>
+      <span class="text-4xl font-extrabold text-gray-50 duration-1000"
+        >{step}</span
+      >
     </div>
     <h1 class="text-xl font-bold mt-2">{title}</h1>
   </header>

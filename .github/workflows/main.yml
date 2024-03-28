@@ -2,17 +2,17 @@ name: Cypress Tests
 
 on: push
 env:
-  NODE_ENV: $NODE_ENV
-  PORT: 3000
+  NODE_ENV: ${{ vars.NODE_ENV }}
+  PORT: ${{ vars.PORT }}
   TOKEN_SECRET: ${{ secrets.TOKEN_SECRET }}
-  TOKEN_EXPIRES_IN: $TOKEN_EXPIRES_IN
+  TOKEN_EXPIRES_IN: ${{ vars.TOKEN_EXPIRES_IN }}
   POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
   POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
   POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
   POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
   POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
-  POSTGRES_SSL: $POSTGRES_SSL
-  DB_MIGRATE_DROP_TABLES: $DB_MIGRATE_DROP_TABLES
+  POSTGRES_SSL: ${{ vars.POSTGRES_SSL }}
+  DB_MIGRATE_DROP_TABLES: ${{ vars.DB_MIGRATE_DROP_TABLES }}
 jobs:
   cypress-run:
     runs-on: ubuntu-22.04
@@ -35,7 +35,6 @@ jobs:
           cd $GITHUB_WORKSPACE/web
           npm install
           npm run dev
-          
       # Install npm dependencies, cache them correctly
       # and run all Cypress tests
       - name: Cypress run

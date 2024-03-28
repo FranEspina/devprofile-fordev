@@ -5,10 +5,24 @@ on: push
 jobs:
   cypress-run:
     runs-on: ubuntu-22.04
+    environment: 
+      name: development
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install dependencies for backend project
+        env:
+          NODE_ENV: $NODE_ENV
+          PORT: $PORT
+          TOKEN_SECRET: ${{ secrets.TOKEN_SECRET }}
+          TOKEN_EXPIRES_IN: $TOKEN_EXPIRES_IN
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
+          POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
+          POSTGRES_SSL: $POSTGRES_SSL
+          DB_MIGRATE_DROP_TABLES: $DB_MIGRATE_DROP_TABLES
         run: |
           cd $GITHUB_WORKSPACE/backend
           npm install

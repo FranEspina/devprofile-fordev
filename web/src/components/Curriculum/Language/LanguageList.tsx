@@ -5,7 +5,7 @@ import { useNotify } from "@/hooks/useNotify"
 import { navigate } from "astro/virtual-modules/transitions-router.js"
 import { getUserSection, deleteUserSection, type UserSection } from '@/services/apiService'
 import { Button } from "@/components/ui/button"
-import { Edit, Moon, Trash } from 'lucide-react'
+import { Trash } from 'lucide-react'
 import { useRefreshStore } from "@/store/refreshStore"
 import { LanguageDialog } from '@/components/Curriculum/Language/LanguageDialog'
 import { LoadIndicator } from "@/components/LoadIndicator"
@@ -81,7 +81,7 @@ export function LanguageList() {
       userId: user.id
     }
 
-    deleteUserSection<UserSection>("language", userSection, token).then((apiResult) => {
+    deleteUserSection("language", userSection, token).then((apiResult) => {
       if (apiResult.success) {
         setLanguageStamp(Date.now())
       }

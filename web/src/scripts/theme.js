@@ -18,6 +18,5 @@ const setDarkMode = () => {
 
 
 document.addEventListener('astro:after-swap', () => {
-  console.log('dentro')
   setDarkMode();
 });

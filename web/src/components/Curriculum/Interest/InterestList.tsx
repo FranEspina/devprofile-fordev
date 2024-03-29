@@ -5,7 +5,7 @@ import { useNotify } from "@/hooks/useNotify"
 import { navigate } from "astro/virtual-modules/transitions-router.js"
 import { getUserSection, deleteUserSection, type UserSection } from '@/services/apiService'
 import { Button } from "@/components/ui/button"
-import { Edit, Moon, Trash } from 'lucide-react'
+import { Trash } from 'lucide-react'
 import { useRefreshStore } from "@/store/refreshStore"
 import { InterestDialog } from '@/components/Curriculum/Interest/InterestDialog'
 import { LoadIndicator } from "@/components/LoadIndicator"
@@ -80,7 +80,7 @@ export function InterestList() {
       userId: user.id
     }
 
-    deleteUserSection<UserSection>("Interest", userSection, token).then((apiResult) => {
+    deleteUserSection("Interest", userSection, token).then((apiResult) => {
       if (apiResult.success) {
         setInterestStamp(Date.now())
       }

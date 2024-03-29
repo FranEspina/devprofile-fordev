@@ -284,7 +284,7 @@ export interface UserSection {
   userId: number,
 }
 
-export async function deleteUserSection<T extends UserSection>(sectionName: string, userSection: UserSection, token: string): Promise<apiResultType<ProfileDelete>> {
+export async function deleteUserSection(sectionName: string, userSection: UserSection, token: string): Promise<apiResultType<UserSection>> {
 
   const endpoint = `${API_BASE_URL}/user/${userSection.userId}/${sectionName}/${userSection.id}`
   try {

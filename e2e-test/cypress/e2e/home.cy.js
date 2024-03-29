@@ -17,15 +17,6 @@ describe('Prueba de página de inicio y ping al Backend', () => {
     cy.url().should('eq', 'http://localhost:4321/');
   });
 
-  // it('Login del usuario', () => {
-  //   cy.visit('http://localhost:4321/');
-  //   cy.get('#modal-iniciar-sesion', { timeout: 10000 }).eq(0)
-  //     .click({ force: true })
-  //   cy.get('#modal-boton-aceptar', { timeout: 10000 }).eq(0)
-  //     .click({ force: true })
-  // });
-
-
 });
 
 

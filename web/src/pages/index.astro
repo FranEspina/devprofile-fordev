@@ -1,7 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Step from "@/components/Landing/Step.astro";
-import { SignInModal } from "@/components/SignInModal";
 import { Wellcome } from "@/components/Wellcome";
 const { id } = Astro.locals.user;
 ---
@@ -34,6 +33,7 @@ const { id } = Astro.locals.user;
         class="flex flex-col md:flex-row gap-4 items-center my-4 md:my-0 self-center"
       >
         <Wellcome client:load />
+        <button id="hola">Boton hola</button>
       </div>
     </header>
     <body>
@@ -64,3 +64,21 @@ const { id } = Astro.locals.user;
     </body>
   </main>
 </Layout>
+
+<script is:inline>
+  console.log("hola");
+  const boton = document.getElementById("hola");
+  if (boton) {
+    console.log("si");
+  } else {
+    console.log("no");
+  }
+  document.addEventListener("astro:page-load", () => {
+    console.log("dentro astro:page-load");
+    if (boton) {
+      boton.addEventListener("click", () => {
+        console.log("hice click");
+      });
+    }
+  });
+</script>

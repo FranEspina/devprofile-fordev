@@ -14,15 +14,12 @@ import { Plus, Edit } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useProfileStore } from '@/store/profileStore'
 import { type ProjectCreate, ProjectSchema, ProjectCreateSchema, type Project, ProjectBaseSchema } from '@/Schemas/projectSchema'
-import { navigate } from "astro/virtual-modules/transitions-router.js"
 import { useNotify } from '@/hooks/useNotify'
 import { validateSchemaAsync } from '@/lib/validations'
 import { createUserSection, updateUserSection } from '@/services/apiService'
 import { useRefreshStore } from '@/store/refreshStore'
 import { LoadIndicator } from '@/components/LoadIndicator'
 import { type ChangeEvent } from "react"
-import { DatePicker } from '@/components/ui/DatePicker'
-import { type SelectSingleEventHandler } from 'react-day-picker'
 import MultipleSelector, { type Option } from "@/components/ui/multiple-selector"
 import { Textarea } from "@/components/ui/textarea"
 import { dateUtcToIso8601, localIso8601ToUtcDate } from '@/lib/dates'

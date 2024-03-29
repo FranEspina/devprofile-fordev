@@ -1,5 +1,5 @@
 import { Modal } from './Modal.jsx'
-import { useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNotify } from '@/hooks/useNotify'
 import { login } from '@/services/apiService'
 import { useProfileStore } from '@/store/profileStore'
@@ -7,16 +7,18 @@ import { UserLoginFormSchema } from '@/Schemas/userSchema';
 import { z } from 'astro/zod'
 import { navigate } from 'astro/virtual-modules/transitions-router.js'
 
-export const SignInModal = ({ text = 'Iniciar sesión' }) => {
+export const SignInModal = ({ text = 'Iniciar sesión', dataCyOpenSignButton = '', dataCyConfirmSignButton = '' }) => {
   const [show, setShow] = useState(false);
   const [errors, setErrors] = useState([])
   const [loading, setLoading] = useState(false);
   const { notifySuccess } = useNotify()
   const { setUser, setToken } = useProfileStore(state => state)
 
-  const showModal = () => {
+  const showModal = useCallback(() => {
+    console.log('abrir modal')
     setShow(true)
-  }
+  }, [setShow])
+
 
   const hideModal = (e) => {
     e.preventDefault()
@@ -77,7 +79,7 @@ export const SignInModal = ({ text = 'Iniciar sesión' }) => {
 
   return (
     <div>
-      <Modal className="w-80 md:w-96" title='Inicio de sesión' textConfirm="Iniciar sesión" show={show} handleCancel={hideModal} handleConfirm={confirmModal} loading={loading}>
+      <Modal dataCyConfirmButton={dataCyConfirmSignButton} className="w-80 md:w-96" title='Inicio de sesión' textConfirm="Iniciar sesión" show={show} handleCancel={hideModal} handleConfirm={confirmModal} loading={loading}>
         <form id='user-sign-in-form' action="submit" className="px-3 md:px-5 py-2 text-xxs md:text-xs" >
           <fieldset >
             {fields.map((field) =>
@@ -98,7 +100,7 @@ export const SignInModal = ({ text = 'Iniciar sesión' }) => {
 
       <button className='uppercase hover:text-blue-500 hover:cursor-pointer hover:shadow-lg transition-colors duration-300'
         type="button"
-        id="modal-iniciar-sesion"
+        data-cy={dataCyOpenSignButton}
         onClick={showModal}>
         {text}
       </button>

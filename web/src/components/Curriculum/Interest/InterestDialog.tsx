@@ -14,7 +14,6 @@ import { Plus, Edit } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useProfileStore } from '@/store/profileStore'
 import { type InterestCreate, InterestSchema, InterestCreateSchema, type Interest } from '@/Schemas/interestSchema'
-import { navigate } from "astro/virtual-modules/transitions-router.js"
 import { useNotify } from '@/hooks/useNotify'
 import { validateSchemaAsync } from '@/lib/validations'
 import { createUserSection, updateUserSection } from '@/services/apiService'

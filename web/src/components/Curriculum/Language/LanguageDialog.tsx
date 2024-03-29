@@ -14,7 +14,6 @@ import { Plus, Edit } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useProfileStore } from '@/store/profileStore'
 import { type LanguageCreate, LanguageSchema, LanguageCreateSchema, type Language } from '@/Schemas/languageSchema'
-import { navigate } from "astro/virtual-modules/transitions-router.js"
 import { useNotify } from '@/hooks/useNotify'
 import { validateSchemaAsync } from '@/lib/validations'
 import { createUserSection, updateUserSection } from '@/services/apiService'

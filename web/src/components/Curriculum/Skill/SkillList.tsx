@@ -82,7 +82,7 @@ export function SkillList() {
       userId: user.id
     }
 
-    deleteUserSection<UserSection>("skill", userSection, token).then((apiResult) => {
+    deleteUserSection("skill", userSection, token).then((apiResult) => {
       if (apiResult.success) {
         setSkillStamp(Date.now())
       }

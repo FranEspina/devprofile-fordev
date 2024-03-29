@@ -14,7 +14,6 @@ import { Plus, Edit } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useProfileStore } from '@/store/profileStore'
 import { type AwardCreate, AwardSchema, AwardCreateSchema, type Award } from '@/Schemas/awardSchema'
-import { navigate } from "astro/virtual-modules/transitions-router.js"
 import { useNotify } from '@/hooks/useNotify'
 import { validateSchemaAsync } from '@/lib/validations'
 import { createUserSection, updateUserSection } from '@/services/apiService'
@@ -22,11 +21,9 @@ import { useRefreshStore } from '@/store/refreshStore'
 import { LoadIndicator } from '@/components/LoadIndicator'
 import { type ChangeEvent } from "react"
 import { Textarea } from "@/components/ui/textarea"
-import { DatePicker } from '@/components/ui/DatePicker'
-import { type SelectSingleEventHandler } from 'react-day-picker'
 import { dateUtcToIso8601, localIso8601ToUtcDate } from '@/lib/dates'
 import { InputDate } from "@/components/ui/InputDate"
-import { z, ZodSchema } from 'zod';
+import { z } from 'zod';
 
 interface AwardDialogProps {
   editMode: boolean,

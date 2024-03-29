@@ -5,7 +5,7 @@ import { useNotify } from "@/hooks/useNotify"
 import { navigate } from "astro/virtual-modules/transitions-router.js"
 import { getUserSection, deleteUserSection, type UserSection } from '@/services/apiService'
 import { Button } from "@/components/ui/button"
-import { Edit, Moon, Trash } from 'lucide-react'
+import { Trash } from 'lucide-react'
 import { useRefreshStore } from "@/store/refreshStore"
 import { CertificateDialog } from '@/components/Curriculum/Certificate/CertificateDialog'
 import { LoadIndicator } from "@/components/LoadIndicator"
@@ -80,7 +80,7 @@ export function CertificateList() {
       userId: user.id
     }
 
-    deleteUserSection<UserSection>("certificate", userSection, token).then((apiResult) => {
+    deleteUserSection("certificate", userSection, token).then((apiResult) => {
       if (apiResult.success) {
         setCertificateStamp(Date.now())
       }

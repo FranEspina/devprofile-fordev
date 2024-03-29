@@ -4,6 +4,7 @@ import { SignUpModal } from '@/components/SignUpModal'
 
 export function Wellcome() {
   const { user, token } = useProfileStore(state => state)
+  console.log(user)
   return (
     <>
       <div className='text-xs md:text-base  '>
@@ -19,7 +20,7 @@ export function Wellcome() {
           <div className='flex flex-row gap-4 '>
             <div className='flex flex-row gap-2'>
               <p >➡️</p>
-              <SignInModal text='Inicia sesión' />
+              <SignInModal text='Inicia sesión' dataCyOpenSignButton='open-modal-sign-button' dataCyConfirmSignButton='confirm-sign-button' />
             </div>
             <div className='flex flex-row gap-2'>
               <p >➡️</p>

@@ -5,7 +5,7 @@ import { useNotify } from "@/hooks/useNotify"
 import { navigate } from "astro/virtual-modules/transitions-router.js"
 import { deleteUserSection, type UserSection, getUserSection } from '@/services/apiService'
 import { Button } from "@/components/ui/button"
-import { Edit, Moon, Trash } from 'lucide-react'
+import { Trash } from 'lucide-react'
 import { useRefreshStore } from "@/store/refreshStore"
 import { ProfileDialog } from '@/components/Curriculum/Profile/ProfileDialog'
 import { LoadIndicator } from '@/components/LoadIndicator'
@@ -81,7 +81,7 @@ export function ProfileList() {
       userId: user.id
     }
 
-    deleteUserSection<UserSection>("profile", userSection, token).then((apiResult) => {
+    deleteUserSection("profile", userSection, token).then((apiResult) => {
       if (apiResult.success) {
         setProfileStamp(Date.now())
       }

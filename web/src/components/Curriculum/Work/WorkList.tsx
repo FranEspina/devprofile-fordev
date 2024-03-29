@@ -82,7 +82,7 @@ export function WorkList() {
       userId: user.id
     }
 
-    deleteUserSection<UserSection>("work", userSection, token).then((apiResult) => {
+    deleteUserSection("work", userSection, token).then((apiResult) => {
       if (apiResult.success) {
         setWorkStamp(Date.now())
       }

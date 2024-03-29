@@ -1,5 +1,3 @@
-import { Button } from "@/components/ui/button"
-import { BasicDialog } from '@/components/Curriculum/Basic/BasicDialog'
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function BasicSkeleton() {

@@ -80,7 +80,7 @@ export function ProjectList() {
       userId: user.id
     }
 
-    deleteUserSection<UserSection>("project", userSection, token).then((apiResult) => {
+    deleteUserSection("project", userSection, token).then((apiResult) => {
       if (apiResult.success) {
         setProjectStamp(Date.now())
       }

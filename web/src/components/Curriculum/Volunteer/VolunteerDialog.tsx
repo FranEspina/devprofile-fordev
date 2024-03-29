@@ -21,8 +21,6 @@ import { createUserSection, updateUserSection } from '@/services/apiService'
 import { useRefreshStore } from '@/store/refreshStore'
 import { LoadIndicator } from '@/components/LoadIndicator'
 import { type ChangeEvent } from "react"
-import { DatePicker } from '@/components/ui/DatePicker'
-import { type SelectSingleEventHandler } from 'react-day-picker'
 import MultipleSelector, { type Option } from "@/components/ui/multiple-selector"
 import { Textarea } from "@/components/ui/textarea"
 import { dateUtcToIso8601, localIso8601ToUtcDate } from '@/lib/dates'

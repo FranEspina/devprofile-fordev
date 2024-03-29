@@ -5,7 +5,7 @@ import { useNotify } from "@/hooks/useNotify"
 import { navigate } from "astro/virtual-modules/transitions-router.js"
 import { getUserSection, deleteUserSection, type UserSection } from '@/services/apiService'
 import { Button } from "@/components/ui/button"
-import { Edit, Moon, Trash } from 'lucide-react'
+import { Trash } from 'lucide-react'
 import { useRefreshStore } from "@/store/refreshStore"
 import { ReferenceDialog } from '@/components/Curriculum/Reference/ReferenceDialog'
 import { LoadIndicator } from "@/components/LoadIndicator"
@@ -80,7 +80,7 @@ export function ReferenceList() {
       userId: user.id
     }
 
-    deleteUserSection<UserSection>("reference", userSection, token).then((apiResult) => {
+    deleteUserSection("reference", userSection, token).then((apiResult) => {
       if (apiResult.success) {
         setReferenceStamp(Date.now())
       }

@@ -4,7 +4,6 @@ import { SignUpModal } from '@/components/SignUpModal'
 
 export function Wellcome() {
   const { user, token } = useProfileStore(state => state)
-  console.log(user)
   return (
     <>
       <div className='text-xs md:text-base  '>

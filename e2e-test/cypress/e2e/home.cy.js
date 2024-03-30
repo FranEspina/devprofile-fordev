@@ -1,6 +1,9 @@
 describe('Prueba de página de inicio y ping al Backend', () => {
-  it('Debe ver la página de bienvenida', () => {
+  beforeEach(() => {
     cy.visit('http://localhost:4321');
+  })
+
+  it('Debe ver la página de bienvenida', () => {
     cy.contains('Comparte tu experiencia');
   });
 
@@ -17,34 +20,25 @@ describe('Prueba de página de inicio y ping al Backend', () => {
     cy.url().should('eq', 'http://localhost:4321/');
   });
 
-  it.only('login', () => {
-    cy.visit('httpº://localhost:4321')
-    cy.request({
-      method: 'POST',
-      url: 'http://localhost:3000/auth/login',
-      body: {
-        email: 'franpies77@gmail.com',
-        password: 'clave',
-      }
-    })
-      .then((response) => {
-        expect(response.status).to.eq(200);
-
-        const user = response.body.data
-        const token = response.body.token
-
-        localStorage.setItem('user', user)
-        localStorage.setItem('token', token)
-
-        cy.log(token)
+  it.only('Login correcto', () => {
+    cy.get('[data-cy="open-modal-sign-button"]')
+      .wait(1000)
+      .click();
+    cy.get('[name="email"]').type('franpies77@gmail.com')
+    cy.get('[name="password"]').type('clave')
 
 
-      });
-
-    cy.visit('http://localhost:4321')
-
+    cy.intercept('POST', 'http://localhost:3000/auth/login').as('responseLogin')
+    cy.get('[data-cy="confirm-sign-button"]').click()
+    cy.wait('@responseLogin').its('response.statusCode').should('be.oneOf', [200])
 
   });
+
+
+
+
+
+
 
 });
 

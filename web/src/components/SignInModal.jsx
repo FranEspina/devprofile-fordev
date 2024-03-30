@@ -15,7 +15,6 @@ export const SignInModal = ({ text = 'Iniciar sesión', dataCyOpenSignButton = '
   const { setUser, setToken } = useProfileStore(state => state)
 
   const showModal = useCallback(() => {
-    console.log('abrir modal')
     setShow(true)
   }, [setShow])
 

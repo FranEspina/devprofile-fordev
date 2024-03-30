@@ -16,14 +16,14 @@ export function ItemListNav({ authRequired, hideLogged, children, hoverStyled = 
 
   //Solo mostramos si está logado
   if (authRequired) {
-    if (token === '') {
+    if (token === '' || token === 'not-loaded') {
       return null
     }
   }
 
   //No se muestra si está logado
   if (hideLogged) {
-    if (token !== '') {
+    if (token !== '' && token !== 'not-loaded') {
       return null
     }
   }

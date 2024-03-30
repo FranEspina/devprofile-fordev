@@ -17,6 +17,35 @@ describe('Prueba de página de inicio y ping al Backend', () => {
     cy.url().should('eq', 'http://localhost:4321/');
   });
 
+  it.only('login', () => {
+    cy.visit('httpº://localhost:4321')
+    cy.request({
+      method: 'POST',
+      url: 'http://localhost:3000/auth/login',
+      body: {
+        email: 'franpies77@gmail.com',
+        password: 'clave',
+      }
+    })
+      .then((response) => {
+        expect(response.status).to.eq(200);
+
+        const user = response.body.data
+        const token = response.body.token
+
+        localStorage.setItem('user', user)
+        localStorage.setItem('token', token)
+
+        cy.log(token)
+
+
+      });
+
+    cy.visit('http://localhost:4321')
+
+
+  });
+
 });
 
 

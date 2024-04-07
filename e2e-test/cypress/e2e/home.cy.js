@@ -20,12 +20,13 @@ describe('Prueba de página de inicio y ping al Backend', () => {
     cy.url().should('eq', 'http://localhost:4321/');
   });
 
+  //login con usuario test en entorno development
   it.only('Login correcto', () => {
     cy.get('[data-cy="open-modal-sign-button"]')
       .wait(1000)
       .click();
-    cy.get('[name="email"]').type('franpies77@gmail.com')
-    cy.get('[name="password"]').type('clave')
+    cy.get('[name="email"]').type('admin@correo.es')
+    cy.get('[name="password"]').type('admin')
 
 
     cy.intercept('POST', 'http://localhost:3000/auth/login').as('responseLogin')

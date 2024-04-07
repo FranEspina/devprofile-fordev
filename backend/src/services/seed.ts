@@ -31,6 +31,7 @@ export const dropCreateAndSeedTables = async () => {
       DROP TABLE IF EXISTS interests;
       DROP TABLE IF EXISTS user_references;
       DROP TABLE IF EXISTS resources;
+      DROP TABLE IF EXISTS sections;
       DROP TABLE IF EXISTS users;
       DROP TABLE IF EXISTS error_log;
     `
@@ -61,10 +62,10 @@ export const dropCreateAndSeedTables = async () => {
   const usersTable = `CREATE TABLE IF NOT EXISTS
       users(
         id SERIAL PRIMARY KEY,
-        first_name VARCHAR(128) NOT NULL,
-        last_name VARCHAR(128) NOT NULL,
-        email VARCHAR(128) NOT NULL,
-        password VARCHAR(128) NOT NULL
+        first_name VARCHAR(1000) NOT NULL,
+        last_name VARCHAR(1000) NOT NULL,
+        email VARCHAR(1000) NOT NULL,
+        password VARCHAR(1000) NOT NULL
       )`;
 
   await pool.query(usersTable)
@@ -81,7 +82,7 @@ export const dropCreateAndSeedTables = async () => {
       sections(
         id SERIAL PRIMARY KEY,
         user_id INTEGER,
-        section_name VARCHAR(50) NOT NULL,
+        section_name VARCHAR(1000) NOT NULL,
         section_id INTEGER NOT NULL,
         is_public BOOLEAN  DEFAULT TRUE NOT NULL,
         FOREIGN KEY (user_id) REFERENCES users(id)
@@ -125,7 +126,7 @@ export const dropCreateAndSeedTables = async () => {
       resources(
         id SERIAL PRIMARY KEY,
         user_id INTEGER,
-        title VARCHAR(128) NOT NULL,
+        title VARCHAR(1000) NOT NULL,
         description TEXT NOT NULL,
         type resourceType NOT NULL,
         keywords TEXT, 
@@ -147,12 +148,12 @@ export const dropCreateAndSeedTables = async () => {
       basics(
         id SERIAL PRIMARY KEY,
         user_id INTEGER,
-        name VARCHAR(50) NOT NULL,
-        label VARCHAR(250) NOT NULL,
-        image VARCHAR(250) NOT NULL,
-        email VARCHAR(100) NOT NULL, 
+        name VARCHAR(1000) NOT NULL,
+        label VARCHAR(1000) NOT NULL,
+        image VARCHAR(1000) NOT NULL,
+        email VARCHAR(1000) NOT NULL, 
         phone VARCHAR(30), 
-        url VARCHAR(250) NOT NULL,
+        url VARCHAR(1000) NOT NULL,
         summary TEXT,
         FOREIGN KEY (user_id) REFERENCES users(id)
       );
@@ -185,8 +186,8 @@ export const dropCreateAndSeedTables = async () => {
       profiles(
         id SERIAL PRIMARY KEY,
         user_id INTEGER,
-        network VARCHAR(50) NOT NULL,
-        username VARCHAR(50) NOT NULL,
+        network VARCHAR(1000) NOT NULL,
+        username VARCHAR(1000) NOT NULL,
         url TEXT NOT NULL,
         FOREIGN KEY (user_id) REFERENCES users(id)
       );
@@ -195,11 +196,11 @@ export const dropCreateAndSeedTables = async () => {
       locations(
         id SERIAL PRIMARY KEY,
         user_id INTEGER,
-        address VARCHAR(250) NOT NULL,
-        postal_code VARCHAR(50) NOT NULL,
-        city VARCHAR(250) NOT NULL,
-        country_code VARCHAR(250) NOT NULL,
-        region VARCHAR(250) NOT NULL,
+        address VARCHAR(1000) NOT NULL,
+        postal_code VARCHAR(1000) NOT NULL,
+        city VARCHAR(1000) NOT NULL,
+        country_code VARCHAR(1000) NOT NULL,
+        region VARCHAR(1000) NOT NULL,
         FOREIGN KEY (user_id) REFERENCES users(id)
       );
 
@@ -207,11 +208,11 @@ export const dropCreateAndSeedTables = async () => {
       works(
         id SERIAL PRIMARY KEY,
         user_id INTEGER,
-        name VARCHAR(100) NOT NULL,
-        location VARCHAR(100) NOT NULL,
+        name VARCHAR(1000) NOT NULL,
+        location VARCHAR(1000) NOT NULL,
         description TEXT NOT NULL,
-        position VARCHAR(150) NOT NULL,
-        url VARCHAR(150) NOT NULL,
+        position VARCHAR(1000) NOT NULL,
+        url VARCHAR(1000) NOT NULL,
         start_date VARCHAR(10) NOT NULL,
         end_date VARCHAR(10),
         summary TEXT,
@@ -223,16 +224,16 @@ export const dropCreateAndSeedTables = async () => {
       projects(
         id SERIAL PRIMARY KEY,
         user_id INTEGER,
-        name VARCHAR(50) NOT NULL,
+        name VARCHAR(1000) NOT NULL,
         description TEXT NOT NULL,
         highlights TEXT,
         keywords TEXT,
         start_date VARCHAR(10) NOT NULL,
         end_date VARCHAR(10),
-        url VARCHAR(250),
+        url VARCHAR(1000),
         roles TEXT,
-        entity VARCHAR(250),
-        type VARCHAR(250),
+        entity VARCHAR(1000),
+        type VARCHAR(1000),
         FOREIGN KEY (user_id) REFERENCES users(id)
       );
 
@@ -240,8 +241,8 @@ export const dropCreateAndSeedTables = async () => {
       skills(
         id SERIAL PRIMARY KEY,
         user_id INTEGER,
-        name VARCHAR(50) NOT NULL,
-        level VARCHAR(50) NOT NULL,
+        name VARCHAR(1000) NOT NULL,
+        level VARCHAR(1000) NOT NULL,
         keywords TEXT,
         FOREIGN KEY (user_id) REFERENCES users(id)
       );
@@ -250,9 +251,9 @@ export const dropCreateAndSeedTables = async () => {
       volunteers(
         id SERIAL PRIMARY KEY,
         user_id INTEGER,
-        organization VARCHAR(250) NOT NULL,
+        organization VARCHAR(1000) NOT NULL,
         position TEXT NOT NULL,
-        url VARCHAR(250),
+        url VARCHAR(1000),
         start_date VARCHAR(10) NOT NULL,
         end_date VARCHAR(10),
         summary TEXT,
@@ -264,13 +265,13 @@ export const dropCreateAndSeedTables = async () => {
       educations(
         id SERIAL PRIMARY KEY,
         user_id INTEGER,
-        institution VARCHAR(250) NOT NULL,
-        url VARCHAR(250),
-        area VARCHAR(250) NOT NULL,
-        study_type VARCHAR(250) NOT NULL,
+        institution VARCHAR(1000) NOT NULL,
+        url VARCHAR(1000),
+        area VARCHAR(1000) NOT NULL,
+        study_type VARCHAR(1000) NOT NULL,
         start_date VARCHAR(10) NOT NULL,
         end_date VARCHAR(10),
-        score VARCHAR(250),
+        score VARCHAR(1000),
         courses TEXT,
         FOREIGN KEY (user_id) REFERENCES users(id)
       );
@@ -279,9 +280,9 @@ export const dropCreateAndSeedTables = async () => {
       awards(
         id SERIAL PRIMARY KEY,
         user_id INTEGER,
-        title VARCHAR(250) NOT NULL,
+        title VARCHAR(1000) NOT NULL,
         date VARCHAR(10) NOT NULL,
-        awarder VARCHAR(250),
+        awarder VARCHAR(1000),
         summary TEXT,
         FOREIGN KEY (user_id) REFERENCES users(id)
       );
@@ -290,10 +291,10 @@ export const dropCreateAndSeedTables = async () => {
       certificates(
         id SERIAL PRIMARY KEY,
         user_id INTEGER,
-        name VARCHAR(250) NOT NULL,
+        name VARCHAR(1000) NOT NULL,
         date VARCHAR(10) NOT NULL,
-        url VARCHAR(250),
-        issuer VARCHAR(250) NOT NULL,
+        url VARCHAR(1000),
+        issuer VARCHAR(1000) NOT NULL,
         FOREIGN KEY (user_id) REFERENCES users(id)
       );
 
@@ -301,10 +302,10 @@ export const dropCreateAndSeedTables = async () => {
       publications(
         id SERIAL PRIMARY KEY,
         user_id INTEGER,
-        name VARCHAR(250) NOT NULL,
-        publisher VARCHAR(250) NOT NULL,
+        name VARCHAR(1000) NOT NULL,
+        publisher VARCHAR(1000) NOT NULL,
         release_date VARCHAR(10) NOT NULL,
-        url VARCHAR(250),
+        url VARCHAR(1000),
         summary TEXT,
         FOREIGN KEY (user_id) REFERENCES users(id)
       );
@@ -313,8 +314,8 @@ export const dropCreateAndSeedTables = async () => {
       languages(
         id SERIAL PRIMARY KEY,
         user_id INTEGER,
-        language VARCHAR(250) NOT NULL,
-        fluency VARCHAR(250) NOT NULL,
+        language VARCHAR(1000) NOT NULL,
+        fluency VARCHAR(1000) NOT NULL,
         FOREIGN KEY (user_id) REFERENCES users(id)
       );
 
@@ -322,7 +323,7 @@ export const dropCreateAndSeedTables = async () => {
       interests(
         id SERIAL PRIMARY KEY,
         user_id INTEGER,
-        name VARCHAR(250) NOT NULL,
+        name VARCHAR(1000) NOT NULL,
         keywords TEXT,
         FOREIGN KEY (user_id) REFERENCES users(id)
       );
@@ -331,7 +332,7 @@ export const dropCreateAndSeedTables = async () => {
       user_references(
         id SERIAL PRIMARY KEY,
         user_id INTEGER,
-        name VARCHAR(250) NOT NULL,
+        name VARCHAR(1000) NOT NULL,
         reference TEXT NOT NULL,
         FOREIGN KEY (user_id) REFERENCES users(id)
       );

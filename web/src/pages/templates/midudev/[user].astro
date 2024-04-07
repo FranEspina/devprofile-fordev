@@ -48,7 +48,7 @@ const basic = result.data[0];
       </div>
       <Header basic={basic} />
       <Section title="Sobre mí">
-        <p>{basic.summary}</p>
+        {basic.summary.split("\n").map((p) => <p>{p}</p>)}
       </Section>
       <Works userId={user} />
       <Education userId={user} />
@@ -151,6 +151,7 @@ const basic = result.data[0];
     line-height: 1.5;
     margin: 0;
     text-wrap: pretty;
+    margin-bottom: 1rem;
   }
 
   .print {

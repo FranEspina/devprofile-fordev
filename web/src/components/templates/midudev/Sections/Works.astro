@@ -17,50 +17,54 @@ const { success, data: work } = result;
   <ul>
     {
       work &&
-        work.map(
-          ({
-            name,
-            startDate,
-            endDate,
-            position,
-            summary,
-            highlights,
-            location,
-            url,
-          }) => {
-            return (
-              <li>
-                <article>
-                  <header>
-                    <div>
-                      <h3>
-                        <a href={url} title={`Ver ${name}`} target="_blank">
-                          {name}
-                        </a>
-                      </h3>
-                      <h4>
-                        {position} - {location}
-                      </h4>
-                    </div>
+        work
+          .sort((a, b) => {
+            return b.startDate.localeCompare(a.startDate);
+          })
+          .map(
+            ({
+              name,
+              startDate,
+              endDate,
+              position,
+              summary,
+              highlights,
+              location,
+              url,
+            }) => {
+              return (
+                <li>
+                  <article>
+                    <header>
+                      <div>
+                        <h3>
+                          <a href={url} title={`Ver ${name}`} target="_blank">
+                            {name}
+                          </a>
+                        </h3>
+                        <h4>
+                          {position} - {location}
+                        </h4>
+                      </div>
 
-                    <FromToDate startDate={startDate} endDate={endDate} />
-                  </header>
+                      <FromToDate startDate={startDate} endDate={endDate} />
+                    </header>
 
-                  <footer>
-                    <p>{summary}</p>
-                    <div class="higlights">
-                      {highlights &&
-                        highlights.length !== 0 &&
-                        highlights.map((highlight) => {
-                          return <span>{highlight}</span>;
-                        })}
-                    </div>
-                  </footer>
-                </article>
-              </li>
-            );
-          },
-        )
+                    <footer>
+                      <p>{summary}</p>
+                      <div class="higlights">
+                        {highlights &&
+                          highlights.length !== 0 &&
+                          highlights.map((highlight) => {
+                            return <span>{highlight}</span>;
+                          })}
+                      </div>
+                    </footer>
+                  </article>
+                </li>
+              );
+            },
+          )
     }
   </ul>
 </Section>

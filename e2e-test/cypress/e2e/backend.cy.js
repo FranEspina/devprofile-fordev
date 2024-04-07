@@ -7,14 +7,15 @@ describe('Prueba sobre el Backend', () => {
       });
   });
 
+  //usuario de test en entorno desarrollo. se crea siempre al crear la bbdd
   it('login', () => {
     cy.visit('http://localhost:4321')
     cy.request({
       method: 'POST',
       url: 'http://localhost:3000/auth/login',
       body: {
-        email: 'franpies77@gmail.com',
-        password: 'clave',
+        email: 'admin@correo.es',
+        password: 'admin',
       }
     })
       .then((response) => {

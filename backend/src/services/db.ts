@@ -1,6 +1,6 @@
 import { Pool, QueryResult } from 'pg'
 import { UserHashPassword, UserDTO, UserCreate } from '../models/user'
-import { UserDeleteSection, SectionData, WorkResume, LocationResume, ProfileResume, VolunteerResume, EducationResume, AwardResume, CertificateResume, PublicationResume, SkillResume, LanguageResume, InterestResume, ReferenceResume, ProjectResume } from '../models/modelSchemas'
+import { UserDeleteSection, SectionData } from '../models/modelSchemas'
 import { camelToSnakeCase, snakeToCamelCase } from '../services/strings'
 import { type JSonResume } from '../schemas/jsonSchema'
 
@@ -287,9 +287,6 @@ export async function dbGetUserSectionDataAsync(userId: number): Promise<Section
     console.log('Error inesperado recuperando secciones de usuario', error)
     throw error
   }
-  finally {
-    ;
-  }
 }
 
 export async function dbGetUserBasicResumeAsync({ userId, includeIds, arrayParsed }: { userId: number, includeIds: boolean, arrayParsed: boolean }): Promise<{ [key: string]: unknown }[]> {
@@ -304,7 +301,8 @@ export async function dbGetUserBasicResumeAsync({ userId, includeIds, arrayParse
         basicResume = basic[0]
       }
       else {
-        const { id, userId, ...basicFields } = basic[0]
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { id: _, userId: __, ...basicFields } = basic[0]
         basicResume = { ...basicFields }
       }
       const profile = await dbGetUserSectionResumeAsync<Profile>({ tablename: 'profiles', userId, includeIds, arrayParsed })
@@ -343,6 +341,7 @@ export async function dbGetUserResumeAsync({ userId, includeIds, arrayParsed }: 
         basicResume = basic[0]
       }
       else {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { id: _, userId: __, ...basicFields } = basic[0]
         basicResume = { ...basicFields }
       }

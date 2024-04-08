@@ -19,6 +19,12 @@ const { success, data: work } = result;
       work &&
         work
           .sort((a, b) => {
+            if (a.endDate && !b.endDate) {
+              return 1; // b > a
+            }
+            if (!a.endDate && b.endDate) {
+              return -1; // a > b
+            }
             return b.startDate.localeCompare(a.startDate);
           })
           .map(

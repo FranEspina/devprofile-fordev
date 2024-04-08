@@ -25,7 +25,7 @@ describe('Prueba de página de inicio y ping al Backend', () => {
     cy.get('[data-cy="open-modal-sign-button"]')
       .wait(1000)
       .click();
-    cy.get('[name="email"]').type('admin@correo.es')
+    cy.get('[name="email"]').type('admin@correo.com')
     cy.get('[name="password"]').type('admin')
 
 

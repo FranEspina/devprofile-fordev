@@ -14,7 +14,7 @@ describe('Prueba sobre el Backend', () => {
       method: 'POST',
       url: 'http://localhost:3000/auth/login',
       body: {
-        email: 'admin@correo.es',
+        email: 'admin@correo.com',
         password: 'admin',
       }
     })

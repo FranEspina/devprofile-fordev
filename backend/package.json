@@ -6,17 +6,26 @@
   "scripts": {
     "clean": "rm -rf coverage dist",
     "lint": "eslint ./src/*.ts",
-    "test": "jest",
-    "build": "tsc",
+    "build": "rimraf dist && tsc",
+    "ts.check": "tsc --project tsconfig.json",
+    "add-build": "git add dist",
+    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "ts-node src/index.ts",
     "dev": "nodemon",
     "db-migrate": "set DB_MIGRATE=true && ts-node -r dotenv/config src/index.ts dotenv_config_path=./.env.development"
   },
+  "pre-commit": [
+    "ts.check",
+    "build",
+    "add-build"
+  ],
   "author": "Fran Espina",
   "license": "ISC",
   "devDependencies": {
     "eslint": "8.57.0",
-    "nodemon": "3.1.0"
+    "nodemon": "3.1.0",
+    "pre-commit": "^1.2.2",
+    "rimraf": "^5.0.5"
   },
   "dependencies": {
     "@types/bcryptjs": "2.4.6",

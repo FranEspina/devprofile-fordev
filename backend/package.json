@@ -11,6 +11,7 @@
     "add-build": "git add dist",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "ts-node src/index.ts",
+    "start-dist": "node dist/src/index.js",
     "dev": "nodemon",
     "db-migrate": "set DB_MIGRATE=true && ts-node -r dotenv/config src/index.ts dotenv_config_path=./.env.development"
   },

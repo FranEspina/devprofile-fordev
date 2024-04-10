@@ -87,7 +87,7 @@ export const SignInModal = ({ text = 'Iniciar sesión', dataCyOpenSignButton = '
                   <label htmlFor={field.name} className="mb-2">{field.desc}</label>
                   {errors[field.schema] && <p className='text-xxs md:text-xs text-blue-500 ml-1'>{errors[field.schema]}</p>}
                 </div>
-                <input className="mb-4 w-full py-2 px-4 block text-xxs md:text-xs disabled:opacity-50 disabled:pointer-events-none bg-blue-950 border-blue-300 text-gray-50 focus:border-blue-500  focus:ring-blue-600 placeholder-gray-600"
+                <input className="mb-4 w-full py-2 px-4 block text-xxs md:text-xs disabled:opacity-50 disabled:pointer-events-none bg-gray-200 dark:bg-blue-950 border-blue-300 text-gray-950 dark:text-gray-50 focus:border-blue-500  focus:ring-blue-600 placeholder-gray-600"
                   type={field.type} id={field.name} name={field.name}
                   placeholder={field.placeholder} />
               </div>

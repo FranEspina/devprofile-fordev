@@ -7,6 +7,7 @@ import { type Basic } from "@/Schemas/basicSchema";
 import Mail from "@/icons/Mail.astro";
 import Phone from "@/icons/Phone.astro";
 import X from "@/icons/X.astro";
+import { LucideHome as Home } from "lucide-react";
 import LinkedIn from "@/icons/LinkedIn.astro";
 import GitHub from "@/icons/GitHub.astro";
 import { type SocialIcon } from "@/env";
@@ -18,7 +19,7 @@ const { profiles, location }: { profiles: Profile[]; location: Location } =
 const linkedInfo =
   profiles && profiles.find(({ network }) => network === "LinkedIn");
 const linkedUrl = linkedInfo?.url;
-const printInfo = [basic.email, basic.phone, linkedUrl]
+const printInfo = [basic.email, basic.phone, linkedUrl, basic.url]
   .filter(Boolean)
   .join(" • ");
 
@@ -63,6 +64,18 @@ const SOCIAL_ICONS: SocialIcon = {
               rel="noopener noreferrer"
             >
               <Phone />
+            </a>
+          )
+        }
+        {
+          basic.phone && (
+            <a
+              href={`${basic.url}`}
+              title={`Página personal ${basic.url}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Home className="w-4" />
             </a>
           )
         }

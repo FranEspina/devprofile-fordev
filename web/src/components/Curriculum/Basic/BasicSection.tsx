@@ -22,6 +22,7 @@ export function BasicSection() {
   const { basicStamp, setBasicStamp } = useRefreshStore(state => state)
   const [isOpenAlert, setIsOpenAlert] = useState(false)
   const deleteRef = useRef(() => undefined);
+  const MAX_PARAGRAPH_SUMMARY = 3
 
   useEffect(() => {
 
@@ -122,7 +123,15 @@ export function BasicSection() {
             <BasicDialog editMode={true} initialState={basics} />
           </div>
         </li>
-        <li className="text-start my-4 text-xs md:text-sm text-gray-500 dark:text-gray-300 ">{basics.summary}</li>
+        <li className="text-start my-4 text-xs md:text-sm text-gray-500 dark:text-gray-300 ">
+          {basics.summary && basics.summary.split("\n").slice(0, Math.min(MAX_PARAGRAPH_SUMMARY, basics.summary.split("\n").length)).map((p) => <p className="mb-2">{p}</p>)}
+          {basics.summary && basics.summary.split("\n").length > MAX_PARAGRAPH_SUMMARY
+            ? <BasicDialog editMode={true} initialState={basics}>
+              <button className="mt-2 font-bold">Leer más ➡️</button>
+            </BasicDialog>
+            : ''
+          }
+        </li>
       </ul>}
       {!loading && !basics &&
         <div className="flex flex-row w-full gap-2 items-center">

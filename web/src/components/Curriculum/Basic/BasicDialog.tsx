@@ -11,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Plus, Edit } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect, Children } from 'react'
 import { useProfileStore } from '@/store/profileStore'
 import { type BasicCreate, BasicSchema, BasicCreateSchema, type Basic } from '@/Schemas/basicSchema'
 import { useNotify } from '@/hooks/useNotify'
@@ -25,10 +25,11 @@ import { Textarea } from '@/components/ui/textarea'
 
 interface BasicDialogProps {
   editMode: boolean,
-  initialState?: Basic
+  initialState?: Basic,
+  children?: React.ReactNode
 }
 
-export function BasicDialog({ editMode = false, initialState = undefined }: BasicDialogProps) {
+export function BasicDialog({ editMode = false, initialState = undefined, children = undefined }: BasicDialogProps) {
   const [loading, setLoading] = useState(false)
   const [isOpen, setIsOpen] = useState<boolean>()
   const { user, token } = useProfileStore(state => state)
@@ -158,18 +159,24 @@ export function BasicDialog({ editMode = false, initialState = undefined }: Basi
 
   }
 
+  let dialogTriggerElement: React.ReactNode
+  if (children) {
+    dialogTriggerElement = children
+  } else {
+    dialogTriggerElement = (editMode === true)
+      ? <Button variant="outline">
+        <Edit className="h-3 w-3" />
+        <span className="sr-only">Editar</span>
+      </Button>
+      : <Button className="text-xs md:text-sm" variant="outline">
+        <Plus className="mr-1 text-blue-500" />Datos básicos
+      </Button>
+  }
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen} modal defaultOpen={isOpen}>
       <DialogTrigger asChild>
-        {(editMode === true)
-          ? <Button variant="outline">
-            <Edit className="h-3 w-3" />
-            <span className="sr-only">Editar</span>
-          </Button>
-          : <Button className="text-xs md:text-sm" variant="outline">
-            <Plus className="mr-1 text-blue-500" />Datos básicos
-          </Button>
-        }
+        {dialogTriggerElement}
       </DialogTrigger>
       <DialogContent className="max-w-[75%]" onInteractOutside={(e) => { e.preventDefault() }}>
         <DialogHeader>
